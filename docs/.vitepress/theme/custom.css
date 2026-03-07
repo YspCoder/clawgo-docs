@@ -1,0 +1,18 @@
+:root {
+  --vp-c-brand-1: #e85d2a;
+  --vp-c-brand-2: #ff7a45;
+  --vp-c-brand-3: #c9461f;
+  --vp-c-brand-soft: rgba(232, 93, 42, 0.14);
+}
+
+.VPHomeHero .image {
+  transform: translateY(6px);
+}
+
+.VPHomeHero .image img {
+  filter: drop-shadow(0 24px 44px rgba(201, 70, 31, 0.28));
+}
+
+.VPFeature {
+  border-image: linear-gradient(135deg, rgba(232, 93, 42, 0.28), rgba(35, 111, 161, 0.18)) 1;
+}

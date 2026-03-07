@@ -1,0 +1,15 @@
+{
+  "name": "clawgo-docs",
+  "private": true,
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "cf:preview": "npm run docs:build && wrangler pages deploy docs/.vitepress/dist --project-name clawgo --branch preview",
+    "cf:deploy": "npm run docs:build && wrangler pages deploy docs/.vitepress/dist --project-name clawgo"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3",
+    "wrangler": "^3.114.0"
+  }
+}
