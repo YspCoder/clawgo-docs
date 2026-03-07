@@ -90,3 +90,24 @@ Fields:
 - `auth`
 - `timeout_sec`
 - `responses.*`
+
+## `tools.mcp`
+
+| Field | Purpose |
+| --- | --- |
+| `enabled` | global MCP enable switch |
+| `request_timeout_sec` | request timeout |
+| `servers` | MCP server declarations |
+
+## `tools.mcp.servers.<name>`
+
+| Field | Purpose |
+| --- | --- |
+| `enabled` | whether the server is enabled |
+| `transport` | currently only `stdio` |
+| `command` | launch command |
+| `args` | launch args |
+| `env` | env var overrides |
+| `working_dir` | working directory, must be absolute |
+| `description` | description |
+| `package` | npm package name for WebUI-assisted install |

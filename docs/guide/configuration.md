@@ -265,6 +265,7 @@ Gateway 同时负责：
 - `tools.shell`
 - `tools.web`
 - `tools.filesystem`
+- `tools.mcp`
 
 ### tools.shell
 
@@ -279,6 +280,31 @@ Gateway 同时负责：
 
 - `api_key`
 - `max_results`
+
+### tools.mcp
+
+- `enabled`
+- `request_timeout_sec`
+- `servers`
+
+单个 server 字段：
+
+- `enabled`
+- `transport`
+- `command`
+- `args`
+- `env`
+- `working_dir`
+- `description`
+- `package`
+
+当前实现只支持：
+
+```text
+transport = "stdio"
+```
+
+更多说明见 [MCP 集成](/guide/mcp)。
 
 ## logging
 

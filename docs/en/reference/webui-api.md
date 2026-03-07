@@ -24,12 +24,14 @@ Access requires either:
 
 ## Runtime Resources
 
+- `GET /webui/api/tools`
 - `GET /webui/api/nodes`
 - `GET /webui/api/sessions`
 - `GET/POST /webui/api/memory`
 - `GET/POST /webui/api/subagent_profiles`
 - `GET/POST /webui/api/subagents_runtime`
 - `GET /webui/api/tool_allowlist_groups`
+- `POST /webui/api/mcp/install`
 
 ## Automation
 
@@ -44,3 +46,13 @@ Access requires either:
 - `GET/POST /webui/api/exec_approvals`
 - `GET /webui/api/logs/recent`
 - `GET /webui/api/logs/stream`
+
+## Page To API Mapping
+
+| Page | Main APIs |
+| --- | --- |
+| MCP | `tools`, `mcp/install`, `config` |
+| Chat | `chat`, `chat/history`, `chat/stream`, `subagents_runtime` |
+| Config | `config` |
+| Cron | `cron` |
+| Skills | `skills` |

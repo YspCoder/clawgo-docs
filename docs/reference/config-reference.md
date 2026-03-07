@@ -169,6 +169,27 @@
 | `api_key` | 搜索 API key |
 | `max_results` | 搜索结果数 |
 
+### `tools.mcp`
+
+| 字段 | 作用 |
+| --- | --- |
+| `enabled` | 是否启用 MCP 总开关 |
+| `request_timeout_sec` | MCP 请求超时 |
+| `servers` | MCP server 声明表 |
+
+### `tools.mcp.servers.<name>`
+
+| 字段 | 作用 |
+| --- | --- |
+| `enabled` | 是否启用该 server |
+| `transport` | 当前仅支持 `stdio` |
+| `command` | 启动命令 |
+| `args` | 启动参数 |
+| `env` | 环境变量覆盖 |
+| `working_dir` | 工作目录，必须是绝对路径 |
+| `description` | 描述 |
+| `package` | npm 包名，供 WebUI 安装辅助使用 |
+
 ## logging / sentinel / memory
 
 这三块建议直接结合 [配置说明](/guide/configuration) 查看：

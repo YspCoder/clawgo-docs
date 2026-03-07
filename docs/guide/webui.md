@@ -71,6 +71,21 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - `GET /webui/api/config`
 - `POST /webui/api/config`
 
+### MCP
+
+用于管理 MCP server 和查看已发现的远端工具，支持：
+
+- 新增/删除 MCP server
+- 编辑 `command`、`args`、`working_dir`、`package`
+- 通过 npm 安装 MCP server 对应包
+- 查看已发现的 `mcp__<server>__<tool>` 工具
+
+接口：
+
+- `/webui/api/tools`
+- `/webui/api/mcp/install`
+- `/webui/api/config`
+
 ### Logs
 
 用于实时日志流和最近日志查看。

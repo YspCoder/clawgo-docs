@@ -150,6 +150,33 @@ Shared dedupe settings:
 - `inbound_content_dedupe_window_seconds`
 - `outbound_dedupe_window_seconds`
 
+## `tools.mcp`
+
+Fields:
+
+- `enabled`
+- `request_timeout_sec`
+- `servers`
+
+Per-server fields:
+
+- `enabled`
+- `transport`
+- `command`
+- `args`
+- `env`
+- `working_dir`
+- `description`
+- `package`
+
+The current implementation only supports:
+
+```text
+transport = "stdio"
+```
+
+See [MCP Integration](/en/guide/mcp) for details.
+
 ## providers
 
 Structured as:

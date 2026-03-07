@@ -6,9 +6,10 @@
 
 1. [快速开始](/guide/quick-start)
 2. [配置说明](/guide/configuration)
-3. [CLI 命令](/guide/cli)
-4. [WebUI 控制台](/guide/webui)
-5. [通道、Cron 与节点](/guide/integrations)
+3. [MCP 集成](/guide/mcp)
+4. [CLI 命令](/guide/cli)
+5. [WebUI 控制台](/guide/webui)
+6. [通道、Cron 与节点](/guide/integrations)
 
 ## 按目标阅读
 
@@ -25,6 +26,14 @@
 
 - [CLI 命令](/guide/cli)
 - [运维与 API](/guide/operations)
+
+### 我想接入 MCP server
+
+看：
+
+- [MCP 集成](/guide/mcp)
+- [配置说明](/guide/configuration)
+- [WebUI 控制台](/guide/webui)
 
 ### 我想通过页面管理
 

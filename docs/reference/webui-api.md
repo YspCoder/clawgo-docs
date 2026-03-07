@@ -48,6 +48,13 @@
 
 ## 资源与运行态
 
+### `GET /webui/api/tools`
+
+返回工具目录。当前 MCP 页面会读取：
+
+- `tools`
+- `mcp_tools`
+
 ### `GET /webui/api/nodes`
 
 查询节点与拓扑相关信息。
@@ -78,6 +85,17 @@ WebUI 当前会用它做：
 ### `GET /webui/api/tool_allowlist_groups`
 
 获取工具白名单分组定义，供 profile 编辑器使用。
+
+### `POST /webui/api/mcp/install`
+
+安装一个 npm 形式的 MCP server 包，并返回解析出的可执行文件信息。
+
+典型返回值包括：
+
+- `package`
+- `output`
+- `bin_name`
+- `bin_path`
 
 ## 调度与自动化
 
@@ -127,6 +145,7 @@ WebUI 当前会用它做：
 
 | 页面 | 主要接口 |
 | --- | --- |
+| MCP | `tools`, `mcp/install`, `config` |
 | Chat | `chat`, `chat/history`, `chat/stream`, `subagents_runtime` |
 | Config | `config` |
 | Cron | `cron` |

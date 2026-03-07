@@ -53,6 +53,21 @@ Configuration workspace with:
 - diff view
 - risky change confirmation
 
+### MCP
+
+Dedicated management page for MCP servers and discovered remote tools. It supports:
+
+- adding and removing MCP servers
+- editing `command`, `args`, `working_dir`, and `package`
+- installing npm packages for MCP servers
+- viewing discovered `mcp__<server>__<tool>` tools
+
+Uses:
+
+- `/webui/api/tools`
+- `/webui/api/mcp/install`
+- `/webui/api/config`
+
 ### Logs
 
 Recent logs and log streaming.

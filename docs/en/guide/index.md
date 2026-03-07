@@ -6,9 +6,10 @@ This section is for people who want to get ClawGo running and start using it.
 
 1. [Quick Start](/en/guide/quick-start)
 2. [Configuration](/en/guide/configuration)
-3. [CLI](/en/guide/cli)
-4. [WebUI Console](/en/guide/webui)
-5. [Channels, Cron, and Nodes](/en/guide/integrations)
+3. [MCP Integration](/en/guide/mcp)
+4. [CLI](/en/guide/cli)
+5. [WebUI Console](/en/guide/webui)
+6. [Channels, Cron, and Nodes](/en/guide/integrations)
 
 ## Read By Goal
 
@@ -21,6 +22,12 @@ This section is for people who want to get ClawGo running and start using it.
 
 - [CLI](/en/guide/cli)
 - [Operations and API](/en/guide/operations)
+
+### I want to connect MCP servers
+
+- [MCP Integration](/en/guide/mcp)
+- [Configuration](/en/guide/configuration)
+- [WebUI Console](/en/guide/webui)
 
 ### I want to manage it from the UI
 
