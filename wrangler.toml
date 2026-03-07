@@ -1,5 +1,0 @@
-name = "clawgo"
-pages_build_output_dir = "docs/.vitepress/dist"
-
-[env.preview]
-name = "clawgo"

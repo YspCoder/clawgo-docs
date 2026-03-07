@@ -6,6 +6,10 @@ export default defineConfig({
   description: 'ClawGo 的完整使用与架构文档',
   cleanUrls: true,
   lastUpdated: true,
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/clawgo-logo.png' }]
+  ],
   locales: {
     root: {
       label: '简体中文',

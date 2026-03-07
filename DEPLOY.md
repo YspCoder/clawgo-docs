@@ -1,83 +1,67 @@
 # Cloudflare Pages 部署
 
-这个项目已经配置好了 Cloudflare Pages 的直接上传部署。
+这个项目现在按 `Git integration` 方式准备，也就是：
 
-注意：
+- 代码推到 GitHub
+- 在 Cloudflare Pages 控制台里关联这个 GitHub 仓库
+- 由 Cloudflare 在线构建和发布
 
-- 当前方案使用的是 `Direct Upload`
-- 按 Cloudflare 官方说明，Direct Upload 项目之后不能直接切换成 Git Integration；如果未来要改成 Git Integration，需要新建一个 Pages 项目
+不再使用本地 `wrangler pages deploy`，也不再使用 GitHub Actions 代替 Pages 发布。
 
-## 约定
+## 官方前提
 
-- Pages 项目名：`clawgo`
-- 生产地址：`https://clawgo.pages.dev`
-- 自定义域名：`https://clawgo.dev`
+按照 Cloudflare 官方文档：
 
-## 本地首次部署
+- Git integration 会在你每次 push 到选定分支时自动构建和部署
+- 如果要把 apex 域名绑定到 Pages，例如 `clawgo.dev`，这个域名必须已经托管在同一个 Cloudflare 账户下，并将 nameserver 指向 Cloudflare
 
-先登录 Cloudflare：
+## 推荐项目设置
 
-```bash
-npx wrangler login
-```
+建议在 Cloudflare Pages 控制台中这样配置：
 
-然后构建并部署：
+- Framework preset: `None`
+- Build command: `npm run docs:build`
+- Build output directory: `docs/.vitepress/dist`
+- Root directory: 留空
+- Production branch: `main`
 
-```bash
-npm run cf:deploy
-```
+如果你把文档目录以后放进 monorepo 子目录，再单独设置 Root directory。
 
-如果 Cloudflare 上还没有 `clawgo` 这个 Pages 项目，`wrangler pages deploy` 会引导你创建项目并确认生产分支。
+## 关联 GitHub 仓库
 
-预览部署：
-
-```bash
-npm run cf:preview
-```
-
-## GitHub Actions 自动部署
-
-仓库里已经提供：
-
-```text
-.github/workflows/deploy-pages.yml
-```
-
-需要在 GitHub 仓库 Secrets 中设置：
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
-权限建议：
-
-- `Account`
-- `Cloudflare Pages`
-- `Edit`
-
-触发规则：
-
-- `main` 分支 push：部署生产环境
-- `pull_request`：部署 preview 分支别名
+1. 把当前项目推到 GitHub
+2. 打开 Cloudflare Dashboard
+3. 进入 `Workers & Pages`
+4. 选择 `Create application` 或 `Create Pages project`
+5. 选择 `Pages` -> `Connect to Git`
+6. 授权 Cloudflare 访问你的 GitHub 仓库
+7. 选择这个仓库
+8. 填入上面的构建配置
+9. 完成首次部署
 
 ## 绑定 `clawgo.dev`
 
-`clawgo.dev` 是 apex 域名，不是子域名。Cloudflare Pages 官方要求：
+1. 在 Cloudflare 的 `Workers & Pages` 中打开这个 Pages 项目
+2. 进入 `Custom domains`
+3. 选择 `Set up a domain`
+4. 输入 `clawgo.dev`
+5. 按面板提示完成
 
-- 这个 apex 域名必须已经作为 zone 托管在同一个 Cloudflare 账户下
-- 域名的 nameserver 需要切到 Cloudflare
+如果 `clawgo.dev` 已经是 Cloudflare zone，Pages 通常会自动创建所需 DNS 记录。
 
-绑定步骤：
+## 预览部署
 
-1. 进入 Cloudflare `Workers & Pages`
-2. 选择 `clawgo` 项目
-3. 打开 `Custom domains`
-4. 选择 `Set up a domain`
-5. 输入 `clawgo.dev`
-6. 按提示完成
+Git integration 模式下：
 
-如果 `clawgo.dev` 已经在 Cloudflare 管理，Pages 会自动帮你创建需要的 DNS 记录。
+- `main` 通常对应生产环境
+- 其他分支或 PR 可用于 preview deployment
 
-## 常用命令
+你可以在 Pages 的 `Settings > Builds > Branch control` 中控制：
+
+- 哪个分支是生产分支
+- 哪些分支会自动触发 preview
+
+## 本地命令
 
 本地开发：
 
@@ -91,14 +75,18 @@ npm run docs:dev
 npm run docs:build
 ```
 
-部署生产：
+本地预览：
 
 ```bash
-npm run cf:deploy
+npm run docs:preview
 ```
 
-部署预览：
+## 为什么移除了 wrangler 和 GitHub Actions
 
-```bash
-npm run cf:preview
-```
+因为你现在明确要走 Cloudflare Pages 的在线 Git 关联部署。继续保留下面这些会让仓库职责混乱：
+
+- `wrangler.toml`
+- `wrangler pages deploy`
+- GitHub Actions 里的 Pages 直传流程
+
+现在仓库只保留 Cloudflare Pages 在线构建所需的最小配置。
