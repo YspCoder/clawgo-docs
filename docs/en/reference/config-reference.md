@@ -104,10 +104,12 @@ Fields:
 | Field | Purpose |
 | --- | --- |
 | `enabled` | whether the server is enabled |
-| `transport` | currently only `stdio` |
-| `command` | launch command |
-| `args` | launch args |
+| `transport` | `stdio`, `http`, `streamable_http`, or `sse` |
+| `command` | launch command for `stdio` servers |
+| `args` | launch args for `stdio` servers |
+| `url` | endpoint URL for `http`, `streamable_http`, or `sse` |
 | `env` | env var overrides |
-| `working_dir` | working directory, must be absolute |
+| `working_dir` | working directory; relative under `workspace`, absolute under `full` |
+| `permission` | `workspace` or `full` |
 | `description` | description |
-| `package` | npm package name for WebUI-assisted install |
+| `package` | package name for WebUI-assisted install |

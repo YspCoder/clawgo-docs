@@ -182,13 +182,15 @@
 | 字段 | 作用 |
 | --- | --- |
 | `enabled` | 是否启用该 server |
-| `transport` | 当前仅支持 `stdio` |
-| `command` | 启动命令 |
-| `args` | 启动参数 |
+| `transport` | `stdio` / `http` / `streamable_http` / `sse` |
+| `command` | `stdio` 模式下的启动命令 |
+| `args` | `stdio` 模式下的启动参数 |
+| `url` | `http` / `streamable_http` / `sse` 使用的 endpoint |
 | `env` | 环境变量覆盖 |
-| `working_dir` | 工作目录，必须是绝对路径 |
+| `working_dir` | 工作目录；`workspace` 权限下可用相对路径，`full` 权限下可用绝对路径 |
+| `permission` | `workspace` / `full` |
 | `description` | 描述 |
-| `package` | npm 包名，供 WebUI 安装辅助使用 |
+| `package` | 包名，供 WebUI 安装辅助使用 |
 
 ## logging / sentinel / memory
 

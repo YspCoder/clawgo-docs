@@ -43,6 +43,12 @@ Uses:
 
 Unified topology view for agents, tasks, threads, messages, and node branches.
 
+Recent UI changes also surface tool visibility details, including:
+
+- tool visibility mode
+- inherited tools
+- effective allowlist and denylist results
+
 ### Config
 
 Configuration workspace with:
@@ -58,8 +64,11 @@ Configuration workspace with:
 Dedicated management page for MCP servers and discovered remote tools. It supports:
 
 - adding and removing MCP servers
-- editing `command`, `args`, `working_dir`, and `package`
-- installing npm packages for MCP servers
+- switching between `stdio`, `http`, `streamable_http`, and `sse`
+- editing `command`, `args`, `url`, `working_dir`, `permission`, and `package`
+- checking whether the configured `command` exists
+- suggesting install choices from the package value
+- installing MCP servers with `npm`, `uv`, or `bun`
 - viewing discovered `mcp__<server>__<tool>` tools
 
 Uses:
@@ -87,6 +96,12 @@ Manage scheduled jobs.
 ### SubagentProfiles
 
 Manage profile-like subagent definitions and prompt files.
+
+The page now also surfaces:
+
+- inherited tools
+- tool visibility mode
+- automatic inheritance of `skill_exec` for subagents
 
 ### TaskAudit
 

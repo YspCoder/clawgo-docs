@@ -33,6 +33,23 @@ Access requires either:
 - `GET /webui/api/tool_allowlist_groups`
 - `POST /webui/api/mcp/install`
 
+`GET /webui/api/tools` is also used by the MCP page for:
+
+- `tools`
+- `mcp_tools`
+- `mcp_server_checks`
+
+`POST /webui/api/mcp/install` accepts:
+
+- `package`
+- `installer`
+
+Supported installers:
+
+- `npm`
+- `uv`
+- `bun`
+
 ## Automation
 
 - `GET/POST /webui/api/cron`

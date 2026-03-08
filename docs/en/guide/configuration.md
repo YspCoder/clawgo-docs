@@ -202,6 +202,46 @@ Fields:
 
 Default port is `18790`.
 
+## `tools.mcp`
+
+The MCP entry point is `tools.mcp`.
+
+Top-level fields:
+
+- `enabled`
+- `request_timeout_sec`
+- `servers`
+
+Common per-server fields:
+
+- `enabled`
+- `transport`
+- `command`
+- `args`
+- `url`
+- `env`
+- `working_dir`
+- `permission`
+- `description`
+- `package`
+
+Supported `transport` values:
+
+- `stdio`
+- `http`
+- `streamable_http`
+- `sse`
+
+Rules:
+
+- `stdio` requires `command`
+- `http`, `streamable_http`, and `sse` require `url`
+- `permission` must be `workspace` or `full`
+- with `permission: "workspace"`, `working_dir` may be relative but must resolve inside the workspace
+- with `permission: "full"`, `working_dir` may be absolute
+
+See [MCP Integration](/en/guide/mcp) for the full guide.
+
 ## Validation
 
 Run:

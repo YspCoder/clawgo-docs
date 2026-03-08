@@ -53,6 +53,12 @@ This enables safer role separation, such as:
 - `coder` holding filesystem and shell access
 - `tester` holding process management and verification tools
 
+There is now one important exception:
+
+- `skill_exec` is automatically inherited by subagents
+
+So even if it is not listed explicitly in the allowlist, subagents can still execute skills. The `SubagentProfiles` WebUI page now shows this as part of the inherited tool set.
+
 ## Skills
 
 Skills are reusable capability packages, typically centered around `SKILL.md`.
@@ -62,6 +68,13 @@ The code loads skills from multiple locations:
 - workspace skills
 - global skills
 - builtin skills
+
+The `skill_exec` tool is what exposes those skills to runtime execution. Recent audit changes also add:
+
+- `caller_agent`
+- `caller_scope`
+
+That makes it easier to tell whether a skill execution came from the main agent or from a subagent.
 
 The repository currently ships workspace skills such as:
 

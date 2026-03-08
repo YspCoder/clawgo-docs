@@ -55,6 +55,12 @@ Subagent 主要有两类：
 - `coder` 才有文件和 shell 能力
 - `tester` 多拿 process manager
 
+最近的实现里还有一个重要例外：
+
+- `skill_exec` 会被自动注入到 subagent 的可用工具集合
+
+也就是说，即使它不在显式 allowlist 中，subagent 仍然可以执行 skill。WebUI 的 `SubagentProfiles` 页面现在也会把这一点作为 inherited tool 展示出来。
+
 ## notify_main_policy
 
 示例配置里能看到：
@@ -94,6 +100,13 @@ Skill 是放在 workspace 或全局目录中的可复用能力包，通常以 `S
 - workspace skills
 - global skills
 - builtin skills
+
+`skill_exec` 工具负责把这些 skills 暴露给运行时，并且最近的审计记录中会额外记录：
+
+- `caller_agent`
+- `caller_scope`
+
+这让你在任务审计里能区分 skill 是由主 agent 还是某个 subagent 触发的。
 
 仓库自带的 workspace skills 包括：
 

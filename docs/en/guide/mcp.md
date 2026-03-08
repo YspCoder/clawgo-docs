@@ -2,18 +2,23 @@
 
 ## Overview
 
-ClawGo now includes built-in MCP integration under `tools.mcp`. In the current implementation this is a first-class runtime capability, not just an external note:
+ClawGo ships MCP as a built-in runtime capability under `tools.mcp`. It is wired into configuration, runtime discovery, dynamic tool registration, and the WebUI:
 
-- configuration schema exists under `tools.mcp`
-- startup creates an `MCPTool`
+- dedicated config schema under `tools.mcp`
+- startup creates `MCPTool`
 - remote MCP tools are discovered automatically
 - discovered remote tools are registered as local ClawGo tools
 - the WebUI has a dedicated MCP page
-- the Gateway exposes an MCP package install endpoint
+- the Gateway exposes an install endpoint for MCP servers
 
 ## Supported Scope
 
-From `pkg/tools/mcp.go` and the README, the current implementation supports `stdio` MCP servers.
+Based on `pkg/tools/mcp.go`, `pkg/config/validate.go`, and the recent README changes, the supported transports are:
+
+- `stdio`
+- `http`
+- `streamable_http`
+- `sse`
 
 Supported bridge actions:
 
@@ -42,8 +47,9 @@ Entry point:
           "command": "npx",
           "args": ["-y", "@upstash/context7-mcp"],
           "env": {},
-          "working_dir": "/absolute/path/to/project",
-          "description": "Example MCP server",
+          "working_dir": "tools/context7",
+          "permission": "workspace",
+          "description": "Context7 MCP server",
           "package": "@upstash/context7-mcp"
         }
       }
@@ -52,11 +58,24 @@ Entry point:
 }
 ```
 
+Per-server fields:
+
+- `enabled`
+- `transport`
+- `command`
+- `args`
+- `url`
+- `env`
+- `working_dir`
+- `permission`
+- `description`
+- `package`
+
 ## Configuration Examples
 
-### Example 1: Minimal Context7 Setup With `npx`
+### Example 1: Minimal `stdio` Setup
 
-This is the simplest practical setup and matches the shape used in `config.example.json`:
+This matches the current `config.example.json` shape:
 
 ```json
 {
@@ -70,9 +89,8 @@ This is the simplest practical setup and matches the shape used in `config.examp
           "transport": "stdio",
           "command": "npx",
           "args": ["-y", "@upstash/context7-mcp"],
-          "env": {},
-          "working_dir": "/absolute/path/to/project",
-          "description": "Context7 MCP server",
+          "working_dir": "tools/context7",
+          "permission": "workspace",
           "package": "@upstash/context7-mcp"
         }
       }
@@ -83,76 +101,64 @@ This is the simplest practical setup and matches the shape used in `config.examp
 
 ### Example 2: Pin A Resolved Binary Path
 
-After installing from the WebUI or from the shell, you may want to pin the resolved executable path instead of relying on `npx`:
-
 ```json
 {
-  "tools": {
-    "mcp": {
-      "enabled": true,
-      "request_timeout_sec": 20,
-      "servers": {
-        "context7": {
-          "enabled": true,
-          "transport": "stdio",
-          "command": "/usr/local/bin/context7-mcp",
-          "args": [],
-          "env": {},
-          "working_dir": "/absolute/path/to/project",
-          "description": "Context7 MCP server",
-          "package": "@upstash/context7-mcp"
-        }
-      }
-    }
-  }
+  "enabled": true,
+  "transport": "stdio",
+  "command": "/usr/local/bin/context7-mcp",
+  "args": [],
+  "permission": "full",
+  "working_dir": "/Users/example/project/tools/context7",
+  "package": "@upstash/context7-mcp"
 }
 ```
 
-### Example 3: Pass Environment Variables To An MCP Server
-
-If the MCP server needs API keys or other configuration, use `env`:
+### Example 3: Use A Hosted MCP Endpoint
 
 ```json
 {
-  "tools": {
-    "mcp": {
-      "enabled": true,
-      "request_timeout_sec": 20,
-      "servers": {
-        "example": {
-          "enabled": true,
-          "transport": "stdio",
-          "command": "npx",
-          "args": ["-y", "@scope/example-mcp"],
-          "env": {
-            "EXAMPLE_API_KEY": "YOUR_KEY"
-          },
-          "working_dir": "/absolute/path/to/project",
-          "description": "Example MCP server",
-          "package": "@scope/example-mcp"
-        }
-      }
-    }
-  }
+  "enabled": true,
+  "transport": "streamable_http",
+  "url": "https://mcp.example.com",
+  "description": "Hosted MCP server"
+}
+```
+
+### Example 4: Pass Environment Variables
+
+```json
+{
+  "enabled": true,
+  "transport": "stdio",
+  "command": "npx",
+  "args": ["-y", "@scope/example-mcp"],
+  "env": {
+    "EXAMPLE_API_KEY": "YOUR_KEY"
+  },
+  "permission": "workspace",
+  "working_dir": "tools/example"
 }
 ```
 
 ## Validation Rules
 
-The MCP validator checks:
+The validator checks:
 
 - `tools.mcp.request_timeout_sec > 0`
 - server names are non-empty
-- enabled servers must define `command`
-- `transport` must be `stdio`
-- `working_dir`, if present, must be an absolute path
+- `transport` must be one of `stdio`, `http`, `streamable_http`, or `sse`
+- `stdio` servers must define `command`
+- `http`, `streamable_http`, and `sse` servers must define `url`
+- `permission` must be `workspace` or `full`
+- with `permission = workspace`, `working_dir` may be relative but must resolve inside the workspace
+- with `permission = full`, `working_dir` may be absolute
 
 ## What Happens At Startup
 
 In `pkg/agent/loop.go`, when `cfg.Tools.MCP.Enabled` is true, ClawGo:
 
 1. creates `MCPTool`
-2. registers the `mcp` bridge tool itself
+2. registers the `mcp` bridge tool
 3. creates a discovery context from `request_timeout_sec`
 4. calls `DiscoverTools()`
 5. registers each discovered remote tool as a local tool
@@ -167,27 +173,18 @@ Discovered remote tools are mapped into:
 mcp__<server>__<tool>
 ```
 
-For example:
+Examples:
 
 ```text
 mcp__context7__resolve_library_id
 mcp__context7__query_docs
 ```
 
-The codebase also has tests showing sanitized names such as:
-
-```text
-mcp__helper__echo
-mcp__context7_server__resolve_library_id
-```
-
-That matters when a server name or remote tool name contains spaces, dots, or other non-identifier characters.
+The names are sanitized, so spaces, dots, and other special characters are converted into safe identifiers.
 
 ## MCP Bridge Tool Examples
 
-### Example: List Configured MCP Servers
-
-Using the generic `mcp` bridge tool:
+### List Configured Servers
 
 ```json
 {
@@ -195,7 +192,7 @@ Using the generic `mcp` bridge tool:
 }
 ```
 
-### Example: List Remote Tools From A Server
+### List Remote Tools
 
 ```json
 {
@@ -204,7 +201,7 @@ Using the generic `mcp` bridge tool:
 }
 ```
 
-### Example: Call A Remote MCP Tool Through The Bridge
+### Call A Remote Tool
 
 ```json
 {
@@ -218,7 +215,7 @@ Using the generic `mcp` bridge tool:
 }
 ```
 
-### Example: Read A Resource
+### Read A Resource
 
 ```json
 {
@@ -228,7 +225,7 @@ Using the generic `mcp` bridge tool:
 }
 ```
 
-### Example: Get A Prompt
+### Get A Prompt
 
 ```json
 {
@@ -241,56 +238,17 @@ Using the generic `mcp` bridge tool:
 }
 ```
 
-## WebUI Support
-
-There is already a dedicated page:
-
-- `webui/src/pages/MCP.tsx`
-
-It supports:
-
-- adding and removing MCP servers
-- editing `command`, `args`, `working_dir`, and `package`
-- saving config
-- viewing discovered MCP tools
-- installing npm packages for MCP servers
-
-## Related WebUI APIs
-
-### `GET /webui/api/tools`
-
-Returns all tools and also:
-
-- `mcp_tools`
-
-### `POST /webui/api/mcp/install`
-
-Input:
-
-```json
-{
-  "package": "@upstash/context7-mcp"
-}
-```
-
-Server behavior:
-
-1. ensures Node runtime is available
-2. runs `npm i -g <package>`
-3. resolves the package binary
-4. returns `bin_name` and `bin_path`
-
 ## Dynamic Tool Usage Examples
 
-After discovery, a remote MCP tool is registered as a normal local tool with a generated name.
+After discovery, remote MCP tools can be called like normal local tools.
 
-For example, if Context7 exposes `resolve-library-id`, ClawGo may register:
+Example generated tool:
 
 ```text
 mcp__context7__resolve_library_id
 ```
 
-You can then call it like a normal tool using its own input schema:
+Arguments:
 
 ```json
 {
@@ -299,13 +257,11 @@ You can then call it like a normal tool using its own input schema:
 }
 ```
 
-Likewise, a discovered docs query tool may look like:
+Another example:
 
 ```text
 mcp__context7__query_docs
 ```
-
-Example arguments:
 
 ```json
 {
@@ -314,71 +270,82 @@ Example arguments:
 }
 ```
 
-## Recommended Usage
+## WebUI Support
 
-### Option 1: Use `npx`
+There is a dedicated page in:
 
-Good for quick trials:
+- `webui/src/pages/MCP.tsx`
+
+It supports:
+
+- adding and removing MCP servers
+- switching between `stdio`, `http`, `streamable_http`, and `sse`
+- editing `command`, `args`, `url`, `working_dir`, `permission`, and `package`
+- checking whether the configured command exists
+- suggesting install commands based on the package
+- installing MCP servers with `npm`, `uv`, or `bun`
+- viewing discovered `mcp__<server>__<tool>` tools
+
+## Related WebUI APIs
+
+### `GET /webui/api/tools`
+
+Returns all tools and also:
+
+- `mcp_tools`
+- `mcp_server_checks`
+
+The first list is for discovered remote tools. The second contains command-check results for configured servers.
+
+### `POST /webui/api/mcp/install`
+
+Example input:
 
 ```json
 {
-  "command": "npx",
-  "args": ["-y", "@upstash/context7-mcp"]
+  "package": "@upstash/context7-mcp",
+  "installer": "npm"
 }
 ```
 
-### Option 2: Install from WebUI and pin the binary path
+The server:
 
-Better for more stable environments:
+1. ensures the required runtime is available
+2. runs the installer
+3. resolves the exposed binary
+4. returns `bin_name` and `bin_path`
 
-- install from the MCP page
-- let the server resolve the actual binary path
-- store that binary path in `command`
+Supported installers:
 
-### Option 3: Start With The Bridge Tool, Then Move To Dynamic Tools
+- `npm`
+- `uv`
+- `bun`
 
-A practical adoption path is:
+## Recommended Usage
 
-1. configure one MCP server
-2. use `mcp` with `list_tools` to confirm the remote capability surface
-3. restart or reload into a state where discovered tools are available
-4. switch your agent prompts or workflows to the discovered `mcp__<server>__<tool>` names
+### For Fast Trials
 
-That keeps debugging simple at the beginning and makes later tool usage more natural.
+- use `stdio + npx`
+- keep `permission` as `workspace`
+- use a workspace-relative `working_dir`
+
+### For Stable Deployments
+
+- pin `command` to the resolved binary path
+- use `http` or `streamable_http` for hosted MCP services
+- only use `permission: "full"` when you really need it
 
 ## Current Limits
 
-Based on the current implementation:
+There are still a few practical boundaries:
 
-- only `stdio` is supported
-- tool discovery happens at startup
-- new or modified MCP servers require save + rediscovery flow
-- server processes are created per request/client lifecycle, not as one shared long-lived pool
+- dynamic tool discovery happens during startup
+- changing an MCP server requires saving config and going through the follow-up discovery path
+- transport support is broader now, but compatibility still depends on the target MCP server implementation
 
-## Troubleshooting
+## Suggested Reading Order
 
-### No MCP Tools Are Discovered
-
-Check:
-
-- `tools.mcp.enabled` is `true`
-- the target server has `enabled: true`
-- `command` is valid
-- `working_dir` is absolute if provided
-- the server process can actually start from the host environment
-
-### The Server Starts But Calls Fail
-
-Check:
-
-- required environment variables in `env`
-- package-specific setup for the MCP server
-- `request_timeout_sec` if the server is slow to initialize
-
-### The MCP Page Shows No Remote Tools
-
-The WebUI MCP page reads discovered tools from:
-
-- `GET /webui/api/tools`
-
-If `mcp_tools` is empty, discovery likely failed earlier in runtime startup.
+1. This page
+2. [Configuration](/en/guide/configuration)
+3. [WebUI Console](/en/guide/webui)
+4. [WebUI API Reference](/en/reference/webui-api)

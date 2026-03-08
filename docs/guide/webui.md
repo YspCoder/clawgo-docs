@@ -56,6 +56,12 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - agent tree
 - stream items
 
+最近的界面也会把工具可见性一起呈现出来，包括：
+
+- tool visibility mode
+- inherited tools
+- allowlist/denylist 生效结果
+
 ### Config
 
 配置编辑工作台，支持：
@@ -76,8 +82,11 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 用于管理 MCP server 和查看已发现的远端工具，支持：
 
 - 新增/删除 MCP server
-- 编辑 `command`、`args`、`working_dir`、`package`
-- 通过 npm 安装 MCP server 对应包
+- 在 `stdio` / `http` / `streamable_http` / `sse` 间切换 transport
+- 编辑 `command`、`args`、`url`、`working_dir`、`permission`、`package`
+- 检查 `command` 是否存在
+- 根据 package 给出建议安装方式
+- 通过 `npm`、`uv`、`bun` 安装 MCP server 对应包
 - 查看已发现的 `mcp__<server>__<tool>` 工具
 
 接口：
@@ -134,6 +143,12 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - 修改 allowlist
 - 编辑 `system_prompt_file`
 - 启停 profile
+
+当前页面也会显式展示工具继承关系，尤其是：
+
+- inherited tools
+- tool visibility mode
+- `skill_exec` 会被自动继承给 subagent
 
 接口：
 

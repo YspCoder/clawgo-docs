@@ -258,6 +258,46 @@ Gateway 同时负责：
 
 这部分控制的是 Cron Runtime 行为，不是单个 Cron Job 的表达式。
 
+## tools.mcp
+
+MCP 的总入口在 `tools.mcp`。
+
+顶层字段：
+
+- `enabled`
+- `request_timeout_sec`
+- `servers`
+
+`servers.<name>` 的常用字段：
+
+- `enabled`
+- `transport`
+- `command`
+- `args`
+- `url`
+- `env`
+- `working_dir`
+- `permission`
+- `description`
+- `package`
+
+当前支持的 `transport`：
+
+- `stdio`
+- `http`
+- `streamable_http`
+- `sse`
+
+使用规则：
+
+- `stdio` 需要 `command`
+- `http` / `streamable_http` / `sse` 需要 `url`
+- `permission` 只能是 `workspace` 或 `full`
+- `permission: "workspace"` 时，`working_dir` 可以写相对路径，但最终必须落在 workspace 内
+- `permission: "full"` 时，`working_dir` 可以使用绝对路径
+
+更多细节见 [MCP 集成](/guide/mcp)。
+
 ## tools
 
 当前顶层配置较少，主要是：

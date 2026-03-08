@@ -54,6 +54,7 @@
 
 - `tools`
 - `mcp_tools`
+- `mcp_server_checks`
 
 ### `GET /webui/api/nodes`
 
@@ -88,7 +89,17 @@ WebUI 当前会用它做：
 
 ### `POST /webui/api/mcp/install`
 
-安装一个 npm 形式的 MCP server 包，并返回解析出的可执行文件信息。
+安装一个 MCP server 包，并返回解析出的可执行文件信息。
+
+请求体除了 `package` 之外，还支持：
+
+- `installer`
+
+当前安装器包括：
+
+- `npm`
+- `uv`
+- `bun`
 
 典型返回值包括：
 
