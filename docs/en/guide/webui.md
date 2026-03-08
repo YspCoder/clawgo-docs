@@ -25,6 +25,13 @@ http://<host>:<port>/webui?token=<gateway.token>
 
 Runtime overview.
 
+The Dashboard now also includes a Node P2P view with:
+
+- current transport
+- active session count
+- retry count
+- STUN / ICE config counts
+
 ### Chat
 
 Supports both:
@@ -67,6 +74,15 @@ Risk confirmation now also covers sensitive fields on named providers, not only 
 - `providers.proxy.api_key`
 - `providers.proxies.<name>.api_base`
 - `providers.proxies.<name>.api_key`
+
+When the `gateway` section is active in form mode, the page can now edit Node P2P fields directly:
+
+- `enabled`
+- `transport`
+- `stun_servers`
+- `ice_servers[].urls`
+- `ice_servers[].username`
+- `ice_servers[].credential`
 
 ### MCP
 
@@ -140,6 +156,8 @@ Current registered endpoints:
 - `/webui/api/exec_approvals`
 - `/webui/api/logs/stream`
 - `/webui/api/logs/recent`
+
+`/webui/api/nodes` now also includes a `p2p` runtime summary alongside `nodes` and `trees`, which is used by the Dashboard and node views.
 
 ## Build and Embed
 

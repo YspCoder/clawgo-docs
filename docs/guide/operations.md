@@ -64,6 +64,15 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/webui/api/subagent_profiles`
 - `/webui/api/tool_allowlist_groups`
 
+其中 `/webui/api/nodes` 现在除了节点列表和拓扑，还会返回 `p2p` 摘要，包含：
+
+- `enabled`
+- `transport`
+- `active_sessions`
+- `configured_stun`
+- `configured_ice`
+- WebRTC 会话健康状态列表
+
 ### 运维与审计
 
 - `/webui/api/task_audit`
@@ -97,6 +106,15 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `Provider API Key`
 
 这比只看 `providers.proxy` 更接近真实运行态。
+
+在节点侧，`status` 也新增了：
+
+- `Nodes P2P`
+- `Nodes P2P ICE`
+- `Nodes Dispatch Top Transport`
+- `Nodes Dispatch Fallbacks`
+
+如果你正在排查 WebRTC 建连或 relay 回退，这几个字段是第一手线索。
 
 ## Sentinel
 

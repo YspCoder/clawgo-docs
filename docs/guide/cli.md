@@ -93,6 +93,8 @@ clawgo status
 - Skill 执行统计
 - Session 分类统计
 - 节点在线情况与能力分布
+- Node P2P 启用状态、transport 与 ICE 配置数量
+- 节点派发使用的 transport 与 fallback 次数
 
 这是运维排障时最优先跑的命令之一。
 

@@ -91,6 +91,23 @@ Fields:
 - `timeout_sec`
 - `responses.*`
 
+## `gateway.nodes.p2p`
+
+| Field | Purpose |
+| --- | --- |
+| `enabled` | whether node P2P is enabled |
+| `transport` | `websocket_tunnel` or `webrtc` |
+| `stun_servers` | list of STUN URLs |
+| `ice_servers` | structured ICE server list |
+
+## `gateway.nodes.p2p.ice_servers[]`
+
+| Field | Purpose |
+| --- | --- |
+| `urls` | list of `stun:`, `turn:`, or `turns:` URLs |
+| `username` | TURN username |
+| `credential` | TURN credential |
+
 ## `tools.mcp`
 
 | Field | Purpose |

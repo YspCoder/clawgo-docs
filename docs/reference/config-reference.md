@@ -138,6 +138,23 @@
 | `port` | 监听端口 |
 | `token` | 网关访问令牌 |
 
+### `gateway.nodes.p2p`
+
+| 字段 | 作用 |
+| --- | --- |
+| `enabled` | 是否启用节点 P2P |
+| `transport` | `websocket_tunnel` / `webrtc` |
+| `stun_servers` | STUN URL 列表 |
+| `ice_servers` | 结构化 ICE server 列表 |
+
+### `gateway.nodes.p2p.ice_servers[]`
+
+| 字段 | 作用 |
+| --- | --- |
+| `urls` | `stun:` / `turn:` / `turns:` URL 列表 |
+| `username` | TURN 用户名 |
+| `credential` | TURN 凭证 |
+
 ## cron
 
 | 字段 | 作用 |

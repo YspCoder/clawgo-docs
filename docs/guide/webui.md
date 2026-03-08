@@ -29,6 +29,13 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 
 总览页面，展示运行时关键统计。
 
+最近 Dashboard 还会展示 Node P2P 卡片，内容包括：
+
+- 当前 transport
+- 活跃会话数
+- 重试次数
+- STUN / ICE 配置数量
+
 ### Chat
 
 支持两类视图：
@@ -80,6 +87,15 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `providers.proxy.api_key`
 - `providers.proxies.<name>.api_base`
 - `providers.proxies.<name>.api_key`
+
+当切到 `gateway` 配置页时，表单模式现在还能直接编辑 Node P2P：
+
+- `enabled`
+- `transport`
+- `stun_servers`
+- `ice_servers[].urls`
+- `ice_servers[].username`
+- `ice_servers[].credential`
 
 后端接口：
 
@@ -217,6 +233,8 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/webui/api/exec_approvals`
 - `/webui/api/logs/stream`
 - `/webui/api/logs/recent`
+
+`/webui/api/nodes` 最近除了 `nodes` 和 `trees` 之外，还会带上 `p2p` 运行态摘要，用于 Dashboard 和节点页面展示。
 
 ## 构建与嵌入
 

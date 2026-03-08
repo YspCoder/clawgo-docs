@@ -247,6 +247,29 @@ Gateway 同时负责：
 
 默认端口是 `18790`。
 
+### gateway.nodes.p2p
+
+节点 P2P 入口位于 `gateway.nodes.p2p`。
+
+字段：
+
+- `enabled`
+- `transport`
+- `stun_servers`
+- `ice_servers`
+
+当前 `transport` 允许：
+
+- `websocket_tunnel`
+- `webrtc`
+
+规则：
+
+- 默认关闭，必须显式启用
+- `stun_servers` 是兼容旧写法的简单列表
+- `ice_servers` 是推荐的新结构，支持 `urls`、`username`、`credential`
+- 如果 `ice_servers[].urls` 中包含 `turn:` 或 `turns:`，则必须填写 `username` 和 `credential`
+
 ## cron
 
 - `min_sleep_sec`

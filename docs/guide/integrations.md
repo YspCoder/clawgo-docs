@@ -95,6 +95,61 @@ Gateway 暴露：
 
 远端节点可被挂载为主拓扑中的 agent branch。
 
+## Node P2P
+
+最近的提交把 Node 数据面扩展成两条可选路径：
+
+- `websocket_tunnel`
+- `webrtc`
+
+默认仍然关闭，只有显式配置 `gateway.nodes.p2p.enabled = true` 才启用。建议实践顺序是：
+
+1. 先用 `websocket_tunnel` 验证链路
+2. 再切换到 `webrtc`
+
+当前 P2P 配置入口：
+
+```json
+{
+  "gateway": {
+    "nodes": {
+      "p2p": {
+        "enabled": true,
+        "transport": "webrtc",
+        "stun_servers": ["stun:stun.l.google.com:19302"],
+        "ice_servers": [
+          {
+            "urls": ["turn:turn.example.com:3478"],
+            "username": "demo",
+            "credential": "secret"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+字段含义：
+
+- `stun_servers`: 兼容旧配置的简单 STUN 列表
+- `ice_servers`: 推荐的新结构，支持 `stun:`、`turn:`、`turns:`
+- `turn:` / `turns:` URL 需要同时提供 `username` 和 `credential`
+
+运行时行为：
+
+- `auto` 模式下优先尝试 P2P
+- P2P 失败时会回退到 relay / tunnel 路径
+- 节点审计会记录 `used_transport` 和 `fallback_from`
+
+WebRTC 还会暴露会话健康状态，例如：
+
+- `status`
+- `last_error`
+- `retry_count`
+- `last_attempt`
+- `last_ready_at`
+
 ## local 模拟节点
 
 代码里默认注册了一个 `local` 节点，用于模拟：
@@ -120,3 +175,10 @@ workspace/memory/nodes-dispatch-audit.jsonl
 ```
 
 `clawgo status` 也会汇总节点数量、在线数、能力分布和派发统计。
+
+最近还新增了这些可观测字段：
+
+- `Nodes P2P: enabled=<bool> transport=<name>`
+- `Nodes P2P ICE: stun=<n> ice=<n>`
+- `Nodes Dispatch Top Transport`
+- `Nodes Dispatch Fallbacks`

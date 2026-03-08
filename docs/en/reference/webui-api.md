@@ -35,6 +35,8 @@ Access requires either:
 - `GET /webui/api/tool_allowlist_groups`
 - `POST /webui/api/mcp/install`
 
+`GET /webui/api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
+
 `GET /webui/api/tools` is also used by the MCP page for:
 
 - `tools`

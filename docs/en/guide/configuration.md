@@ -202,6 +202,29 @@ Fields:
 
 Default port is `18790`.
 
+### `gateway.nodes.p2p`
+
+The node P2P entry point lives under `gateway.nodes.p2p`.
+
+Fields:
+
+- `enabled`
+- `transport`
+- `stun_servers`
+- `ice_servers`
+
+Supported `transport` values:
+
+- `websocket_tunnel`
+- `webrtc`
+
+Rules:
+
+- it is disabled by default and must be enabled explicitly
+- `stun_servers` is the legacy-compatible flat list
+- `ice_servers` is the preferred structured form with `urls`, `username`, and `credential`
+- if any `ice_servers[].urls` entry uses `turn:` or `turns:`, both `username` and `credential` are required
+
 ## `tools.mcp`
 
 The MCP entry point is `tools.mcp`.

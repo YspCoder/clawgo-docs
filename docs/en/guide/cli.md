@@ -81,6 +81,8 @@ It reports:
 - skill execution stats
 - session kind counts
 - node state and capability summary
+- node P2P enablement, transport, and ICE config counts
+- node dispatch transport usage and fallback counts
 
 Note:
 

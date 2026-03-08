@@ -55,6 +55,15 @@ Risk confirmation on config writes now covers not only the default provider, but
 - `/webui/api/subagent_profiles`
 - `/webui/api/tool_allowlist_groups`
 
+`/webui/api/nodes` now returns more than the node list and trees. It also includes a `p2p` summary with:
+
+- `enabled`
+- `transport`
+- `active_sessions`
+- `configured_stun`
+- `configured_ice`
+- WebRTC session health rows
+
 ### Audit and Logs
 
 - `/webui/api/task_audit`
@@ -97,6 +106,15 @@ The WebUI can also read recent logs and stream them.
 - `Provider API Key`
 
 That makes the command more accurate when `agents.defaults.proxy` points to a named provider under `providers.proxies`.
+
+For node troubleshooting, `status` also now includes:
+
+- `Nodes P2P`
+- `Nodes P2P ICE`
+- `Nodes Dispatch Top Transport`
+- `Nodes Dispatch Fallbacks`
+
+Those lines are the fastest way to spot failed WebRTC setup or relay fallback behavior.
 
 ## Recommended Checks
 

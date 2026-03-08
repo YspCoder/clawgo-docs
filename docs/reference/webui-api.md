@@ -67,6 +67,19 @@
 
 查询节点与拓扑相关信息。
 
+最近返回值里还增加了：
+
+- `p2p`
+
+其中会包含 Node P2P 的运行态摘要，例如：
+
+- `enabled`
+- `transport`
+- `active_sessions`
+- `configured_stun`
+- `configured_ice`
+- `nodes[]` 中的 WebRTC 会话健康字段
+
 ### `GET /webui/api/sessions`
 
 查询 session 列表与历史。
