@@ -9,7 +9,8 @@
 3. [MCP 集成](/guide/mcp)
 4. [CLI 命令](/guide/cli)
 5. [WebUI 控制台](/guide/webui)
-6. [通道、Cron 与节点](/guide/integrations)
+6. [通道与 Cron](/guide/integrations)
+7. [节点使用篇](/guide/nodes)
 
 ## 按目标阅读
 
@@ -45,7 +46,8 @@
 
 看：
 
-- [通道、Cron 与节点](/guide/integrations)
+- [通道与 Cron](/guide/integrations)
+- [节点使用篇](/guide/nodes)
 
 ## 这部分不解决什么
 

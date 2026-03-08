@@ -49,7 +49,8 @@ export default defineConfig({
               { text: 'MCP 集成', link: '/guide/mcp' },
               { text: 'CLI 命令', link: '/guide/cli' },
               { text: 'WebUI 控制台', link: '/guide/webui' },
-              { text: '通道、Cron 与节点', link: '/guide/integrations' }
+              { text: '通道与 Cron', link: '/guide/integrations' },
+              { text: '节点使用篇', link: '/guide/nodes' }
             ]
           },
           {
@@ -127,7 +128,8 @@ export default defineConfig({
               { text: 'MCP Integration', link: '/en/guide/mcp' },
               { text: 'CLI', link: '/en/guide/cli' },
               { text: 'WebUI Console', link: '/en/guide/webui' },
-              { text: 'Channels, Cron, and Nodes', link: '/en/guide/integrations' }
+              { text: 'Channels and Cron', link: '/en/guide/integrations' },
+              { text: 'Nodes Guide', link: '/en/guide/nodes' }
             ]
           },
           {

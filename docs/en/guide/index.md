@@ -9,7 +9,8 @@ This section is for people who want to get ClawGo running and start using it.
 3. [MCP Integration](/en/guide/mcp)
 4. [CLI](/en/guide/cli)
 5. [WebUI Console](/en/guide/webui)
-6. [Channels, Cron, and Nodes](/en/guide/integrations)
+6. [Channels and Cron](/en/guide/integrations)
+7. [Nodes Guide](/en/guide/nodes)
 
 ## Read By Goal
 
@@ -35,7 +36,8 @@ This section is for people who want to get ClawGo running and start using it.
 
 ### I want Telegram, Cron, or remote nodes
 
-- [Channels, Cron, and Nodes](/en/guide/integrations)
+- [Channels and Cron](/en/guide/integrations)
+- [Nodes Guide](/en/guide/nodes)
 
 ## What This Section Is Not For
 
