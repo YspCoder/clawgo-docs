@@ -11,6 +11,7 @@ Top-level `clawgo` commands:
 - `provider`
 - `config`
 - `cron`
+- `node`
 - `channel`
 - `skills`
 - `version`
@@ -145,6 +146,51 @@ clawgo cron enable <job_id>
 clawgo cron disable <job_id>
 clawgo cron remove <job_id>
 ```
+
+## `node`
+
+Used to register a remote execution node with Gateway or send a standalone heartbeat.
+
+### Register A Node
+
+```bash
+clawgo node register --gateway http://127.0.0.1:18790 --id edge-dev --endpoint http://10.0.0.8:8080
+```
+
+Common parameters:
+
+- `--gateway`: Gateway base URL
+- `--token`: Gateway token
+- `--node-token`: Bearer token for the node endpoint itself
+- `--id`: node ID
+- `--name`: display name
+- `--endpoint`: public node endpoint
+- `--actions`: supported action list
+- `--models`: supported model list
+- `--capabilities`: capability flags such as `run,invoke,model,camera,screen,location,canvas`
+- `--watch`: keep the websocket open and continue sending heartbeats
+- `--heartbeat-sec`: heartbeat interval while `--watch` is enabled
+
+Without `--watch`, `register` sends a single registration request and exits. With `--watch`, it will:
+
+- establish a websocket connection
+- send heartbeats automatically
+- handle node requests pushed from Gateway
+- provide the signaling and data-plane base for `websocket_tunnel` and `webrtc`
+
+### Send A Single Heartbeat
+
+```bash
+clawgo node heartbeat --gateway http://127.0.0.1:18790 --id edge-dev
+```
+
+Common parameters:
+
+- `--gateway`
+- `--token`
+- `--id`
+
+This is useful when you want an external scheduler or your own node supervisor to keep the node alive.
 
 ## `channel`
 

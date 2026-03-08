@@ -11,6 +11,7 @@
 - `provider`
 - `config`
 - `cron`
+- `node`
 - `channel`
 - `skills`
 - `version`
@@ -181,6 +182,51 @@ clawgo cron enable <job_id>
 clawgo cron disable <job_id>
 clawgo cron remove <job_id>
 ```
+
+## node
+
+用于把远端执行节点注册到 Gateway，或单独发送节点心跳。
+
+### 注册节点
+
+```bash
+clawgo node register --gateway http://127.0.0.1:18790 --id edge-dev --endpoint http://10.0.0.8:8080
+```
+
+常用参数：
+
+- `--gateway`: Gateway 地址
+- `--token`: Gateway token
+- `--node-token`: 节点自身 endpoint 的 Bearer token
+- `--id`: 节点 ID
+- `--name`: 节点显示名
+- `--endpoint`: 节点公开 endpoint
+- `--actions`: 支持的动作列表
+- `--models`: 支持的模型列表
+- `--capabilities`: 能力标记，例如 `run,invoke,model,camera,screen,location,canvas`
+- `--watch`: 保持 websocket 连接并持续发心跳
+- `--heartbeat-sec`: `--watch` 模式下的心跳周期
+
+默认情况下，`register` 只发一次注册请求就退出。带上 `--watch` 后，会：
+
+- 建立 websocket 连接
+- 自动发送 heartbeat
+- 在循环里处理 Gateway 下发的节点请求
+- 为后续 `websocket_tunnel` / `webrtc` 提供信令与数据面基础
+
+### 单次发送心跳
+
+```bash
+clawgo node heartbeat --gateway http://127.0.0.1:18790 --id edge-dev
+```
+
+常用参数：
+
+- `--gateway`
+- `--token`
+- `--id`
+
+这个子命令适合外部调度器或你自己的节点守护逻辑手动保活。
 
 ## channel
 
