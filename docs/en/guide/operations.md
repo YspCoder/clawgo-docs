@@ -73,6 +73,10 @@ Risk confirmation on config writes now covers not only the default provider, but
 - `/webui/api/logs/recent`
 - `/webui/api/logs/stream`
 
+For a dedicated explanation of EKG metrics, windows, and rankings, see:
+
+- [EKG Guide](/en/guide/ekg)
+
 ### Automation
 
 - `/webui/api/cron`

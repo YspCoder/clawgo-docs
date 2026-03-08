@@ -205,6 +205,10 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 对应 `/webui/api/ekg_stats`，用于展示运行时状态趋势。
 
+如果你要单独理解窗口、排名项、错误签名和 escalation 的含义，直接看：
+
+- [EKG 使用篇](/guide/ekg)
+
 ### Exec Approvals / Logs / Log Codes
 
 这几页用于运维和审计辅助。

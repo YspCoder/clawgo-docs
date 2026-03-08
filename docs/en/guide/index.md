@@ -12,6 +12,7 @@ This section is for people who want to get ClawGo running and start using it.
 6. [Channels Guide](/en/guide/channels)
 7. [Cron Guide](/en/guide/cron)
 8. [Nodes Guide](/en/guide/nodes)
+9. [EKG Guide](/en/guide/ekg)
 
 ## Read By Goal
 
@@ -34,6 +35,7 @@ This section is for people who want to get ClawGo running and start using it.
 ### I want to manage it from the UI
 
 - [WebUI Console](/en/guide/webui)
+- [EKG Guide](/en/guide/ekg)
 
 ### I want Telegram, Cron, or remote nodes
 

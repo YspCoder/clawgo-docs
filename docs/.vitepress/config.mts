@@ -52,6 +52,7 @@ export default defineConfig({
               { text: '通道使用篇', link: '/guide/channels' },
               { text: 'Cron 使用篇', link: '/guide/cron' },
               { text: '节点使用篇', link: '/guide/nodes' }
+              ,{ text: 'EKG 使用篇', link: '/guide/ekg' }
             ]
           },
           {
@@ -131,7 +132,8 @@ export default defineConfig({
               { text: 'WebUI Console', link: '/en/guide/webui' },
               { text: 'Channels Guide', link: '/en/guide/channels' },
               { text: 'Cron Guide', link: '/en/guide/cron' },
-              { text: 'Nodes Guide', link: '/en/guide/nodes' }
+              { text: 'Nodes Guide', link: '/en/guide/nodes' },
+              { text: 'EKG Guide', link: '/en/guide/ekg' }
             ]
           },
           {

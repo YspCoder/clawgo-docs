@@ -12,6 +12,7 @@
 6. [通道使用篇](/guide/channels)
 7. [Cron 使用篇](/guide/cron)
 8. [节点使用篇](/guide/nodes)
+9. [EKG 使用篇](/guide/ekg)
 
 ## 按目标阅读
 
@@ -42,6 +43,7 @@
 看：
 
 - [WebUI 控制台](/guide/webui)
+- [EKG 使用篇](/guide/ekg)
 
 ### 我想接入 Telegram、Cron、远端节点
 

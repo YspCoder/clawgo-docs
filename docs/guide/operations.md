@@ -82,6 +82,10 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/webui/api/logs/recent`
 - `/webui/api/logs/stream`
 
+如果你要专门看 EKG 指标、窗口和 provider / errsig 排名，直接看：
+
+- [EKG 使用篇](/guide/ekg)
+
 ### 自动化
 
 - `/webui/api/cron`

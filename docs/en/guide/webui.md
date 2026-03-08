@@ -132,6 +132,14 @@ The page now also surfaces:
 
 Inspect task queue state and detailed audit records.
 
+### EKG
+
+Uses `/webui/api/ekg_stats` to show runtime health trends.
+
+For windows, rankings, error signatures, and escalation semantics, see:
+
+- [EKG Guide](/en/guide/ekg)
+
 ## WebUI API Surface
 
 Current registered endpoints:
