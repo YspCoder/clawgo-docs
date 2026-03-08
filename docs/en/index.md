@@ -84,3 +84,8 @@ This documentation is organized from the current codebase in `/Users/lpf/Desktop
 3. [Configuration](/en/guide/configuration)
 4. [CLI](/en/guide/cli)
 5. [WebUI Console](/en/guide/webui)
+
+## 📮 Contact
+
+- WeChat: `Coding_001`
+- Telegram: [@YspCoder](https://t.me/YspCoder)

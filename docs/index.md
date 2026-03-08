@@ -92,3 +92,8 @@ ClawGo 不是单纯的聊天壳子，也不是只会调用工具的一层 prompt
 3. [配置说明](/guide/configuration)
 4. [CLI 命令](/guide/cli)
 5. [WebUI 控制台](/guide/webui)
+
+## 📮 联系方式
+
+- 微信：`Coding_001`
+- Telegram：[`@YspCoder`](https://t.me/YspCoder)
