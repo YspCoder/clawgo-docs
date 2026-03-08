@@ -72,13 +72,20 @@ clawgo status
 It reports:
 
 - config and workspace status
-- active model and proxy
+- active model, proxy, and effective provider
+- the active provider `api_base`
+- whether the active provider API key is set
 - logging configuration
 - heartbeat and cron runtime settings
 - heartbeat and trigger stats
 - skill execution stats
 - session kind counts
 - node state and capability summary
+
+Note:
+
+- if `agents.defaults.proxy` points to `providers.proxies.<name>`, `status` now reports the active provider details
+- it no longer only reflects the default `providers.proxy` slot
 
 ## `provider`
 

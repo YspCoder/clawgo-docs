@@ -49,6 +49,8 @@ Recent UI changes also surface tool visibility details, including:
 - inherited tools
 - effective allowlist and denylist results
 
+The tooltip preview was also simplified. It now focuses on the latest internal stream item instead of packing several older previews into the same card.
+
 ### Config
 
 Configuration workspace with:
@@ -58,6 +60,13 @@ Configuration workspace with:
 - hot-reload field filtering
 - diff view
 - risky change confirmation
+
+Risk confirmation now also covers sensitive fields on named providers, not only the default provider:
+
+- `providers.proxy.api_base`
+- `providers.proxy.api_key`
+- `providers.proxies.<name>.api_base`
+- `providers.proxies.<name>.api_key`
 
 ### MCP
 
@@ -139,3 +148,11 @@ The WebUI is not assumed to be deployed separately. The Makefile flow:
 1. builds `webui/dist`
 2. syncs it into `cmd/clawgo/workspace/webui`
 3. lets Go `embed` package those assets into release builds
+
+The frontend now also lazy-loads routes and splits vendor bundles into manual chunks such as:
+
+- `react-vendor`
+- `motion`
+- `icons`
+
+That reduces how much code the initial page load has to fetch.

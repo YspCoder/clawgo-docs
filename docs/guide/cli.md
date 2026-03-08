@@ -84,7 +84,9 @@ clawgo status
 
 - 配置文件路径
 - workspace 路径
-- 当前 model 与 proxy
+- 当前 model、proxy 与实际生效的 provider
+- 当前 provider 的 `api_base`
+- 当前 provider 的 API key 是否已配置
 - 日志配置
 - Heartbeat 与 Cron runtime 参数
 - 心跳日志与触发统计
@@ -93,6 +95,11 @@ clawgo status
 - 节点在线情况与能力分布
 
 这是运维排障时最优先跑的命令之一。
+
+注意：
+
+- 如果 `agents.defaults.proxy` 指向 `providers.proxies.<name>`，`status` 现在会显示当前生效 provider 的 `api_base` 和 key 状态
+- 它不再只盯着 `providers.proxy` 这个默认槽位
 
 ## provider
 

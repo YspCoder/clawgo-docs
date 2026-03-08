@@ -29,6 +29,14 @@ make build-webui
 
 This installs dependencies, builds the frontend, and produces `webui/dist`.
 
+Recent WebUI changes moved routes to `React.lazy + Suspense` and added manual chunk splitting in the Vite build. The main named chunks include:
+
+- `react-vendor`
+- `motion`
+- `icons`
+
+That matters when you inspect bundle output, debug initial page load, or package `webui.tar.gz`.
+
 ## Embedded Asset Sync
 
 Release builds rely on Go `embed` for workspace templates and WebUI assets.

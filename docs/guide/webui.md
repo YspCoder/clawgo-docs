@@ -62,6 +62,8 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - inherited tools
 - allowlist/denylist 生效结果
 
+tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而不是一次塞进多条摘要。
+
 ### Config
 
 配置编辑工作台，支持：
@@ -71,6 +73,13 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - 按热更新字段过滤
 - 差异对比
 - 提交高风险配置前确认
+
+高风险确认现在会覆盖命名 provider 的敏感字段，而不只是默认 provider：
+
+- `providers.proxy.api_base`
+- `providers.proxy.api_key`
+- `providers.proxies.<name>.api_base`
+- `providers.proxies.<name>.api_key`
 
 后端接口：
 
@@ -216,5 +225,13 @@ WebUI 不是独立部署前提。仓库里的 Makefile 会：
 1. 构建 `webui/dist`
 2. 同步到 `cmd/clawgo/workspace/webui`
 3. 让 Go 的 `embed` 机制在发布时带上这些静态资源
+
+最近前端路由也改成了按页面懒加载，并在 Vite 构建里拆出了手工 chunk，例如：
+
+- `react-vendor`
+- `motion`
+- `icons`
+
+这样首屏不会一次把所有页面代码都下载下来。
 
 因此 release 包同时能分发 runtime 和控制台。

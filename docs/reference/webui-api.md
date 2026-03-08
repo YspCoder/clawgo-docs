@@ -19,6 +19,13 @@
 
 写入配置，并触发后续 hook。WebUI 侧支持高风险变更确认。
 
+最近的实现里，高风险字段会动态收集，除了默认 provider 之外，也包括：
+
+- `providers.proxies.<name>.api_base`
+- `providers.proxies.<name>.api_key`
+
+当这些字段被改动且未确认时，接口会返回 `requires_confirm: true`。
+
 ### `GET /webui/api/version`
 
 返回 Gateway/WebUI 版本信息。

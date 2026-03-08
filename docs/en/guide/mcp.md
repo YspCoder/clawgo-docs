@@ -165,6 +165,8 @@ In `pkg/agent/loop.go`, when `cfg.Tools.MCP.Enabled` is true, ClawGo:
 
 That means the model can either call the generic `mcp` bridge or directly call discovered tools.
 
+For `http` transport, initialization now also sends `notifications/initialized` as a real MCP notification without an `id`. This improves compatibility with stricter MCP servers.
+
 ## Dynamic Tool Naming
 
 Discovered remote tools are mapped into:

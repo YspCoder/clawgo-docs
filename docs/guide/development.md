@@ -38,6 +38,14 @@ Makefile 会：
 2. 执行前端 build
 3. 生成 `webui/dist`
 
+最近 WebUI 路由已经改成 `React.lazy + Suspense`，并在 Vite 构建配置里按依赖拆 chunk。当前手工拆分的重点包包括：
+
+- `react-vendor`
+- `motion`
+- `icons`
+
+这会影响你分析 bundle、排查首屏加载问题和发布 `webui.tar.gz` 时的静态文件结构。
+
 ## 嵌入式资源同步
 
 ClawGo 发布时依赖 Go `embed` 打包 workspace 模版与 WebUI 静态资源。

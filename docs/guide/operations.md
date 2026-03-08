@@ -43,6 +43,11 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/webui/api/config`
 - `/webui/api/version`
 
+其中配置写入的高风险确认现在不只覆盖默认 provider，也会覆盖：
+
+- `providers.proxies.<name>.api_base`
+- `providers.proxies.<name>.api_key`
+
 ### 对话与上传
 
 - `/webui/api/chat`
@@ -85,6 +90,13 @@ WebUI 与 API 受 `gateway.token` 保护。
 - nodes manager 当前状态
 
 这意味着它是“运行结果视角”的诊断命令。
+
+而且在多 provider 场景下，`status` 现在会按当前激活的 provider 输出：
+
+- `Provider API Base`
+- `Provider API Key`
+
+这比只看 `providers.proxy` 更接近真实运行态。
 
 ## Sentinel
 

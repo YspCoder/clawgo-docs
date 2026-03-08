@@ -34,6 +34,11 @@ Both require token-based auth.
 - `/webui/api/config`
 - `/webui/api/version`
 
+Risk confirmation on config writes now covers not only the default provider, but also:
+
+- `providers.proxies.<name>.api_base`
+- `providers.proxies.<name>.api_key`
+
 ### Chat and Upload
 
 - `/webui/api/chat`
@@ -83,6 +88,15 @@ Default log path:
 ```
 
 The WebUI can also read recent logs and stream them.
+
+## `status` As An Operational Check
+
+`clawgo status` reads runtime-facing artifacts rather than only echoing config. In multi-provider setups it now reports the active provider details:
+
+- `Provider API Base`
+- `Provider API Key`
+
+That makes the command more accurate when `agents.defaults.proxy` points to a named provider under `providers.proxies`.
 
 ## Recommended Checks
 
