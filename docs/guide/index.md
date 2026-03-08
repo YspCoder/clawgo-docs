@@ -13,7 +13,7 @@
 7. [Cron 使用篇](/guide/cron)
 8. [节点使用篇](/guide/nodes)
 9. [EKG 使用篇](/guide/ekg)
-10. [示例总览](/examples/)
+10. [Node P2P E2E 验证](/examples/node-p2p-e2e)
 
 ## 按目标阅读
 
@@ -58,7 +58,6 @@
 
 看：
 
-- [示例总览](/examples/)
 - [Node P2P E2E 验证](/examples/node-p2p-e2e)
 
 ## 这部分不解决什么
