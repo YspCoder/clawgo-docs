@@ -13,6 +13,7 @@ This section is for people who want to get ClawGo running and start using it.
 7. [Cron Guide](/en/guide/cron)
 8. [Nodes Guide](/en/guide/nodes)
 9. [EKG Guide](/en/guide/ekg)
+10. [Examples Index](/en/examples/)
 
 ## Read By Goal
 
@@ -42,6 +43,11 @@ This section is for people who want to get ClawGo running and start using it.
 - [Channels Guide](/en/guide/channels)
 - [Cron Guide](/en/guide/cron)
 - [Nodes Guide](/en/guide/nodes)
+
+### I want a runnable example
+
+- [Examples Index](/en/examples/)
+- [Node P2P E2E Validation](/en/examples/node-p2p-e2e)
 
 ## What This Section Is Not For
 

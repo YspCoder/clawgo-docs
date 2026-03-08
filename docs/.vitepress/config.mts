@@ -19,6 +19,7 @@ export default defineConfig({
         nav: [
           { text: '概念', link: '/concepts/' },
           { text: '使用', link: '/guide/' },
+          { text: '示例', link: '/examples/' },
           { text: '参考', link: '/reference/' },
           { text: '运维开发', link: '/ops/' }
         ],
@@ -53,6 +54,13 @@ export default defineConfig({
               { text: 'Cron 使用篇', link: '/guide/cron' },
               { text: '节点使用篇', link: '/guide/nodes' }
               ,{ text: 'EKG 使用篇', link: '/guide/ekg' }
+            ]
+          },
+          {
+            text: '示例',
+            items: [
+              { text: '示例总览', link: '/examples/' },
+              { text: 'Node P2P E2E 验证', link: '/examples/node-p2p-e2e' }
             ]
           },
           {
@@ -100,6 +108,7 @@ export default defineConfig({
         nav: [
           { text: 'Concepts', link: '/en/concepts/' },
           { text: 'Guides', link: '/en/guide/' },
+          { text: 'Examples', link: '/en/examples/' },
           { text: 'Reference', link: '/en/reference/' },
           { text: 'Ops & Dev', link: '/en/ops/' }
         ],
@@ -134,6 +143,13 @@ export default defineConfig({
               { text: 'Cron Guide', link: '/en/guide/cron' },
               { text: 'Nodes Guide', link: '/en/guide/nodes' },
               { text: 'EKG Guide', link: '/en/guide/ekg' }
+            ]
+          },
+          {
+            text: 'Examples',
+            items: [
+              { text: 'Examples Index', link: '/en/examples/' },
+              { text: 'Node P2P E2E Validation', link: '/en/examples/node-p2p-e2e' }
             ]
           },
           {
