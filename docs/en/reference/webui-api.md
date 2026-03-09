@@ -17,6 +17,8 @@ Access requires either:
 
 `POST /webui/api/config` supports risky-change confirmation. Recent changes expanded that logic to include named providers under `providers.proxies.<name>`, not only the default provider. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
 
+The WebUI header version-check action compares this version payload with the latest GitHub release.
+
 ## Chat and Upload
 
 - `POST /webui/api/chat`

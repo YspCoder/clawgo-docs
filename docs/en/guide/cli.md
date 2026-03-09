@@ -27,6 +27,14 @@ clawgo onboard
 
 It creates default config, workspace templates, and a gateway token.
 
+To refresh only the embedded WebUI assets, run:
+
+```bash
+clawgo onboard --sync-webui
+```
+
+That mode only overwrites the workspace `webui/` files and does not recreate `config.json`.
+
 ## `agent`
 
 Direct interaction with `AgentLoop`.

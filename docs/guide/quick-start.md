@@ -23,9 +23,10 @@ curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | b
 `install.sh` 会：
 
 - 根据系统与架构下载最新 release 二进制
-- 下载 `webui.tar.gz`
-- 把 WebUI 释放到 `~/.clawgo/workspace/webui`
+- 不再单独下载 `webui.tar.gz`
+- 安装完成后会调用 `clawgo onboard --sync-webui`，把嵌入式 WebUI 同步到 `~/.clawgo/workspace/webui`
 - 可选执行 OpenClaw 到 ClawGo 的迁移
+- 如果还没有配置文件，会提示是否继续执行 `clawgo onboard`
 
 ### 方式二：源码构建
 
@@ -50,6 +51,12 @@ clawgo onboard
 - 在 `~/.clawgo/config.json` 生成默认配置
 - 自动生成 `gateway.token`
 - 将内置工作区模板拷贝到 `~/.clawgo/workspace`
+
+如果只是升级后刷新嵌入式 WebUI，不想重建配置，可以执行：
+
+```bash
+clawgo onboard --sync-webui
+```
 
 默认工作区中会包含：
 

@@ -11,6 +11,20 @@ ClawGo ships MCP as a built-in runtime capability under `tools.mcp`. It is wired
 - the WebUI has a dedicated MCP page
 - the Gateway exposes an install endpoint for MCP servers
 
+Recent WebUI changes also redesigned the MCP workflow into a server-card plus modal-editor flow:
+
+- the main list shows one summary card per server
+- create and edit actions now happen inside a modal
+- save writes through `/webui/api/config` directly
+- discovered tools are shown in a separate section
+- missing commands and install suggestions are surfaced both on the card and in the editor
+
+For `stdio` servers, install assistance can now infer the installer from:
+
+- `package`
+- `installer`
+- `command + args`, such as `npx`, `uvx`, or `bunx`
+
 ## Supported Scope
 
 Based on `pkg/tools/mcp.go`, `pkg/config/validate.go`, and the recent README changes, the supported transports are:

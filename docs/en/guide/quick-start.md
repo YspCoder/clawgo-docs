@@ -24,9 +24,10 @@ The script:
 
 - detects OS and architecture
 - downloads the latest release binary
-- downloads `webui.tar.gz`
-- installs the WebUI into `~/.clawgo/workspace/webui`
+- no longer downloads `webui.tar.gz` separately
+- runs `clawgo onboard --sync-webui` after install so the embedded WebUI is refreshed into `~/.clawgo/workspace/webui`
 - optionally migrates from OpenClaw
+- prompts for `clawgo onboard` only when no config exists yet
 
 ### Option 2: Build From Source
 
@@ -51,6 +52,12 @@ It will:
 - create `~/.clawgo/config.json`
 - generate `gateway.token`
 - copy the default workspace template into `~/.clawgo/workspace`
+
+If you only want to refresh the embedded WebUI after an upgrade, run:
+
+```bash
+clawgo onboard --sync-webui
+```
 
 ## Configure A Provider
 

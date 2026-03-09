@@ -30,6 +30,8 @@
 
 返回 Gateway/WebUI 版本信息。
 
+WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub latest release 做对比。
+
 ## 聊天与上传
 
 ### `POST /webui/api/chat`

@@ -31,6 +31,14 @@ clawgo onboard
 - 创建 workspace 模板
 - 自动生成 `gateway.token`
 
+如果只是刷新嵌入式 WebUI 资源，可以执行：
+
+```bash
+clawgo onboard --sync-webui
+```
+
+这个模式只会覆盖 workspace 下的 `webui/` 资源，不会重建 `config.json`。
+
 ## agent
 
 直接与 AgentLoop 交互。

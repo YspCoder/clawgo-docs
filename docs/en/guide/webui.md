@@ -19,6 +19,13 @@ Usually served by the Gateway:
 http://<host>:<port>/webui?token=<gateway.token>
 ```
 
+The header now also includes two utility actions:
+
+- a GitHub repository link
+- a latest-release version check
+
+The version check compares the current Gateway/WebUI versions with the latest GitHub release.
+
 ## Major Pages
 
 ### Dashboard
@@ -124,6 +131,13 @@ Dedicated management page for MCP servers and discovered remote tools. It suppor
 - suggesting install choices from the package value
 - installing MCP servers with `npm`, `uv`, or `bun`
 - viewing discovered `mcp__<server>__<tool>` tools
+
+Recent changes also moved this page to a server-card plus modal-editor workflow:
+
+- the main list shows compact server summaries
+- create, edit, and install actions happen in the modal
+- save writes config immediately
+- discovered tools are separated from server configuration
 
 Uses:
 

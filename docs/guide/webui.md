@@ -21,6 +21,13 @@ http://<host>:<port>/webui?token=<gateway.token>
 
 Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 
+顶部 Header 最近还加了两个常用动作：
+
+- GitHub 仓库入口
+- 最新 release 版本检查
+
+版本检查会直接对比当前 Gateway/WebUI 版本和 GitHub latest release。
+
 ## 页面结构
 
 从 `webui/src/pages` 可以看出控制台并不是单一聊天页，而是运维工作台。
@@ -142,6 +149,13 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - 根据 package 给出建议安装方式
 - 通过 `npm`、`uv`、`bun` 安装 MCP server 对应包
 - 查看已发现的 `mcp__<server>__<tool>` 工具
+
+最近这个页面改成了“server 卡片 + 弹窗编辑”模式：
+
+- 主列表只展示 server 摘要
+- 新建、编辑、安装都在弹窗里完成
+- 保存会立即写回配置
+- discovered tools 独立显示，便于区分“配置”和“发现结果”
 
 接口：
 
