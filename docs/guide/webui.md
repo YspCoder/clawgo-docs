@@ -35,6 +35,7 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - 活跃会话数
 - 重试次数
 - STUN / ICE 配置数量
+- 节点派发的产物数量与预览摘要
 
 ### Chat
 
@@ -96,6 +97,23 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `ice_servers[].urls`
 - `ice_servers[].username`
 - `ice_servers[].credential`
+
+同一页里也能直接维护：
+
+- `gateway.nodes.dispatch`
+- `gateway.nodes.artifacts`
+
+其中包括：
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags` / `agent_tags`
+- `allow_actions` / `deny_actions`
+- `allow_agents` / `deny_agents`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
 
 后端接口：
 
@@ -196,10 +214,62 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `logs`
 - `media_items`
 
+最近这个页面还加了 node dispatch 审计视图，能直接看到：
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+如果后端挂了 `SetNodeDispatchHandler(...)`，页面上还能直接 replay 一次节点派发请求。
+
 接口：
 
 - `/webui/api/task_queue`
 - `/webui/api/task_audit`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+
+### Nodes
+
+节点详情工作台。
+
+当前会展示：
+
+- 节点在线状态、版本、OS/arch、endpoint、tags
+- capabilities、actions、models
+- 远端 agent tree
+- P2P 会话健康信息
+- 最近派发记录
+- 最近产物与原始 JSON
+
+接口：
+
+- `/webui/api/nodes`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_artifacts`
+
+### NodeArtifacts
+
+节点产物列表页。
+
+支持：
+
+- 按 node / action / kind 过滤
+- 下载单个产物
+- 导出筛选结果
+- 删除单个产物
+- 触发 prune
+- 查看当前 retention 摘要
+
+接口：
+
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
 
 ### EKG
 
@@ -224,6 +294,13 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/webui/api/version`
 - `/webui/api/upload`
 - `/webui/api/nodes`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
 - `/webui/api/cron`
 - `/webui/api/skills`
 - `/webui/api/sessions`
@@ -238,7 +315,14 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/webui/api/logs/stream`
 - `/webui/api/logs/recent`
 
-`/webui/api/nodes` 最近除了 `nodes` 和 `trees` 之外，还会带上 `p2p` 运行态摘要，用于 Dashboard 和节点页面展示。
+`/webui/api/nodes` 最近除了 `nodes` 和 `trees` 之外，还会带上：
+
+- `p2p`
+- `dispatches`
+- `alerts`
+- `artifact_retention`
+
+用于 Dashboard、Nodes、NodeArtifacts 和 TaskAudit 页面展示。
 
 ## 构建与嵌入
 

@@ -64,6 +64,22 @@ Risk confirmation on config writes now covers not only the default provider, but
 - `configured_ice`
 - WebRTC session health rows
 
+Recent versions also add:
+
+- `dispatches`
+- `alerts`
+- `artifact_retention`
+
+There are also dedicated node runtime endpoints:
+
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
+
 ### Audit and Logs
 
 - `/webui/api/task_audit`
@@ -76,6 +92,16 @@ Risk confirmation on config writes now covers not only the default provider, but
 For a dedicated explanation of EKG metrics, windows, and rankings, see:
 
 - [EKG Guide](/en/guide/ekg)
+
+Node audit now also includes:
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+The replay endpoint can resend a historical node dispatch through the current node dispatch handler.
 
 ### Automation
 

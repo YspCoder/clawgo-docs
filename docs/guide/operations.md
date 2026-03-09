@@ -73,6 +73,22 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `configured_ice`
 - WebRTC 会话健康状态列表
 
+最近还扩展了：
+
+- `dispatches`
+- `alerts`
+- `artifact_retention`
+
+另外还有单独的节点运行态接口：
+
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
+
 ### 运维与审计
 
 - `/webui/api/task_audit`
@@ -85,6 +101,16 @@ WebUI 与 API 受 `gateway.token` 保护。
 如果你要专门看 EKG 指标、窗口和 provider / errsig 排名，直接看：
 
 - [EKG 使用篇](/guide/ekg)
+
+节点审计最近还增加了：
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+其中 replay 接口可以把一次历史节点派发重新送回当前 node dispatch handler。
 
 ### 自动化
 

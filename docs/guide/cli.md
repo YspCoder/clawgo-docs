@@ -203,6 +203,7 @@ clawgo node register --gateway http://127.0.0.1:18790 --id edge-dev --endpoint h
 - `--endpoint`: 节点公开 endpoint
 - `--actions`: 支持的动作列表
 - `--models`: 支持的模型列表
+- `--tags`: 节点标签，用于匹配派发策略，例如 `gpu,vision,build`
 - `--capabilities`: 能力标记，例如 `run,invoke,model,camera,screen,location,canvas`
 - `--watch`: 保持 websocket 连接并持续发心跳
 - `--heartbeat-sec`: `--watch` 模式下的心跳周期

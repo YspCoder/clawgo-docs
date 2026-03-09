@@ -167,6 +167,7 @@ Common parameters:
 - `--endpoint`: public node endpoint
 - `--actions`: supported action list
 - `--models`: supported model list
+- `--tags`: node tags used by dispatch policy, such as `gpu,vision,build`
 - `--capabilities`: capability flags such as `run,invoke,model,camera,screen,location,canvas`
 - `--watch`: keep the websocket open and continue sending heartbeats
 - `--heartbeat-sec`: heartbeat interval while `--watch` is enabled

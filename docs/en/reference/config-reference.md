@@ -108,6 +108,29 @@ Fields:
 | `username` | TURN username |
 | `credential` | TURN credential |
 
+## `gateway.nodes.dispatch`
+
+| Field | Purpose |
+| --- | --- |
+| `prefer_local` | prefer local execution or local-node routing |
+| `prefer_p2p` | prefer P2P when available |
+| `allow_relay_fallback` | allow fallback to relay when P2P is unavailable |
+| `action_tags` | required node tags for a given action |
+| `agent_tags` | required node tags for a given remote agent |
+| `allow_actions` | allowed node tags for a given action |
+| `deny_actions` | denied node tags for a given action |
+| `allow_agents` | allowed node tags for a given remote agent |
+| `deny_agents` | denied node tags for a given remote agent |
+
+## `gateway.nodes.artifacts`
+
+| Field | Purpose |
+| --- | --- |
+| `enabled` | enable node artifact retention and cleanup |
+| `keep_latest` | number of latest artifacts kept on each read |
+| `retain_days` | max retention days, `0` disables age-based pruning |
+| `prune_on_read` | whether reads automatically prune old artifacts |
+
 ## `tools.mcp`
 
 | Field | Purpose |

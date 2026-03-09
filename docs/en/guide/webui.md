@@ -31,6 +31,7 @@ The Dashboard now also includes a Node P2P view with:
 - active session count
 - retry count
 - STUN / ICE config counts
+- dispatch artifact counts and preview summaries
 
 ### Chat
 
@@ -84,6 +85,23 @@ When the `gateway` section is active in form mode, the page can now edit Node P2
 - `ice_servers[].username`
 - `ice_servers[].credential`
 
+The same page also edits:
+
+- `gateway.nodes.dispatch`
+- `gateway.nodes.artifacts`
+
+Including:
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags` / `agent_tags`
+- `allow_actions` / `deny_actions`
+- `allow_agents` / `deny_agents`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
 ### MCP
 
 Dedicated management page for MCP servers and discovered remote tools. It supports:
@@ -132,6 +150,63 @@ The page now also surfaces:
 
 Inspect task queue state and detailed audit records.
 
+Recent versions also add a node dispatch audit view with:
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+If the backend wires `SetNodeDispatchHandler(...)`, the page can also replay a node dispatch request.
+
+Uses:
+
+- `/webui/api/task_queue`
+- `/webui/api/task_audit`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+
+### Nodes
+
+Dedicated node detail workspace.
+
+It currently shows:
+
+- online state, version, OS/arch, endpoint, and tags
+- capabilities, actions, and models
+- remote agent tree
+- P2P session health
+- recent dispatch rows
+- recent artifacts and raw JSON
+
+Uses:
+
+- `/webui/api/nodes`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_artifacts`
+
+### NodeArtifacts
+
+Node artifact listing page.
+
+It supports:
+
+- filtering by node / action / kind
+- downloading a single artifact
+- exporting filtered results
+- deleting a single artifact
+- triggering prune
+- viewing the current retention summary
+
+Uses:
+
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
+
 ### EKG
 
 Uses `/webui/api/ekg_stats` to show runtime health trends.
@@ -151,6 +226,13 @@ Current registered endpoints:
 - `/webui/api/version`
 - `/webui/api/upload`
 - `/webui/api/nodes`
+- `/webui/api/node_dispatches`
+- `/webui/api/node_dispatches/replay`
+- `/webui/api/node_artifacts`
+- `/webui/api/node_artifacts/export`
+- `/webui/api/node_artifacts/download`
+- `/webui/api/node_artifacts/delete`
+- `/webui/api/node_artifacts/prune`
 - `/webui/api/cron`
 - `/webui/api/skills`
 - `/webui/api/sessions`
@@ -165,7 +247,14 @@ Current registered endpoints:
 - `/webui/api/logs/stream`
 - `/webui/api/logs/recent`
 
-`/webui/api/nodes` now also includes a `p2p` runtime summary alongside `nodes` and `trees`, which is used by the Dashboard and node views.
+`/webui/api/nodes` now also includes:
+
+- `p2p`
+- `dispatches`
+- `alerts`
+- `artifact_retention`
+
+Those fields are used by the Dashboard, Nodes, NodeArtifacts, and TaskAudit pages.
 
 ## Build and Embed
 

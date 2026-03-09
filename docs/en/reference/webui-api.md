@@ -37,6 +37,43 @@ Access requires either:
 
 `GET /webui/api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
 
+Recent versions also add:
+
+- `dispatches`
+- `alerts`
+- `artifact_retention`
+
+Node summaries also expose:
+
+- node tags
+- recent dispatch statistics
+- node alerts
+- artifact retention summary
+
+Additional node-specific runtime APIs:
+
+- `GET /webui/api/node_dispatches`
+- `POST /webui/api/node_dispatches/replay`
+- `GET /webui/api/node_artifacts`
+- `GET /webui/api/node_artifacts/export`
+- `GET /webui/api/node_artifacts/download`
+- `POST /webui/api/node_artifacts/delete`
+- `POST /webui/api/node_artifacts/prune`
+
+`GET /webui/api/node_dispatches` returns node dispatch audit rows, including:
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+`POST /webui/api/node_dispatches/replay` replays a historical node dispatch through the current node dispatch handler.
+
+`GET /webui/api/node_artifacts` reads node artifact rows and retention summary. Common filters include `node`, `action`, `kind`, and `limit`.
+
+`POST /webui/api/node_artifacts/prune` accepts common fields such as `node`, `action`, `kind`, and `keep_latest`.
+
 `GET /webui/api/tools` is also used by the MCP page for:
 
 - `tools`
@@ -77,3 +114,15 @@ Supported installers:
 | Config | `config` |
 | Cron | `cron` |
 | Skills | `skills` |
+| Memory | `memory` |
+| SubagentProfiles | `subagent_profiles`, `tool_allowlist_groups`, `subagents_runtime` |
+| Subagents | `nodes`, `subagents_runtime` |
+| Nodes | `nodes`, `node_dispatches`, `node_artifacts` |
+| NodeArtifacts | `node_artifacts`, `node_artifacts/export`, `node_artifacts/download`, `node_artifacts/delete`, `node_artifacts/prune` |
+| TaskAudit | `task_queue`, `task_audit`, `node_dispatches`, `node_dispatches/replay` |
+| EKG | `ekg_stats` |
+| Logs | `logs/recent`, `logs/stream` |
+
+## Usage Notes
+
+If you are building on top of the WebUI, it is cleaner to wrap these APIs by capability group, such as config, chat, runtime, and audit, instead of coupling them directly to individual pages.

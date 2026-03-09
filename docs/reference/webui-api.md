@@ -70,6 +70,9 @@
 最近返回值里还增加了：
 
 - `p2p`
+- `dispatches`
+- `alerts`
+- `artifact_retention`
 
 其中会包含 Node P2P 的运行态摘要，例如：
 
@@ -79,6 +82,69 @@
 - `configured_stun`
 - `configured_ice`
 - `nodes[]` 中的 WebRTC 会话健康字段
+
+节点摘要里也会带出：
+
+- 节点 tags
+- 最近 dispatch 统计
+- 节点告警
+- 产物 retention 摘要
+
+### `GET /webui/api/node_dispatches`
+
+读取节点派发审计。
+
+典型字段：
+
+- `used_transport`
+- `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts`
+
+### `POST /webui/api/node_dispatches/replay`
+
+把一条历史节点派发重新送回当前 node dispatch handler。
+
+适合：
+
+- 验证新的路由策略
+- 回放一次失败请求
+- 检查 P2P / relay 选择变化
+
+### `GET /webui/api/node_artifacts`
+
+读取节点产物列表与 retention 摘要。
+
+支持按这些维度过滤：
+
+- `node`
+- `action`
+- `kind`
+- `limit`
+
+### `GET /webui/api/node_artifacts/export`
+
+导出当前筛选命中的节点产物。
+
+### `GET /webui/api/node_artifacts/download`
+
+下载单个节点产物。
+
+### `POST /webui/api/node_artifacts/delete`
+
+删除单个节点产物记录及关联文件。
+
+### `POST /webui/api/node_artifacts/prune`
+
+按筛选条件触发一次 prune。
+
+请求体里常见字段：
+
+- `node`
+- `action`
+- `kind`
+- `keep_latest`
 
 ### `GET /webui/api/sessions`
 
@@ -184,7 +250,9 @@ WebUI 当前会用它做：
 | Memory | `memory` |
 | SubagentProfiles | `subagent_profiles`, `tool_allowlist_groups`, `subagents_runtime` |
 | Subagents | `nodes`, `subagents_runtime` |
-| TaskAudit | `task_queue`, `task_audit` |
+| Nodes | `nodes`, `node_dispatches`, `node_artifacts` |
+| NodeArtifacts | `node_artifacts`, `node_artifacts/export`, `node_artifacts/download`, `node_artifacts/delete`, `node_artifacts/prune` |
+| TaskAudit | `task_queue`, `task_audit`, `node_dispatches`, `node_dispatches/replay` |
 | EKG | `ekg_stats` |
 | Logs | `logs/recent`, `logs/stream` |
 

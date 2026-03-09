@@ -225,6 +225,57 @@ Rules:
 - `ice_servers` is the preferred structured form with `urls`, `username`, and `credential`
 - if any `ice_servers[].urls` entry uses `turn:` or `turns:`, both `username` and `credential` are required
 
+### `gateway.nodes.dispatch`
+
+Node dispatch policy lives under `gateway.nodes.dispatch`.
+
+Fields:
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags`
+- `agent_tags`
+- `allow_actions`
+- `deny_actions`
+- `allow_agents`
+- `deny_agents`
+
+These fields control:
+
+- whether local execution should be preferred over remote nodes
+- whether relay fallback is allowed when P2P is unavailable
+- which node tags are required for a given action or remote agent
+- which tag sets are explicitly allowed or denied for an action or agent
+
+Use `action_tags` and `agent_tags` for tag requirements, and `allow_*` / `deny_*` for stricter admission rules.
+
+### `gateway.nodes.artifacts`
+
+Node artifact retention lives under `gateway.nodes.artifacts`.
+
+Fields:
+
+- `enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+Defaults:
+
+- `enabled = false`
+- `keep_latest = 500`
+- `retain_days = 7`
+- `prune_on_read = true`
+
+Validation:
+
+- when `enabled = true`, `keep_latest` must be greater than `0`
+- `keep_latest` cannot be negative
+- `retain_days` cannot be negative
+
+When enabled, Gateway prunes node artifacts on read using both the latest-count and retain-days limits.
+
 ## `tools.mcp`
 
 The MCP entry point is `tools.mcp`.

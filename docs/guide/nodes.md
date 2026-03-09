@@ -32,6 +32,13 @@ Gateway 暴露的基础节点接口包括：
 
 仓库里还会默认注册一个 `local` 节点，用来统一本地能力和远端能力的调用模型。
 
+如果节点本身带有 agent 描述，Gateway 还会把它们镜像成远端 branch，例如：
+
+- `node.edge-a.main`
+- `node.edge-a.vision`
+
+这样主拓扑里不仅能看到节点本身，也能看到节点下挂的远端 agent 树。
+
 ## 派发模式
 
 节点调度支持三种模式：
@@ -50,8 +57,44 @@ Gateway 暴露的基础节点接口包括：
 
 - `used_transport`
 - `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
 
 这样你可以直接看一次请求最终走了哪条链路，是否发生过回退。
+
+## 派发策略
+
+最近的版本把节点调度策略单独放到了 `gateway.nodes.dispatch`。
+
+常见字段：
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags`
+- `agent_tags`
+- `allow_actions`
+- `deny_actions`
+- `allow_agents`
+- `deny_agents`
+
+实用理解：
+
+- `prefer_local`：本地节点与远端节点都能做时，是否先试本地
+- `prefer_p2p`：远端节点可直连时，是否先试 P2P
+- `action_tags` / `agent_tags`：某个 action 或远端 agent 只有命中标签才允许派发
+- `allow_*` / `deny_*`：更强的白名单 / 黑名单约束
+
+节点标签来源有两处：
+
+- 节点注册时的 `clawgo node register --tags`
+- 节点上报的 `NodeInfo.tags`
+
+适合的例子：
+
+- `camera_clip` 只打到 `vision`
+- `agent_task` 的某个远端 agent 只打到 `gpu`
+- 某些高风险动作拒绝落到 `public` 标签节点
 
 ## Node P2P
 
@@ -132,13 +175,55 @@ Gateway 暴露的基础节点接口包括：
 
 这对排查“为什么没直连成功”很关键。
 
+## 节点产物
+
+最近节点执行除了返回文本结果，还会把媒体和文件产物挂到审计里。
+
+常见来源：
+
+- `agent_task`
+- `camera_snap`
+- `camera_clip`
+- `screen_snapshot`
+- `screen_record`
+
+最近的审计与 WebUI 里会看到：
+
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts[]`
+
+如果是 `agent_task`，最近实现还支持把 `artifact_paths` 一起上送，便于把远端执行生成的文件纳入统一下载与审计链路。
+
+### 保留策略
+
+`gateway.nodes.artifacts` 控制节点产物保留：
+
+- `enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+默认值是：
+
+- `enabled = false`
+- `keep_latest = 500`
+- `retain_days = 7`
+- `prune_on_read = true`
+
+启用后，Gateway 会在读取产物列表时自动清理过期或超量记录。
+
 ## WebUI 里怎么看
 
 最近的 WebUI 已经把节点 P2P 接进去了：
 
 - Dashboard 会展示 Node P2P 卡片
 - Config 页面能直接编辑 `gateway.nodes.p2p`
-- `/webui/api/nodes` 会返回 `p2p` 运行态摘要
+- Config 页面还能直接编辑 `gateway.nodes.dispatch` 与 `gateway.nodes.artifacts`
+- Nodes 页面会展示节点详情、远端 agent 树、最近派发、P2P 会话和产物
+- NodeArtifacts 页面会展示产物列表、导出、下载、删除和 prune
+- TaskAudit 页面会追加 node dispatch 审计视图
+- `/webui/api/nodes` 会返回 `p2p`、`dispatches`、`alerts`、`artifact_retention`
 
 Dashboard 当前会展示：
 
@@ -146,6 +231,15 @@ Dashboard 当前会展示：
 - active sessions
 - retry count
 - STUN / ICE 配置数量
+- 节点派发的产物数量与预览摘要
+
+Nodes 详情页当前能直接查看：
+
+- 节点标签、能力、动作、模型
+- 在线状态、last seen、endpoint、版本、OS/arch
+- 远端 agent tree
+- 最近派发记录与 replay
+- 最近产物与原始 JSON
 
 ## `status` 怎么看
 
@@ -176,6 +270,18 @@ Dashboard 当前会展示：
 - `status` 输出里的 `Nodes Dispatch Fallbacks`
 - `nodes-dispatch-audit.jsonl` 里的 `used_transport` 和 `fallback_from`
 - `/webui/api/nodes` 返回的 `p2p.nodes[]` 会话状态
+- `/webui/api/node_dispatches` 返回的节点派发审计
+
+### 节点产物越来越多
+
+先确认：
+
+- `gateway.nodes.artifacts.enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+如果你希望人工收口，也可以直接在 WebUI 的 NodeArtifacts 页面触发 prune。
 
 ### 什么时候先别上 WebRTC
 

@@ -258,6 +258,58 @@ Gateway 同时负责：
 - `stun_servers`
 - `ice_servers`
 
+### gateway.nodes.dispatch
+
+节点调度策略位于 `gateway.nodes.dispatch`。
+
+字段：
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags`
+- `agent_tags`
+- `allow_actions`
+- `deny_actions`
+- `allow_agents`
+- `deny_agents`
+
+这组配置会决定：
+
+- 优先走本地节点还是远端节点
+- P2P 不可用时是否允许回退到 relay
+- 某个 action 或远端 agent 需要哪些 node tags
+- 某个 action 或 agent 允许或拒绝哪些标签集合
+
+`action_tags` 和 `agent_tags` 更适合做“必须命中这些标签才能派发”，
+`allow_*` / `deny_*` 适合做更硬的准入约束。
+
+### gateway.nodes.artifacts
+
+节点产物保留策略位于 `gateway.nodes.artifacts`。
+
+字段：
+
+- `enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+默认值：
+
+- `enabled = false`
+- `keep_latest = 500`
+- `retain_days = 7`
+- `prune_on_read = true`
+
+校验规则：
+
+- `enabled = true` 时，`keep_latest` 必须大于 `0`
+- `keep_latest` 不能小于 `0`
+- `retain_days` 不能小于 `0`
+
+开启后，Gateway 会在读取节点产物列表时按“最近保留数量 + 最长保留天数”做自动清理。
+
 当前 `transport` 允许：
 
 - `websocket_tunnel`

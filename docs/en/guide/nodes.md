@@ -32,6 +32,13 @@ The current node capability model includes:
 
 The repository also registers a default `local` node so the same invocation model works for both local and remote capabilities.
 
+If a node reports agent metadata, Gateway also mirrors them as remote branches, for example:
+
+- `node.edge-a.main`
+- `node.edge-a.vision`
+
+That means the main topology can show both the node itself and the child agents exposed by that node.
+
 ## Dispatch Modes
 
 Node dispatch supports three modes:
@@ -50,8 +57,44 @@ Recent audit rows also record:
 
 - `used_transport`
 - `fallback_from`
+- `artifact_count`
+- `artifact_kinds`
 
 That makes it easy to see which path actually handled a request.
+
+## Dispatch Policy
+
+Recent versions moved node dispatch policy into `gateway.nodes.dispatch`.
+
+Common fields:
+
+- `prefer_local`
+- `prefer_p2p`
+- `allow_relay_fallback`
+- `action_tags`
+- `agent_tags`
+- `allow_actions`
+- `deny_actions`
+- `allow_agents`
+- `deny_agents`
+
+Practical reading:
+
+- `prefer_local`: when both local and remote execution can satisfy a request, try local first
+- `prefer_p2p`: prefer direct P2P when a remote node is reachable
+- `action_tags` / `agent_tags`: require specific tags for an action or remote agent
+- `allow_*` / `deny_*`: harder allow and deny constraints
+
+Node tags come from:
+
+- `clawgo node register --tags`
+- `NodeInfo.tags` reported by the node
+
+Typical uses:
+
+- send `camera_clip` only to nodes tagged `vision`
+- route a specific remote `agent_task` only to `gpu` nodes
+- block sensitive actions from nodes tagged `public`
 
 ## Node P2P
 
@@ -132,13 +175,55 @@ Recent changes also expose session health fields such as:
 
 Those fields are important when debugging why a direct session is not coming up.
 
+## Node Artifacts
+
+Recent node execution changes do more than return text results. Media and file artifacts are now attached to dispatch audit rows.
+
+Common sources:
+
+- `agent_task`
+- `camera_snap`
+- `camera_clip`
+- `screen_snapshot`
+- `screen_record`
+
+Recent audit and WebUI views surface:
+
+- `artifact_count`
+- `artifact_kinds`
+- `artifacts[]`
+
+For `agent_task`, the implementation also supports `artifact_paths`, so files produced on the remote node can be pulled into the same audit and download flow.
+
+### Retention
+
+`gateway.nodes.artifacts` controls retention:
+
+- `enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+Defaults:
+
+- `enabled = false`
+- `keep_latest = 500`
+- `retain_days = 7`
+- `prune_on_read = true`
+
+When enabled, Gateway prunes expired or excess artifact records whenever the artifact list is read.
+
 ## What You See In The WebUI
 
 Recent WebUI updates already surface node P2P:
 
 - the Dashboard shows a Node P2P card
 - the Config page can edit `gateway.nodes.p2p`
-- `/webui/api/nodes` returns a `p2p` runtime summary
+- the Config page can also edit `gateway.nodes.dispatch` and `gateway.nodes.artifacts`
+- the Nodes page shows node details, remote agent trees, recent dispatches, P2P sessions, and artifacts
+- the NodeArtifacts page shows listing, export, download, delete, and prune actions
+- the TaskAudit page now includes a node dispatch audit view
+- `/webui/api/nodes` returns `p2p`, `dispatches`, `alerts`, and `artifact_retention`
 
 The Dashboard currently shows:
 
@@ -146,6 +231,15 @@ The Dashboard currently shows:
 - active sessions
 - retry count
 - STUN / ICE config counts
+- dispatch artifact counts and preview summaries
+
+The node details view currently shows:
+
+- node tags, capabilities, actions, and models
+- online state, last seen, endpoint, version, and OS/arch
+- remote agent tree
+- recent dispatch rows and replay
+- recent artifacts and raw JSON
 
 ## What You See In `status`
 
@@ -176,6 +270,18 @@ Check:
 - `Nodes Dispatch Fallbacks` in `status`
 - `used_transport` and `fallback_from` in `nodes-dispatch-audit.jsonl`
 - the session state in `/webui/api/nodes` under `p2p.nodes[]`
+- node dispatch audit rows from `/webui/api/node_dispatches`
+
+### Artifact Volume Keeps Growing
+
+Check:
+
+- `gateway.nodes.artifacts.enabled`
+- `keep_latest`
+- `retain_days`
+- `prune_on_read`
+
+If you want to prune manually, the NodeArtifacts page can trigger prune directly.
 
 ### When Not To Start With WebRTC
 

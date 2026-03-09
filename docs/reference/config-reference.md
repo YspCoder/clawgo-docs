@@ -155,6 +155,29 @@
 | `username` | TURN 用户名 |
 | `credential` | TURN 凭证 |
 
+### `gateway.nodes.dispatch`
+
+| 字段 | 作用 |
+| --- | --- |
+| `prefer_local` | 优先使用本地节点或本地执行路径 |
+| `prefer_p2p` | 可用时优先走 P2P |
+| `allow_relay_fallback` | P2P 不可用时是否允许回退到 relay |
+| `action_tags` | 为某个 action 指定必须命中的 node tags |
+| `agent_tags` | 为某个远端 agent 指定必须命中的 node tags |
+| `allow_actions` | 为某个 action 指定允许的 node tags |
+| `deny_actions` | 为某个 action 指定拒绝的 node tags |
+| `allow_agents` | 为某个远端 agent 指定允许的 node tags |
+| `deny_agents` | 为某个远端 agent 指定拒绝的 node tags |
+
+### `gateway.nodes.artifacts`
+
+| 字段 | 作用 |
+| --- | --- |
+| `enabled` | 是否启用节点产物保留与清理 |
+| `keep_latest` | 每次读取时保留的最近产物数量 |
+| `retain_days` | 最长保留天数，`0` 表示不按天数裁剪 |
+| `prune_on_read` | 读取产物列表时是否自动清理 |
+
 ## cron
 
 | 字段 | 作用 |
