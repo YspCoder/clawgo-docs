@@ -54,12 +54,16 @@ This page is the lookup companion to [Configuration](/en/guide/configuration).
 | `notify_main_policy` | main notification policy |
 | `display_name` | display name |
 | `role` | role |
-| `system_prompt` | inline prompt |
 | `system_prompt_file` | prompt file path |
 | `memory_namespace` | memory namespace |
 | `tools.allowlist` | tool allowlist |
 | `tools.denylist` | tool denylist |
 | `runtime.*` | runtime controls |
+
+Notes:
+
+- enabled subagents should define `system_prompt_file`
+- `system_prompt_file` must be a relative path inside the workspace
 
 ## `channels`
 

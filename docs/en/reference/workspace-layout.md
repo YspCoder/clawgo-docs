@@ -44,6 +44,17 @@ Typical seeded contents include:
 - `memory/`
 - `skills/`
 
+One especially important recent skill under `skills/` is:
+
+- `spec-coding`
+
+It provides:
+
+- `scripts/init.sh`
+- `templates/spec.md`
+- `templates/tasks.md`
+- `templates/checklist.md`
+
 ## Runtime Files
 
 Common runtime files include:
@@ -56,3 +67,22 @@ Common runtime files include:
 - `subagent_events.jsonl`
 - `threads.jsonl`
 - `agent_messages.jsonl`
+
+## Spec Files In The Active Coding Project
+
+Recent non-trivial coding work can also maintain these files in the current coding project root:
+
+- `spec.md`
+- `tasks.md`
+- `checklist.md`
+
+These are not meant to live permanently in `~/.clawgo/workspace/`, and they are no longer kept as repo-root docs inside ClawGo itself.
+
+Typical source:
+
+- `workspace/skills/spec-coding/templates/*`
+
+In practice:
+
+- `workspace/skills/spec-coding/templates/` is the template source
+- `spec.md`, `tasks.md`, and `checklist.md` in the active coding project are runtime collaboration artifacts

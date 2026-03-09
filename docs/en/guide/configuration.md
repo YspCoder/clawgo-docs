@@ -118,7 +118,6 @@ Common fields:
 - `notify_main_policy`
 - `display_name`
 - `role`
-- `system_prompt`
 - `system_prompt_file`
 - `memory_namespace`
 - `accept_from`
@@ -129,8 +128,10 @@ Common fields:
 
 Notes:
 
-- enabled local subagents should normally define `system_prompt_file`
+- enabled subagents should now use `system_prompt_file`
+- when required, `system_prompt_file` must be relative and stay inside the workspace
 - node-backed branches require `transport: "node"`, `node_id`, and `parent_agent_id`
+- the old inline `system_prompt` field should be treated as legacy compatibility only, not as the normal configuration path
 
 ## channels
 

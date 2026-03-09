@@ -45,7 +45,18 @@ Uses:
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
 - `/webui/api/subagents_runtime`
+
+Recent versions also subscribe to:
+
+- `/webui/api/subagents_runtime/live`
+
+to refresh:
+
+- thread and message detail for the selected task
+- inbox messages
+- the latest stream preview used by topology tooltips
 
 ### Subagents
 
@@ -146,6 +157,8 @@ The page now also surfaces:
 - tool visibility mode
 - automatic inheritance of `skill_exec` for subagents
 
+Inline `system_prompt` editing has also been removed from this page. The profile now expects `system_prompt_file` as the source of role definition.
+
 ### TaskAudit
 
 Inspect task queue state and detailed audit records.
@@ -223,6 +236,8 @@ Current registered endpoints:
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
+- `/webui/api/runtime`
 - `/webui/api/version`
 - `/webui/api/upload`
 - `/webui/api/nodes`
@@ -239,6 +254,7 @@ Current registered endpoints:
 - `/webui/api/memory`
 - `/webui/api/subagent_profiles`
 - `/webui/api/subagents_runtime`
+- `/webui/api/subagents_runtime/live`
 - `/webui/api/tool_allowlist_groups`
 - `/webui/api/task_audit`
 - `/webui/api/task_queue`
@@ -255,6 +271,15 @@ Current registered endpoints:
 - `artifact_retention`
 
 Those fields are used by the Dashboard, Nodes, NodeArtifacts, and TaskAudit pages.
+
+`/webui/api/runtime` is now the live runtime snapshot websocket used by AppContext to aggregate:
+
+- version
+- nodes
+- sessions
+- task queue
+- ekg summary
+- subagent runtime
 
 ## Build and Embed
 

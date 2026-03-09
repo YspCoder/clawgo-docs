@@ -53,14 +53,17 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
 - `/webui/api/upload`
 
 ### 运行资源
 
 - `/webui/api/nodes`
+- `/webui/api/runtime`
 - `/webui/api/sessions`
 - `/webui/api/memory`
 - `/webui/api/subagents_runtime`
+- `/webui/api/subagents_runtime/live`
 - `/webui/api/subagent_profiles`
 - `/webui/api/tool_allowlist_groups`
 
@@ -111,6 +114,8 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `artifacts`
 
 其中 replay 接口可以把一次历史节点派发重新送回当前 node dispatch handler。
+
+`/webui/api/runtime` 和 `/webui/api/subagents_runtime/live` 现在都支持 websocket 形式的实时快照，用于前端 runtime 汇总和 subagent 细节联动。
 
 ### 自动化
 

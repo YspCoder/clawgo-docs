@@ -10,6 +10,24 @@ Use these directories as the main map:
 - `workspace`: default workspace template
 - `docs`: in-repo project docs and assets
 
+Recent workspace changes add one especially important coding skill:
+
+- `spec-coding`
+
+Its templates live under:
+
+```text
+workspace/skills/spec-coding/templates
+```
+
+and include:
+
+- `spec.md`
+- `tasks.md`
+- `checklist.md`
+
+Those files belong in the current coding project root, not as permanent files in the ClawGo repository root.
+
 ## Go Build
 
 Common commands:
@@ -67,3 +85,26 @@ This creates:
 ```bash
 go test ./...
 ```
+
+## Spec-Driven Coding
+
+Recent agent and workspace changes wire spec-driven coding into the main workflow.
+
+When a request is treated as non-trivial coding work, the runtime can maintain these files in the current project root:
+
+- `spec.md`: scope, goals, decisions, tradeoffs
+- `tasks.md`: current task breakdown and progress
+- `checklist.md`: final verification gate
+
+Implementation details:
+
+- missing files can be scaffolded from `workspace/skills/spec-coding/templates`
+- the context builder treats these files as part of active project context when present
+- task completion can update `tasks.md` and `checklist.md`
+- rework or regression follow-up can reopen the task and reset the checklist
+
+If you are tracing why the agent created or updated these files, start with:
+
+- `pkg/agent/context.go`
+- `pkg/agent/spec_coding.go`
+- `workspace/skills/spec-coding/`

@@ -49,6 +49,16 @@
 
 提供聊天流式输出或事件流。
 
+### `GET /webui/api/chat/live`
+
+基于 websocket 的聊天流接口。
+
+发送首条 JSON 消息后，会按块返回：
+
+- `chat_chunk`
+- `chat_done`
+- `chat_error`
+
 ### `POST /webui/api/upload`
 
 上传附件，返回服务端可引用路径。
@@ -62,6 +72,23 @@
 - `tools`
 - `mcp_tools`
 - `mcp_server_checks`
+
+### `GET /webui/api/runtime`
+
+基于 websocket 的 runtime 汇总快照。
+
+返回类型：
+
+- `runtime_snapshot`
+
+当前聚合：
+
+- version
+- nodes
+- sessions
+- task queue
+- ekg summary
+- subagents runtime
 
 ### `GET /webui/api/nodes`
 
@@ -169,6 +196,25 @@ WebUI 当前会用它做：
 - 读取 prompt file
 - 获取 registry / topology
 
+### `GET /webui/api/subagents_runtime/live`
+
+基于 websocket 的 subagent 实时详情接口。
+
+常用 query 参数：
+
+- `task_id`
+- `preview_task_id`
+
+返回类型：
+
+- `subagents_live`
+
+当前会带：
+
+- 选中任务对应的 thread / messages
+- inbox
+- preview task 对应的 stream 摘要
+
 ### `GET /webui/api/tool_allowlist_groups`
 
 获取工具白名单分组定义，供 profile 编辑器使用。
@@ -243,13 +289,13 @@ WebUI 当前会用它做：
 | 页面 | 主要接口 |
 | --- | --- |
 | MCP | `tools`, `mcp/install`, `config` |
-| Chat | `chat`, `chat/history`, `chat/stream`, `subagents_runtime` |
+| Chat | `chat`, `chat/history`, `chat/stream`, `chat/live`, `subagents_runtime` |
 | Config | `config` |
 | Cron | `cron` |
 | Skills | `skills` |
 | Memory | `memory` |
 | SubagentProfiles | `subagent_profiles`, `tool_allowlist_groups`, `subagents_runtime` |
-| Subagents | `nodes`, `subagents_runtime` |
+| Subagents | `runtime`, `nodes`, `subagents_runtime`, `subagents_runtime/live` |
 | Nodes | `nodes`, `node_dispatches`, `node_artifacts` |
 | NodeArtifacts | `node_artifacts`, `node_artifacts/export`, `node_artifacts/download`, `node_artifacts/delete`, `node_artifacts/prune` |
 | TaskAudit | `task_queue`, `task_audit`, `node_dispatches`, `node_dispatches/replay` |

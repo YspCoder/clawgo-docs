@@ -49,6 +49,7 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
 - `/webui/api/subagents_runtime`
 
 这也是最能体现“主通道与内部协作流分离”的页面。
@@ -71,6 +72,16 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 - allowlist/denylist 生效结果
 
 tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而不是一次塞进多条摘要。
+
+最近这个页面还会订阅：
+
+- `/webui/api/subagents_runtime/live`
+
+用于实时刷新：
+
+- 选中任务的 thread / messages
+- inbox 消息
+- tooltip 对应 subagent 的最近 stream 预览
 
 ### Config
 
@@ -193,6 +204,12 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - tool visibility mode
 - `skill_exec` 会被自动继承给 subagent
 
+最近这里已经移除了 inline `system_prompt` 编辑入口，保存时要求：
+
+- 必须提供 `system_prompt_file`
+- 路径要能在 workspace 内解析
+- 角色变化要对应 prompt 文件内容一起维护
+
 接口：
 
 - `/webui/api/subagent_profiles`
@@ -291,6 +308,8 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
+- `/webui/api/runtime`
 - `/webui/api/version`
 - `/webui/api/upload`
 - `/webui/api/nodes`
@@ -307,6 +326,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/webui/api/memory`
 - `/webui/api/subagent_profiles`
 - `/webui/api/subagents_runtime`
+- `/webui/api/subagents_runtime/live`
 - `/webui/api/tool_allowlist_groups`
 - `/webui/api/task_audit`
 - `/webui/api/task_queue`
@@ -323,6 +343,15 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `artifact_retention`
 
 用于 Dashboard、Nodes、NodeArtifacts 和 TaskAudit 页面展示。
+
+`/webui/api/runtime` 现在是一个基于 websocket 的 live runtime snapshot 入口，AppContext 会用它聚合：
+
+- version
+- nodes
+- sessions
+- task queue
+- ekg summary
+- subagents runtime
 
 ## 构建与嵌入
 

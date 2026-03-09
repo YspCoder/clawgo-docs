@@ -158,7 +158,6 @@ ClawGo 的路由器支持基于关键字的主 agent 派发。
 - `display_name`
 - `role`
 - `description`
-- `system_prompt`
 - `system_prompt_file`
 - `memory_namespace`
 - `accept_from`
@@ -179,8 +178,10 @@ ClawGo 的路由器支持基于关键字的主 agent 派发。
 
 注意：
 
-- 启用的本地 subagent 建议设置 `system_prompt_file`
+- 启用的 subagent 现在应使用 `system_prompt_file`
+- `system_prompt_file` 为必填时，路径必须是相对路径，且必须留在 workspace 内
 - 使用 `transport: "node"` 时必须有 `node_id` 和 `parent_agent_id`
+- 旧的 `system_prompt` 字段只建议视为兼容性历史遗留，不应继续作为正式配置使用
 
 ## channels
 

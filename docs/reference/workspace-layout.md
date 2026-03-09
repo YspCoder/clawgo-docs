@@ -45,6 +45,17 @@
 - `skills/`
 - `webui/`（安装脚本或发布产物会放这里）
 
+`skills/` 里最近一个重要的模板技能是：
+
+- `spec-coding`
+
+它会提供：
+
+- `scripts/init.sh`
+- `templates/spec.md`
+- `templates/tasks.md`
+- `templates/checklist.md`
+
 ## logs
 
 默认日志：
@@ -99,6 +110,25 @@ Session 索引和历史位于：
 - `agent_messages.jsonl`
 
 这些文件是恢复和审计的重要基础。
+
+## 当前编码项目根目录中的 Spec 文件
+
+最近复杂编码任务会额外在“当前被编码的项目根目录”维护：
+
+- `spec.md`
+- `tasks.md`
+- `checklist.md`
+
+注意这三者不是固定写在 `~/.clawgo/workspace/` 根目录，也不是常驻保留在 `clawgo` 仓库根目录。
+
+它们的典型来源是：
+
+- `workspace/skills/spec-coding/templates/*`
+
+也就是说：
+
+- `workspace/skills/spec-coding/templates/` 是模板
+- 当前编码项目根目录下的 `spec.md` / `tasks.md` / `checklist.md` 是运行期协作产物
 
 ## 仓库内的 workspace 与用户 workspace 区别
 

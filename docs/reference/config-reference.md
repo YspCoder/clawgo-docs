@@ -87,7 +87,6 @@
 | `notify_main_policy` | 主代理通知策略 |
 | `display_name` | 显示名称 |
 | `role` | 角色 |
-| `system_prompt` | 直接 prompt |
 | `system_prompt_file` | prompt 文件路径 |
 | `memory_namespace` | 记忆命名空间 |
 | `accept_from` | 接收来源 |
@@ -95,6 +94,11 @@
 | `tools.allowlist` | 工具白名单 |
 | `tools.denylist` | 工具黑名单 |
 | `runtime.*` | 模型、重试、并发等运行时参数 |
+
+说明：
+
+- 启用的 subagent 应配置 `system_prompt_file`
+- `system_prompt_file` 必须是 workspace 内的相对路径
 
 ## channels
 

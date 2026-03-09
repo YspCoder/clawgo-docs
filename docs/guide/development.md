@@ -10,6 +10,24 @@
 - `workspace`: 初始化时复制给用户的默认工作区模版
 - `docs`: 主仓库自带的说明资源
 
+最近 `workspace/skills` 里有一个重要变化：
+
+- `spec-coding` 成为默认的复杂编码工作流技能
+
+它的模板目录在：
+
+```text
+workspace/skills/spec-coding/templates
+```
+
+包含：
+
+- `spec.md`
+- `tasks.md`
+- `checklist.md`
+
+注意这些文件的真实落点不是 `clawgo` 仓库根目录，而是“当前被编码的项目根目录”。
+
 ## Go 构建
 
 常用命令：
@@ -116,6 +134,29 @@ make package-all
 ```bash
 go test ./...
 ```
+
+## Spec-Driven Coding
+
+最近的 agent context 和 workspace prompt 已经把 spec-driven coding 接进主流程。
+
+当请求被判断为“非 trivial 编码任务”时，运行时会优先围绕当前项目根目录维护：
+
+- `spec.md`：范围、目标、决策、取舍
+- `tasks.md`：当前任务拆解与进度
+- `checklist.md`：最后的验证闸门
+
+实现层面的关键点：
+
+- 缺失文件可从 `workspace/skills/spec-coding/templates` 自动补齐
+- context builder 会在这些文件存在时把它们视为活跃项目上下文的一部分
+- 任务完成时会更新 `tasks.md` / `checklist.md`
+- 任务返工或回归失败时会把任务重新打开，并重置 checklist
+
+这意味着如果你在调试“为什么 agent 会自动生成 spec/task/checklist 文件”，应该先看：
+
+- `pkg/agent/context.go`
+- `pkg/agent/spec_coding.go`
+- `workspace/skills/spec-coding/`
 
 ## 文档维护建议
 

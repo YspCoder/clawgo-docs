@@ -44,14 +44,17 @@ Risk confirmation on config writes now covers not only the default provider, but
 - `/webui/api/chat`
 - `/webui/api/chat/history`
 - `/webui/api/chat/stream`
+- `/webui/api/chat/live`
 - `/webui/api/upload`
 
 ### Runtime Resources
 
 - `/webui/api/nodes`
+- `/webui/api/runtime`
 - `/webui/api/sessions`
 - `/webui/api/memory`
 - `/webui/api/subagents_runtime`
+- `/webui/api/subagents_runtime/live`
 - `/webui/api/subagent_profiles`
 - `/webui/api/tool_allowlist_groups`
 
@@ -102,6 +105,8 @@ Node audit now also includes:
 - `artifacts`
 
 The replay endpoint can resend a historical node dispatch through the current node dispatch handler.
+
+`/webui/api/runtime` and `/webui/api/subagents_runtime/live` now provide websocket-based live snapshots for the frontend runtime overview and subagent detail views.
 
 ### Automation
 

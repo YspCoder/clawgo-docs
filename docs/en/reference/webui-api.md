@@ -22,18 +22,29 @@ Access requires either:
 - `POST /webui/api/chat`
 - `GET /webui/api/chat/history`
 - `GET /webui/api/chat/stream`
+- `GET /webui/api/chat/live`
 - `POST /webui/api/upload`
+
+`GET /webui/api/chat/live` is the websocket chat streaming endpoint. After the first JSON message, it sends:
+
+- `chat_chunk`
+- `chat_done`
+- `chat_error`
 
 ## Runtime Resources
 
 - `GET /webui/api/tools`
+- `GET /webui/api/runtime`
 - `GET /webui/api/nodes`
 - `GET /webui/api/sessions`
 - `GET/POST /webui/api/memory`
 - `GET/POST /webui/api/subagent_profiles`
 - `GET/POST /webui/api/subagents_runtime`
+- `GET /webui/api/subagents_runtime/live`
 - `GET /webui/api/tool_allowlist_groups`
 - `POST /webui/api/mcp/install`
+
+`GET /webui/api/runtime` is the websocket runtime snapshot endpoint. It emits `runtime_snapshot` payloads aggregating version, nodes, sessions, task queue, EKG summary, and subagent runtime.
 
 `GET /webui/api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
 
@@ -74,6 +85,8 @@ Additional node-specific runtime APIs:
 
 `POST /webui/api/node_artifacts/prune` accepts common fields such as `node`, `action`, `kind`, and `keep_latest`.
 
+`GET /webui/api/subagents_runtime/live` is the websocket subagent detail feed. Common query params are `task_id` and `preview_task_id`, and the payload type is `subagents_live`.
+
 `GET /webui/api/tools` is also used by the MCP page for:
 
 - `tools`
@@ -110,13 +123,13 @@ Supported installers:
 | Page | Main APIs |
 | --- | --- |
 | MCP | `tools`, `mcp/install`, `config` |
-| Chat | `chat`, `chat/history`, `chat/stream`, `subagents_runtime` |
+| Chat | `chat`, `chat/history`, `chat/stream`, `chat/live`, `subagents_runtime` |
 | Config | `config` |
 | Cron | `cron` |
 | Skills | `skills` |
 | Memory | `memory` |
 | SubagentProfiles | `subagent_profiles`, `tool_allowlist_groups`, `subagents_runtime` |
-| Subagents | `nodes`, `subagents_runtime` |
+| Subagents | `runtime`, `nodes`, `subagents_runtime`, `subagents_runtime/live` |
 | Nodes | `nodes`, `node_dispatches`, `node_artifacts` |
 | NodeArtifacts | `node_artifacts`, `node_artifacts/export`, `node_artifacts/download`, `node_artifacts/delete`, `node_artifacts/prune` |
 | TaskAudit | `task_queue`, `task_audit`, `node_dispatches`, `node_dispatches/replay` |
