@@ -12,6 +12,7 @@ Top-level `clawgo` commands:
 - `config`
 - `cron`
 - `node`
+- `tui`
 - `channel`
 - `skills`
 - `version`
@@ -200,6 +201,35 @@ Common parameters:
 - `--id`
 
 This is useful when you want an external scheduler or your own node supervisor to keep the node alive.
+
+## `tui`
+
+Terminal-native chat interface.
+
+```bash
+clawgo tui
+clawgo tui --session main
+clawgo tui --token <gateway-token>
+```
+
+Common parameters:
+
+- `--token`: explicitly pass the Gateway token
+- `--session`, `-s`: initial session to open, default `main`
+- `--no-history`: skip loading history on startup
+
+Usage notes:
+
+- it connects directly to Gateway WebUI/API endpoints
+- it is useful on servers, SSH sessions, or terminal-only environments
+- it supports multi-pane chat and can keep up to 4 session panes open
+- after startup, use `/help` to inspect the built-in commands
+
+Notes:
+
+- `clawgo tui` depends on the `with_tui` build tag
+- current release variants include TUI in the `-nochannels` / `none` build
+- if the current binary was built without TUI, the command tells you to install the no-channel variant
 
 ## `channel`
 

@@ -26,6 +26,8 @@ The header now also includes two utility actions:
 
 The version check compares the current Gateway/WebUI versions with the latest GitHub release.
 
+The header and runtime bootstrap now also receive `compiled_channels`, which the UI uses to prune channel-specific routes and settings dynamically.
+
 ## Major Pages
 
 ### Dashboard
@@ -119,6 +121,12 @@ Including:
 - `keep_latest`
 - `retain_days`
 - `prune_on_read`
+
+There is also an important channel-page behavior change:
+
+- the page only shows channels actually compiled into the current binary
+- a single-channel build no longer exposes unrelated channel forms
+- a `-nochannels` / `none` build hides channel settings and falls back to the generic config page
 
 ### MCP
 

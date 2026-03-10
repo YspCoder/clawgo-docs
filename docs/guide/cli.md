@@ -12,6 +12,7 @@
 - `config`
 - `cron`
 - `node`
+- `tui`
 - `channel`
 - `skills`
 - `version`
@@ -236,6 +237,35 @@ clawgo node heartbeat --gateway http://127.0.0.1:18790 --id edge-dev
 - `--id`
 
 这个子命令适合外部调度器或你自己的节点守护逻辑手动保活。
+
+## tui
+
+终端内置聊天界面。
+
+```bash
+clawgo tui
+clawgo tui --session main
+clawgo tui --token <gateway-token>
+```
+
+常用参数：
+
+- `--token`: 显式指定 Gateway token
+- `--session`, `-s`: 初始打开的 session，默认 `main`
+- `--no-history`: 启动时跳过历史记录加载
+
+使用说明：
+
+- 它会直接连接 Gateway 的 WebUI/API 接口
+- 适合在服务器、SSH 或纯终端环境下做会话切换和聊天
+- 支持多 pane 视图，最多同时打开 4 个 session pane
+- 启动后可通过 `/help` 查看内置命令
+
+注意：
+
+- `clawgo tui` 依赖 `with_tui` build tag
+- 当前发布变体里，`-nochannels` / `none` 版本会带上 TUI
+- 如果当前二进制没编入 TUI，命令会提示你安装 no-channel 变体
 
 ## channel
 

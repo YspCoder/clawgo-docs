@@ -14,6 +14,12 @@ Currently implemented channels include:
 - `whatsapp`
 - `maixcam`
 
+The WebUI channel settings page now reflects the channels actually compiled into the current binary instead of always listing every possible adapter:
+
+- the `full` variant shows the full channel list
+- a single-channel build only shows that channel
+- the `-nochannels` / `none` build hides channel configuration pages entirely
+
 The channel manager is responsible for:
 
 - initializing enabled adapters

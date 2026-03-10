@@ -112,8 +112,14 @@ Key targets:
 Meaning:
 
 - `full`: full channel build
-- `none`: all channels omitted, producing the `-nochannels` artifact
+- `none`: all channels omitted, producing the `-nochannels` artifact, but it now also includes `with_tui`
 - single-channel variants: keep one channel and omit the others through `omit_<channel>` build tags
+
+That means the current no-channel release is not a "no entrypoint" build. It is aimed more at operator and SSH-oriented usage:
+
+- no external message channels are compiled in
+- `clawgo tui` remains available as the terminal UI entrypoint
+- it fits local debugging, remote operations, or Gateway/API-only deployments
 
 The install script also now supports:
 

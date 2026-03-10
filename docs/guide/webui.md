@@ -28,6 +28,8 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 
 版本检查会直接对比当前 Gateway/WebUI 版本和 GitHub latest release。
 
+另外，Header 和 runtime 初始化现在还会拿到当前二进制的 `compiled_channels`，供路由和配置页动态裁剪通道入口。
+
 ## 页面结构
 
 从 `webui/src/pages` 可以看出控制台并不是单一聊天页，而是运维工作台。
@@ -132,6 +134,12 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `keep_latest`
 - `retain_days`
 - `prune_on_read`
+
+最近通道配置页还有一个很实用的行为变化：
+
+- 页面只显示当前二进制真实编译进来的 channels
+- 如果你部署的是单通道变体，配置页不会再出现其他无效平台
+- 如果你部署的是 `-nochannels` / `none` 变体，WebUI 会隐藏 channel 配置入口并回退到通用配置页
 
 后端接口：
 

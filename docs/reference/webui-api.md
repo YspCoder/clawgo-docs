@@ -32,6 +32,12 @@
 
 WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub latest release 做对比。
 
+最近这里还增加了：
+
+- `compiled_channels`
+
+用于告诉前端“当前二进制实际编译进了哪些 channel”。
+
 ## 聊天与上传
 
 ### `POST /webui/api/chat`
@@ -91,6 +97,12 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - task queue
 - ekg summary
 - subagents runtime
+
+其中 `version` 快照里现在也会带：
+
+- `compiled_channels`
+
+WebUI 会用它来裁剪 channel settings 路由和菜单。
 
 ### `GET /webui/api/nodes`
 

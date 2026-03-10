@@ -141,8 +141,14 @@ WebUI 已经内嵌在二进制里，所以 release 不再需要单独上传 `web
 含义：
 
 - `full`：完整通道构建
-- `none`：去掉所有通道，对应 `-nochannels`
+- `none`：去掉所有通道，对应 `-nochannels`，但会额外带上 `with_tui`
 - 单通道变体：只保留某一个 channel，其他 channel 通过 `omit_<channel>` build tags 被裁掉
+
+这意味着当前 release 里的 no-channel 变体，不是“什么入口都没有”，而是更偏运维和 SSH 场景：
+
+- 不包含外部消息通道
+- 保留 `clawgo tui` 这个终端界面入口
+- 适合本地调试、远端值班或只通过 Gateway/API 使用系统
 
 安装脚本也已经支持：
 

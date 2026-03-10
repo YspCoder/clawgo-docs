@@ -19,6 +19,12 @@ Access requires either:
 
 The WebUI header version-check action compares this version payload with the latest GitHub release.
 
+Recent versions also add:
+
+- `compiled_channels`
+
+The UI uses that field to know which channel adapters are actually compiled into the current binary.
+
 ## Chat and Upload
 
 - `POST /webui/api/chat`
@@ -47,6 +53,12 @@ The WebUI header version-check action compares this version payload with the lat
 - `POST /webui/api/mcp/install`
 
 `GET /webui/api/runtime` is the websocket runtime snapshot endpoint. It emits `runtime_snapshot` payloads aggregating version, nodes, sessions, task queue, EKG summary, and subagent runtime.
+
+The `version` part of that snapshot now also includes:
+
+- `compiled_channels`
+
+This lets the WebUI prune channel settings routes and menus at runtime.
 
 `GET /webui/api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
 
