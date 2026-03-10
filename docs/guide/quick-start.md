@@ -20,9 +20,16 @@ ClawGo 是一个 Go 编写的 Agent Runtime。代码入口在 `cmd/clawgo`，核
 curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | bash
 ```
 
+如果你只想装某一个 channel 变体，最近也可以显式指定：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | bash -s -- --variant telegram
+```
+
 `install.sh` 会：
 
 - 根据系统与架构下载最新 release 二进制
+- 支持 `full` / `none` / `telegram` / `discord` / `feishu` / `maixcam` / `qq` / `dingtalk` / `whatsapp` 这些安装变体
 - 不再单独下载 `webui.tar.gz`
 - 安装完成后会调用 `clawgo onboard --sync-webui`，把嵌入式 WebUI 同步到 `~/.clawgo/workspace/webui`
 - 可选执行 OpenClaw 到 ClawGo 的迁移

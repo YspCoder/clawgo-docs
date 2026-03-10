@@ -34,7 +34,9 @@ workspace/skills/spec-coding/templates
 
 ```bash
 make build
+make build-variants
 make build-all
+make build-all-variants
 make build-linux-slim
 make test
 ```
@@ -62,7 +64,7 @@ Makefile 会：
 - `motion`
 - `icons`
 
-这会影响你分析 bundle、排查首屏加载问题和发布 `webui.tar.gz` 时的静态文件结构。
+这会影响你分析 bundle、排查首屏加载问题和嵌入式 WebUI 的静态文件结构。
 
 ## 嵌入式资源同步
 
@@ -80,7 +82,7 @@ make cleanup-embed-workspace
 同步目标目录是：
 
 ```text
-cmd/clawgo/workspace
+cmd/workspace
 ```
 
 ## 开发模式
@@ -103,8 +105,7 @@ make package-all
 
 会生成：
 
-- 各平台二进制压缩包
-- `webui.tar.gz`
+- 各平台 full / no-channel / 单通道变体压缩包
 - `checksums.txt`
 
 ## install.sh 的发布约定
@@ -112,9 +113,42 @@ make package-all
 安装脚本默认从 GitHub Release 拉取：
 
 - `clawgo-<os>-<arch>.tar.gz`
-- `webui.tar.gz`
+- `clawgo-<os>-<arch>-nochannels.tar.gz`
+- `clawgo-<os>-<arch>-<channel>.tar.gz`
 
-因此 release 发布时，二进制和 WebUI 产物必须同时上传。
+其中 `<channel>` 目前对应：
+
+- `telegram`
+- `discord`
+- `feishu`
+- `maixcam`
+- `qq`
+- `dingtalk`
+- `whatsapp`
+
+WebUI 已经内嵌在二进制里，所以 release 不再需要单独上传 `webui.tar.gz`。
+
+## Channel-Specific Build Variants
+
+最近 Makefile 和 release 流程新增了 channel-specific build variants。
+
+关键目标：
+
+- `make build-variants`
+- `make build-all-variants`
+- `make package-all`
+
+含义：
+
+- `full`：完整通道构建
+- `none`：去掉所有通道，对应 `-nochannels`
+- 单通道变体：只保留某一个 channel，其他 channel 通过 `omit_<channel>` build tags 被裁掉
+
+安装脚本也已经支持：
+
+```bash
+./install.sh --variant telegram
+```
 
 ## 测试
 

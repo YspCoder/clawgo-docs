@@ -205,7 +205,7 @@ ClawGo 的路由器支持基于关键字的主 agent 派发。
 
 - Telegram 支持 `streaming`
 - Telegram/Feishu 支持群聊 mention 约束
-- WhatsApp 依赖 bridge URL
+- WhatsApp 既可以走内嵌 bridge，也可以显式配置 `bridge_url`
 - MaixCam 使用 host/port 本地服务
 
 ## providers

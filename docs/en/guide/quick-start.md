@@ -20,10 +20,17 @@ ClawGo is an agent runtime written in Go. The codebase is centered around:
 curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | bash
 ```
 
+If you only want one channel-specific variant, you can now pass it explicitly:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | bash -s -- --variant telegram
+```
+
 The script:
 
 - detects OS and architecture
 - downloads the latest release binary
+- supports `full`, `none`, `telegram`, `discord`, `feishu`, `maixcam`, `qq`, `dingtalk`, and `whatsapp` install variants
 - no longer downloads `webui.tar.gz` separately
 - runs `clawgo onboard --sync-webui` after install so the embedded WebUI is refreshed into `~/.clawgo/workspace/webui`
 - optionally migrates from OpenClaw

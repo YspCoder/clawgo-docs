@@ -55,7 +55,7 @@ Good for:
 - small-group operational entry points
 - streaming replies
 
-## Feishu / DingTalk / QQ / Discord / WhatsApp
+## Feishu / DingTalk / QQ / Discord
 
 The main differences across these channels are:
 
@@ -67,6 +67,32 @@ But the integration model is the same:
 
 - inbound messages enter the runtime
 - outbound messages are pushed back through the message bus
+
+## WhatsApp
+
+Recent versions treat WhatsApp more like a first-class bridge-backed channel service.
+
+You can think about it in two ways:
+
+- use the default embedded bridge flow
+- explicitly configure `channels.whatsapp.bridge_url`
+
+Common fields:
+
+- `enabled`
+- `bridge_url`
+- `allow_from`
+- `enable_groups`
+- `require_mention_in_groups`
+
+If you use the WebUI channel settings page, you can also inspect:
+
+- bridge status
+- active account
+- recent bridge events
+- QR code availability
+
+That makes it a better fit for phone-linked access, personal inbox entry points, or group-duty workflows.
 
 ## MaixCam
 

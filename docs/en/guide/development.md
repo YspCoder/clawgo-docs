@@ -34,7 +34,9 @@ Common commands:
 
 ```bash
 make build
+make build-variants
 make build-all
+make build-all-variants
 make build-linux-slim
 make test
 ```
@@ -53,7 +55,7 @@ Recent WebUI changes moved routes to `React.lazy + Suspense` and added manual ch
 - `motion`
 - `icons`
 
-That matters when you inspect bundle output, debug initial page load, or package `webui.tar.gz`.
+That matters when you inspect bundle output, debug initial page load, or inspect the embedded WebUI assets.
 
 ## Embedded Asset Sync
 
@@ -76,9 +78,48 @@ make package-all
 
 This creates:
 
-- per-platform archives
-- `webui.tar.gz`
+- per-platform full, no-channel, and single-channel archives
 - `checksums.txt`
+
+The release flow now expects artifacts such as:
+
+- `clawgo-<os>-<arch>.tar.gz`
+- `clawgo-<os>-<arch>-nochannels.tar.gz`
+- `clawgo-<os>-<arch>-<channel>.tar.gz`
+
+Current `<channel>` variants include:
+
+- `telegram`
+- `discord`
+- `feishu`
+- `maixcam`
+- `qq`
+- `dingtalk`
+- `whatsapp`
+
+WebUI is now embedded in the binary, so releases no longer need a separate `webui.tar.gz`.
+
+## Channel-Specific Build Variants
+
+Recent Makefile and release changes add channel-specific build variants.
+
+Key targets:
+
+- `make build-variants`
+- `make build-all-variants`
+- `make package-all`
+
+Meaning:
+
+- `full`: full channel build
+- `none`: all channels omitted, producing the `-nochannels` artifact
+- single-channel variants: keep one channel and omit the others through `omit_<channel>` build tags
+
+The install script also now supports:
+
+```bash
+./install.sh --variant telegram
+```
 
 ## Recommended Test Command
 

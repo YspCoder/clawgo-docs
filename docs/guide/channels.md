@@ -55,7 +55,7 @@ Telegram 是最常见的接入方式之一。
 - 小规模群聊运维入口
 - 需要流式回复展示的场景
 
-## Feishu / DingTalk / QQ / Discord / WhatsApp
+## Feishu / DingTalk / QQ / Discord
 
 这些通道的差异主要在：
 
@@ -67,6 +67,32 @@ Telegram 是最常见的接入方式之一。
 
 - 入站消息进入 runtime
 - 出站消息由 message bus 回推
+
+## WhatsApp
+
+WhatsApp 最近更接近“bridge 作为一等通道服务”的模式。
+
+你可以有两种理解方式：
+
+- 使用默认嵌入式 bridge 流程
+- 显式配置 `channels.whatsapp.bridge_url`
+
+常见字段：
+
+- `enabled`
+- `bridge_url`
+- `allow_from`
+- `enable_groups`
+- `require_mention_in_groups`
+
+如果你使用 WebUI 的频道设置页，还能直接看到：
+
+- bridge 状态
+- 当前账号
+- 最近事件
+- QR code 可用性
+
+这更适合做手机侧接入、个人消息入口或群聊值班入口。
 
 ## MaixCam
 

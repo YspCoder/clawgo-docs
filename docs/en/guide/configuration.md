@@ -151,6 +151,13 @@ Shared dedupe settings:
 - `inbound_content_dedupe_window_seconds`
 - `outbound_dedupe_window_seconds`
 
+Examples of channel-specific behavior:
+
+- Telegram supports `streaming`
+- Telegram and Feishu support mention constraints in groups
+- WhatsApp can use the embedded bridge flow or an explicit `bridge_url`
+- MaixCam uses a local host/port service
+
 ## `tools.mcp`
 
 Fields:
