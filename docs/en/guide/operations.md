@@ -83,6 +83,22 @@ There are also dedicated node runtime endpoints:
 - `/webui/api/node_artifacts/delete`
 - `/webui/api/node_artifacts/prune`
 
+Recent versions also add dedicated provider operations endpoints:
+
+- `/webui/api/provider/oauth/start`
+- `/webui/api/provider/oauth/complete`
+- `/webui/api/provider/oauth/import`
+- `/webui/api/provider/oauth/accounts`
+- `/webui/api/provider/runtime`
+- `/webui/api/provider/runtime/summary`
+
+These are used for:
+
+- browser-driven OAuth login
+- importing existing auth JSON
+- inspecting provider runtime health, cooldown state, and candidate ordering
+- triggering refresh, rerank, or cooldown cleanup manually
+
 ### Audit and Logs
 
 - `/webui/api/task_audit`
@@ -150,6 +166,24 @@ For node troubleshooting, `status` also now includes:
 - `Nodes Dispatch Fallbacks`
 
 Those lines are the fastest way to spot failed WebRTC setup or relay fallback behavior.
+
+## Service Deployment
+
+`clawgo gateway` now supports service control across desktop and server environments:
+
+- Linux: `systemd`, with `user` or `system` scope
+- macOS: `launchd`
+- Windows: Scheduled Task
+
+Running:
+
+```bash
+clawgo gateway
+```
+
+attempts to register the gateway service for the current platform.
+
+`clawgo uninstall` also tries to remove the installed gateway service.
 
 ## Recommended Checks
 

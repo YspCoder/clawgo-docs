@@ -116,6 +116,14 @@ make package-all
 - `clawgo-<os>-<arch>-nochannels.tar.gz`
 - `clawgo-<os>-<arch>-<channel>.tar.gz`
 
+对外分发时，文档站还会直接托管一份脚本：
+
+```text
+https://clawgo.dev/install.sh
+```
+
+这样用户不需要再记 GitHub raw 地址。
+
 其中 `<channel>` 目前对应：
 
 - `telegram`
@@ -144,9 +152,12 @@ WebUI 已经内嵌在二进制里，所以 release 不再需要单独上传 `web
 - `none`：去掉所有通道，对应 `-nochannels`，但会额外带上 `with_tui`
 - 单通道变体：只保留某一个 channel，其他 channel 通过 `omit_<channel>` build tags 被裁掉
 
-这意味着当前 release 里的 no-channel 变体，不是“什么入口都没有”，而是更偏运维和 SSH 场景：
+最近 `full` 变体也已经编入 `with_tui`，所以 TUI 不再是 no-channel 独占能力。
 
-- 不包含外部消息通道
+这意味着当前 release 里的 full / no-channel 变体，都保留了终端入口：
+
+- `full`：通道能力完整，同时也能直接跑 `clawgo tui`
+- `none`：不包含外部消息通道，但保留 `clawgo tui`
 - 保留 `clawgo tui` 这个终端界面入口
 - 适合本地调试、远端值班或只通过 Gateway/API 使用系统
 

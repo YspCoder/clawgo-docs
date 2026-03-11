@@ -97,6 +97,7 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - task queue
 - ekg summary
 - subagents runtime
+- providers runtime summary
 
 其中 `version` 快照里现在也会带：
 
@@ -232,6 +233,43 @@ WebUI 当前会用它做：
 ### `GET /webui/api/tool_allowlist_groups`
 
 获取工具白名单分组定义，供 profile 编辑器使用。
+
+### `POST /webui/api/provider/oauth/start`
+
+启动一次 provider OAuth 登录流，返回授权地址和 flow id。
+
+### `POST /webui/api/provider/oauth/complete`
+
+提交 OAuth 回调参数，完成一次登录并把 credential 信息写回 provider 配置。
+
+### `POST /webui/api/provider/oauth/import`
+
+导入 auth JSON，并更新 provider 的 credential 与 models。
+
+### `GET/POST /webui/api/provider/oauth/accounts`
+
+读取或维护某个 provider 的 OAuth 账户。
+
+`POST` 常见动作：
+
+- `refresh`
+- `delete`
+- `clear_cooldown`
+
+### `GET/POST /webui/api/provider/runtime`
+
+读取 provider runtime 明细，或执行运维动作。
+
+`POST` 常见动作：
+
+- `clear_api_cooldown`
+- `clear_history`
+- `refresh_now`
+- `rerank`
+
+### `GET /webui/api/provider/runtime/summary`
+
+返回 provider runtime 汇总，供 Providers 页面总览使用。
 
 ### `POST /webui/api/mcp/install`
 

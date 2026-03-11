@@ -87,6 +87,14 @@ The release flow now expects artifacts such as:
 - `clawgo-<os>-<arch>-nochannels.tar.gz`
 - `clawgo-<os>-<arch>-<channel>.tar.gz`
 
+For public install entrypoints, the docs site also mirrors the script at:
+
+```text
+https://clawgo.dev/install.sh
+```
+
+That keeps end-user install instructions independent from a GitHub raw URL.
+
 Current `<channel>` variants include:
 
 - `telegram`
@@ -115,9 +123,12 @@ Meaning:
 - `none`: all channels omitted, producing the `-nochannels` artifact, but it now also includes `with_tui`
 - single-channel variants: keep one channel and omit the others through `omit_<channel>` build tags
 
-That means the current no-channel release is not a "no entrypoint" build. It is aimed more at operator and SSH-oriented usage:
+Recent builds also include `with_tui` in the `full` variant, so TUI is no longer exclusive to the no-channel build.
 
-- no external message channels are compiled in
+That means current full and no-channel releases both keep a terminal entrypoint:
+
+- `full`: all channel capabilities plus `clawgo tui`
+- `none`: no external message channels, but `clawgo tui` remains available
 - `clawgo tui` remains available as the terminal UI entrypoint
 - it fits local debugging, remote operations, or Gateway/API-only deployments
 

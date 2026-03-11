@@ -146,6 +146,30 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `GET /webui/api/config`
 - `POST /webui/api/config`
 
+### Providers
+
+独立的 provider 工作台，专门管理：
+
+- `models.providers.*`
+- bearer / oauth / hybrid 几种鉴权模式
+- provider runtime 摘要与候选排序
+- OAuth 账户登录、导入、刷新、删除和冷却清理
+
+相比把 provider 塞在通用配置页里，这个页面更偏运维视角：
+
+- 顶部按 provider 分 tab
+- 每个 provider 都能看 runtime health、cooldown、最近错误和候选顺序
+- `oauth` / `hybrid` 模式下可以直接走浏览器登录或导入 auth JSON
+
+接口：
+
+- `/webui/api/provider/oauth/start`
+- `/webui/api/provider/oauth/complete`
+- `/webui/api/provider/oauth/import`
+- `/webui/api/provider/oauth/accounts`
+- `/webui/api/provider/runtime`
+- `/webui/api/provider/runtime/summary`
+
 ### MCP
 
 用于管理 MCP server 和查看已发现的远端工具，支持：

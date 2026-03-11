@@ -93,7 +93,32 @@ Fields:
 - `supports_responses_compact`
 - `auth`
 - `timeout_sec`
+- `runtime_persist`
+- `runtime_history_file`
+- `runtime_history_max`
+- `oauth.*`
 - `responses.*`
+
+`auth` supports `bearer`, `oauth`, `hybrid`, and `none`.
+
+## `providers.proxy.oauth` / `providers.proxies.<name>.oauth`
+
+| Field | Purpose |
+| --- | --- |
+| `provider` | OAuth provider name |
+| `network_proxy` | network proxy for OAuth login and refresh |
+| `credential_file` | primary credential file |
+| `credential_files` | bound credential file list |
+| `callback_port` | local callback port |
+| `client_id` | OAuth client id |
+| `client_secret` | OAuth client secret |
+| `auth_url` | custom authorization URL |
+| `token_url` | custom token URL |
+| `redirect_url` | custom redirect URL |
+| `scopes` | OAuth scopes |
+| `cooldown_sec` | failure cooldown window |
+| `refresh_scan_sec` | refresh scan interval |
+| `refresh_lead_sec` | proactive refresh lead window |
 
 ## `gateway.nodes.p2p`
 

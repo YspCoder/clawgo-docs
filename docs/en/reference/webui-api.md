@@ -54,6 +54,8 @@ The UI uses that field to know which channel adapters are actually compiled into
 
 `GET /webui/api/runtime` is the websocket runtime snapshot endpoint. It emits `runtime_snapshot` payloads aggregating version, nodes, sessions, task queue, EKG summary, and subagent runtime.
 
+Recent runtime snapshots also include provider runtime summary data for the dedicated Providers page.
+
 The `version` part of that snapshot now also includes:
 
 - `compiled_channels`
@@ -118,6 +120,22 @@ Supported installers:
 - `uv`
 - `bun`
 
+Additional provider-management APIs:
+
+- `POST /webui/api/provider/oauth/start`
+- `POST /webui/api/provider/oauth/complete`
+- `POST /webui/api/provider/oauth/import`
+- `GET/POST /webui/api/provider/oauth/accounts`
+- `GET/POST /webui/api/provider/runtime`
+- `GET /webui/api/provider/runtime/summary`
+
+Typical provider runtime actions include:
+
+- `clear_api_cooldown`
+- `clear_history`
+- `refresh_now`
+- `rerank`
+
 ## Automation
 
 - `GET/POST /webui/api/cron`
@@ -137,6 +155,7 @@ Supported installers:
 | Page | Main APIs |
 | --- | --- |
 | MCP | `tools`, `mcp/install`, `config` |
+| Providers | `provider/oauth/start`, `provider/oauth/complete`, `provider/oauth/import`, `provider/oauth/accounts`, `provider/runtime`, `provider/runtime/summary` |
 | Chat | `chat`, `chat/history`, `chat/stream`, `chat/live`, `subagents_runtime` |
 | Config | `config` |
 | Cron | `cron` |

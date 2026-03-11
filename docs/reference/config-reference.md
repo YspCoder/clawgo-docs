@@ -130,9 +130,32 @@
 | `api_base` | API 基地址 |
 | `models` | 模型列表 |
 | `supports_responses_compact` | 是否支持 compact responses |
-| `auth` | `bearer` / `oauth` / `none` |
+| `auth` | `bearer` / `oauth` / `hybrid` / `none` |
 | `timeout_sec` | 超时秒数 |
+| `runtime_persist` | 是否持久化 provider runtime 事件 |
+| `runtime_history_file` | runtime 历史文件路径 |
+| `runtime_history_max` | 持久化历史上限 |
+| `oauth.*` | OAuth 登录与账户刷新配置 |
 | `responses.*` | responses API 细节参数 |
+
+### `providers.proxy.oauth` / `providers.proxies.<name>.oauth`
+
+| 字段 | 作用 |
+| --- | --- |
+| `provider` | OAuth provider 名称 |
+| `network_proxy` | OAuth 网络代理 |
+| `credential_file` | 主 credential 文件 |
+| `credential_files` | 已绑定 credential 文件列表 |
+| `callback_port` | 本地回调端口 |
+| `client_id` | OAuth client id |
+| `client_secret` | OAuth client secret |
+| `auth_url` | 自定义授权地址 |
+| `token_url` | 自定义 token 地址 |
+| `redirect_url` | 自定义回调地址 |
+| `scopes` | OAuth scopes |
+| `cooldown_sec` | 失败冷却时间 |
+| `refresh_scan_sec` | 刷新扫描周期 |
+| `refresh_lead_sec` | 过期前提前刷新窗口 |
 
 ## gateway
 

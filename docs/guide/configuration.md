@@ -223,7 +223,41 @@ ClawGo 的路由器支持基于关键字的主 agent 派发。
 - `supports_responses_compact`
 - `auth`
 - `timeout_sec`
+- `runtime_persist`
+- `runtime_history_file`
+- `runtime_history_max`
+- `oauth`
 - `responses`
+
+`auth` 目前允许：
+
+- `bearer`
+- `oauth`
+- `hybrid`
+- `none`
+
+`oauth` 相关字段包括：
+
+- `provider`
+- `network_proxy`
+- `credential_file`
+- `credential_files`
+- `callback_port`
+- `client_id`
+- `client_secret`
+- `auth_url`
+- `token_url`
+- `redirect_url`
+- `scopes`
+- `cooldown_sec`
+- `refresh_scan_sec`
+- `refresh_lead_sec`
+
+其中：
+
+- `auth=oauth` 时必须提供 `oauth.provider`
+- `auth=hybrid` 表示 API key 和 OAuth 账户都可以参与候选 provider 排序
+- `runtime_persist` / `runtime_history_*` 用于保留 provider runtime 事件和候选排序历史
 
 `responses` 进一步包含：
 

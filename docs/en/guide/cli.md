@@ -228,8 +228,8 @@ Usage notes:
 Notes:
 
 - `clawgo tui` depends on the `with_tui` build tag
-- current release variants include TUI in the `-nochannels` / `none` build
-- if the current binary was built without TUI, the command tells you to install the no-channel variant
+- current release variants include TUI in both the `full` build and the `-nochannels` / `none` build
+- if the current binary was built without TUI, the command tells you to install a build variant that includes TUI
 
 ## `channel`
 

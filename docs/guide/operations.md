@@ -92,6 +92,22 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/webui/api/node_artifacts/delete`
 - `/webui/api/node_artifacts/prune`
 
+Provider 侧这轮也新增了独立运维接口：
+
+- `/webui/api/provider/oauth/start`
+- `/webui/api/provider/oauth/complete`
+- `/webui/api/provider/oauth/import`
+- `/webui/api/provider/oauth/accounts`
+- `/webui/api/provider/runtime`
+- `/webui/api/provider/runtime/summary`
+
+这组接口主要用于：
+
+- 浏览器内完成 OAuth 登录
+- 导入已有 auth JSON
+- 查看 provider runtime 健康度、cooldown 和候选顺序
+- 手动触发 refresh / rerank / cooldown 清理
+
 ### 运维与审计
 
 - `/webui/api/task_audit`
@@ -200,6 +216,20 @@ WebUI 还能直接查看最近日志和日志流。
 - `stop`
 - `restart`
 - `status`
+
+最近这套服务化逻辑已经补成跨平台：
+
+- Linux：`systemd`，支持 `user` / `system` scope
+- macOS：`launchd`
+- Windows：计划任务
+
+默认直接执行：
+
+```bash
+clawgo gateway
+```
+
+就会尝试为当前平台注册 gateway service。
 
 卸载时 `clawgo uninstall` 会尝试清理安装的 gateway service。
 

@@ -128,6 +128,30 @@ There is also an important channel-page behavior change:
 - a single-channel build no longer exposes unrelated channel forms
 - a `-nochannels` / `none` build hides channel settings and falls back to the generic config page
 
+### Providers
+
+Dedicated provider workspace for managing:
+
+- `models.providers.*`
+- bearer, oauth, and hybrid auth modes
+- provider runtime summaries and candidate ordering
+- OAuth account login, import, refresh, delete, and cooldown cleanup
+
+This page is more operations-focused than a generic config editor:
+
+- providers are split into tabs
+- each provider shows runtime health, cooldown state, recent errors, and candidate order
+- `oauth` and `hybrid` providers can log in through the browser flow or import auth JSON directly
+
+Uses:
+
+- `/webui/api/provider/oauth/start`
+- `/webui/api/provider/oauth/complete`
+- `/webui/api/provider/oauth/import`
+- `/webui/api/provider/oauth/accounts`
+- `/webui/api/provider/runtime`
+- `/webui/api/provider/runtime/summary`
+
 ### MCP
 
 Dedicated management page for MCP servers and discovered remote tools. It supports:

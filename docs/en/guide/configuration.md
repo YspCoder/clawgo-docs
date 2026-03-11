@@ -200,7 +200,41 @@ Fields:
 - `supports_responses_compact`
 - `auth`
 - `timeout_sec`
+- `runtime_persist`
+- `runtime_history_file`
+- `runtime_history_max`
+- `oauth`
 - `responses`
+
+Supported `auth` values:
+
+- `bearer`
+- `oauth`
+- `hybrid`
+- `none`
+
+OAuth-related fields include:
+
+- `provider`
+- `network_proxy`
+- `credential_file`
+- `credential_files`
+- `callback_port`
+- `client_id`
+- `client_secret`
+- `auth_url`
+- `token_url`
+- `redirect_url`
+- `scopes`
+- `cooldown_sec`
+- `refresh_scan_sec`
+- `refresh_lead_sec`
+
+Notes:
+
+- `auth=oauth` requires `oauth.provider`
+- `auth=hybrid` means API key and OAuth accounts can both participate in provider candidate selection
+- `runtime_persist` and `runtime_history_*` retain provider runtime events and candidate-order history
 
 ## gateway
 

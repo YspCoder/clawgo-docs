@@ -264,8 +264,8 @@ clawgo tui --token <gateway-token>
 注意：
 
 - `clawgo tui` 依赖 `with_tui` build tag
-- 当前发布变体里，`-nochannels` / `none` 版本会带上 TUI
-- 如果当前二进制没编入 TUI，命令会提示你安装 no-channel 变体
+- 当前发布变体里，`full` 和 `-nochannels` / `none` 版本都会带上 TUI
+- 如果当前二进制没编入 TUI，命令会提示你安装带 TUI 的构建变体
 
 ## channel
 
