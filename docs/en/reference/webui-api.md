@@ -1,6 +1,6 @@
 # WebUI API Reference
 
-This page groups the currently registered `/webui/api/*` endpoints from `pkg/api/server.go`.
+This page groups the currently registered `/api/*` endpoints from `pkg/api/server.go`.
 
 ## Auth
 
@@ -11,11 +11,11 @@ Access requires either:
 
 ## Config
 
-- `GET /webui/api/config`
-- `POST /webui/api/config`
-- `GET /webui/api/version`
+- `GET /api/config`
+- `POST /api/config`
+- `GET /api/version`
 
-`POST /webui/api/config` supports risky-change confirmation. Recent changes expanded that logic to include named providers under `providers.proxies.<name>`, not only the default provider. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
+`POST /api/config` supports risky-change confirmation. Recent changes expanded that logic to include named providers under `providers.proxies.<name>`, not only the default provider. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
 
 The WebUI header version-check action compares this version payload with the latest GitHub release.
 
@@ -27,13 +27,13 @@ The UI uses that field to know which channel adapters are actually compiled into
 
 ## Chat and Upload
 
-- `POST /webui/api/chat`
-- `GET /webui/api/chat/history`
-- `GET /webui/api/chat/stream`
-- `GET /webui/api/chat/live`
-- `POST /webui/api/upload`
+- `POST /api/chat`
+- `GET /api/chat/history`
+- `GET /api/chat/stream`
+- `GET /api/chat/live`
+- `POST /api/upload`
 
-`GET /webui/api/chat/live` is the websocket chat streaming endpoint. After the first JSON message, it sends:
+`GET /api/chat/live` is the websocket chat streaming endpoint. After the first JSON message, it sends:
 
 - `chat_chunk`
 - `chat_done`
@@ -41,18 +41,18 @@ The UI uses that field to know which channel adapters are actually compiled into
 
 ## Runtime Resources
 
-- `GET /webui/api/tools`
-- `GET /webui/api/runtime`
-- `GET /webui/api/nodes`
-- `GET /webui/api/sessions`
-- `GET/POST /webui/api/memory`
-- `GET/POST /webui/api/subagent_profiles`
-- `GET/POST /webui/api/subagents_runtime`
-- `GET /webui/api/subagents_runtime/live`
-- `GET /webui/api/tool_allowlist_groups`
-- `POST /webui/api/mcp/install`
+- `GET /api/tools`
+- `GET /api/runtime`
+- `GET /api/nodes`
+- `GET /api/sessions`
+- `GET/POST /api/memory`
+- `GET/POST /api/subagent_profiles`
+- `GET/POST /api/subagents_runtime`
+- `GET /api/subagents_runtime/live`
+- `GET /api/tool_allowlist_groups`
+- `POST /api/mcp/install`
 
-`GET /webui/api/runtime` is the websocket runtime snapshot endpoint. It emits `runtime_snapshot` payloads aggregating version, nodes, sessions, task queue, EKG summary, and subagent runtime.
+`GET /api/runtime` is the websocket runtime snapshot endpoint. It emits `runtime_snapshot` payloads aggregating version, nodes, sessions, task queue, EKG summary, and subagent runtime.
 
 Recent runtime snapshots also include provider runtime summary data for the dedicated Providers page.
 
@@ -62,7 +62,7 @@ The `version` part of that snapshot now also includes:
 
 This lets the WebUI prune channel settings routes and menus at runtime.
 
-`GET /webui/api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
+`GET /api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
 
 Recent versions also add:
 
@@ -79,15 +79,15 @@ Node summaries also expose:
 
 Additional node-specific runtime APIs:
 
-- `GET /webui/api/node_dispatches`
-- `POST /webui/api/node_dispatches/replay`
-- `GET /webui/api/node_artifacts`
-- `GET /webui/api/node_artifacts/export`
-- `GET /webui/api/node_artifacts/download`
-- `POST /webui/api/node_artifacts/delete`
-- `POST /webui/api/node_artifacts/prune`
+- `GET /api/node_dispatches`
+- `POST /api/node_dispatches/replay`
+- `GET /api/node_artifacts`
+- `GET /api/node_artifacts/export`
+- `GET /api/node_artifacts/download`
+- `POST /api/node_artifacts/delete`
+- `POST /api/node_artifacts/prune`
 
-`GET /webui/api/node_dispatches` returns node dispatch audit rows, including:
+`GET /api/node_dispatches` returns node dispatch audit rows, including:
 
 - `used_transport`
 - `fallback_from`
@@ -95,21 +95,21 @@ Additional node-specific runtime APIs:
 - `artifact_kinds`
 - `artifacts`
 
-`POST /webui/api/node_dispatches/replay` replays a historical node dispatch through the current node dispatch handler.
+`POST /api/node_dispatches/replay` replays a historical node dispatch through the current node dispatch handler.
 
-`GET /webui/api/node_artifacts` reads node artifact rows and retention summary. Common filters include `node`, `action`, `kind`, and `limit`.
+`GET /api/node_artifacts` reads node artifact rows and retention summary. Common filters include `node`, `action`, `kind`, and `limit`.
 
-`POST /webui/api/node_artifacts/prune` accepts common fields such as `node`, `action`, `kind`, and `keep_latest`.
+`POST /api/node_artifacts/prune` accepts common fields such as `node`, `action`, `kind`, and `keep_latest`.
 
-`GET /webui/api/subagents_runtime/live` is the websocket subagent detail feed. Common query params are `task_id` and `preview_task_id`, and the payload type is `subagents_live`.
+`GET /api/subagents_runtime/live` is the websocket subagent detail feed. Common query params are `task_id` and `preview_task_id`, and the payload type is `subagents_live`.
 
-`GET /webui/api/tools` is also used by the MCP page for:
+`GET /api/tools` is also used by the MCP page for:
 
 - `tools`
 - `mcp_tools`
 - `mcp_server_checks`
 
-`POST /webui/api/mcp/install` accepts:
+`POST /api/mcp/install` accepts:
 
 - `package`
 - `installer`
@@ -122,12 +122,12 @@ Supported installers:
 
 Additional provider-management APIs:
 
-- `POST /webui/api/provider/oauth/start`
-- `POST /webui/api/provider/oauth/complete`
-- `POST /webui/api/provider/oauth/import`
-- `GET/POST /webui/api/provider/oauth/accounts`
-- `GET/POST /webui/api/provider/runtime`
-- `GET /webui/api/provider/runtime/summary`
+- `POST /api/provider/oauth/start`
+- `POST /api/provider/oauth/complete`
+- `POST /api/provider/oauth/import`
+- `GET/POST /api/provider/oauth/accounts`
+- `GET/POST /api/provider/runtime`
+- `GET /api/provider/runtime/summary`
 
 Typical provider runtime actions include:
 
@@ -138,17 +138,17 @@ Typical provider runtime actions include:
 
 ## Automation
 
-- `GET/POST /webui/api/cron`
-- `GET/POST /webui/api/skills`
+- `GET/POST /api/cron`
+- `GET/POST /api/skills`
 
 ## Audit and Logs
 
-- `GET /webui/api/task_audit`
-- `GET /webui/api/task_queue`
-- `GET /webui/api/ekg_stats`
-- `GET/POST /webui/api/exec_approvals`
-- `GET /webui/api/logs/recent`
-- `GET /webui/api/logs/stream`
+- `GET /api/task_audit`
+- `GET /api/task_queue`
+- `GET /api/ekg_stats`
+- `GET/POST /api/exec_approvals`
+- `GET /api/logs/recent`
+- `GET /api/logs/stream`
 
 ## Page To API Mapping
 

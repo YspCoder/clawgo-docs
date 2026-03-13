@@ -23,7 +23,7 @@
 1. 两台远端 node 都能成功注册到同一个 gateway
 2. `websocket_tunnel` 模式下，远端 node 任务可成功完成
 3. `webrtc` 模式下，远端 node 任务可成功完成
-4. `webrtc` 模式下，`/webui/api/nodes` 的 `p2p.active_sessions` 大于 `0`
+4. `webrtc` 模式下，`/api/nodes` 的 `p2p.active_sessions` 大于 `0`
 5. Dashboard / Subagents 能看到 node P2P 会话状态和最近调度路径
 
 ## 拓扑准备
@@ -207,7 +207,7 @@ clawgo node register \
 
 ```bash
 curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://<gateway-host>:18790/webui/api/nodes
+  http://<gateway-host>:18790/api/nodes
 ```
 
 预期：
@@ -225,7 +225,7 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 curl -s \
   -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
   -H 'Content-Type: application/json' \
-  http://<gateway-host>:18790/webui/api/subagents_runtime \
+  http://<gateway-host>:18790/api/subagents_runtime \
   -d '{
     "action": "dispatch_and_wait",
     "agent_id": "node.<node-id>.main",
@@ -257,7 +257,7 @@ curl -s \
 
 ```bash
 curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://<gateway-host>:18790/webui/api/nodes
+  http://<gateway-host>:18790/api/nodes
 ```
 
 预期 `p2p` 段包含：
@@ -298,7 +298,7 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 
 现象：
 
-- 配置明明改了，但 `/webui/api/nodes` 仍表现出旧行为
+- 配置明明改了，但 `/api/nodes` 仍表现出旧行为
 
 处理：
 
@@ -314,7 +314,7 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 
 处理：
 
-- 直接使用 `/webui/api/subagents_runtime`
+- 直接使用 `/api/subagents_runtime`
 - 用 `dispatch_and_wait`
 - 明确指定 `node.<id>.main`
 
@@ -331,7 +331,7 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 
 看这几处：
 
-- `/webui/api/nodes` 的 `p2p` 状态
+- `/api/nodes` 的 `p2p` 状态
 - `nodes-dispatch-audit.jsonl` 里的 `used_transport`
 - `nodes-dispatch-audit.jsonl` 里的 `fallback_from`
 - `clawgo status` 里的 `Nodes Dispatch Fallbacks`

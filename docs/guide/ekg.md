@@ -24,7 +24,7 @@ workspace/memory/ekg-snapshot.json
 
 - WebUI 的 EKG 页面
 - Dashboard 的 EKG 摘要
-- `/webui/api/ekg_stats`
+- `/api/ekg_stats`
 - session planner 的任务提示与 provider 选择辅助
 
 ## WebUI 里能看到什么
@@ -56,7 +56,7 @@ Dashboard 首页也会拿 `24h` 窗口的 EKG 摘要做卡片展示。
 核心接口：
 
 ```text
-GET /webui/api/ekg_stats?window=24h
+GET /api/ekg_stats?window=24h
 ```
 
 常见返回字段包括：

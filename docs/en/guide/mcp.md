@@ -15,7 +15,7 @@ Recent WebUI changes also redesigned the MCP workflow into a server-card plus mo
 
 - the main list shows one summary card per server
 - create and edit actions now happen inside a modal
-- save writes through `/webui/api/config` directly
+- save writes through `/api/config` directly
 - discovered tools are shown in a separate section
 - missing commands and install suggestions are surfaced both on the card and in the editor
 
@@ -304,7 +304,7 @@ It supports:
 
 ## Related WebUI APIs
 
-### `GET /webui/api/tools`
+### `GET /api/tools`
 
 Returns all tools and also:
 
@@ -313,7 +313,7 @@ Returns all tools and also:
 
 The first list is for discovered remote tools. The second contains command-check results for configured servers.
 
-### `POST /webui/api/mcp/install`
+### `POST /api/mcp/install`
 
 Example input:
 

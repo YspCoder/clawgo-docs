@@ -223,7 +223,7 @@ Recent WebUI updates already surface node P2P:
 - the Nodes page shows node details, remote agent trees, recent dispatches, P2P sessions, and artifacts
 - the NodeArtifacts page shows listing, export, download, delete, and prune actions
 - the TaskAudit page now includes a node dispatch audit view
-- `/webui/api/nodes` returns `p2p`, `dispatches`, `alerts`, and `artifact_retention`
+- `/api/nodes` returns `p2p`, `dispatches`, `alerts`, and `artifact_retention`
 
 The Dashboard currently shows:
 
@@ -269,8 +269,8 @@ Check:
 
 - `Nodes Dispatch Fallbacks` in `status`
 - `used_transport` and `fallback_from` in `nodes-dispatch-audit.jsonl`
-- the session state in `/webui/api/nodes` under `p2p.nodes[]`
-- node dispatch audit rows from `/webui/api/node_dispatches`
+- the session state in `/api/nodes` under `p2p.nodes[]`
+- node dispatch audit rows from `/api/node_dispatches`
 
 ### Artifact Volume Keeps Growing
 

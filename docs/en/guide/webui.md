@@ -51,15 +51,15 @@ Supports both:
 
 Uses:
 
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/subagents_runtime`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/subagents_runtime`
 
 Recent versions also subscribe to:
 
-- `/webui/api/subagents_runtime/live`
+- `/api/subagents_runtime/live`
 
 to refresh:
 
@@ -145,12 +145,12 @@ This page is more operations-focused than a generic config editor:
 
 Uses:
 
-- `/webui/api/provider/oauth/start`
-- `/webui/api/provider/oauth/complete`
-- `/webui/api/provider/oauth/import`
-- `/webui/api/provider/oauth/accounts`
-- `/webui/api/provider/runtime`
-- `/webui/api/provider/runtime/summary`
+- `/api/provider/oauth/start`
+- `/api/provider/oauth/complete`
+- `/api/provider/oauth/import`
+- `/api/provider/oauth/accounts`
+- `/api/provider/runtime`
+- `/api/provider/runtime/summary`
 
 ### MCP
 
@@ -173,9 +173,9 @@ Recent changes also moved this page to a server-card plus modal-editor workflow:
 
 Uses:
 
-- `/webui/api/tools`
-- `/webui/api/mcp/install`
-- `/webui/api/config`
+- `/api/tools`
+- `/api/mcp/install`
+- `/api/config`
 
 ### Logs
 
@@ -221,10 +221,10 @@ If the backend wires `SetNodeDispatchHandler(...)`, the page can also replay a n
 
 Uses:
 
-- `/webui/api/task_queue`
-- `/webui/api/task_audit`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
+- `/api/task_queue`
+- `/api/task_audit`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
 
 ### Nodes
 
@@ -241,9 +241,9 @@ It currently shows:
 
 Uses:
 
-- `/webui/api/nodes`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_artifacts`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_artifacts`
 
 ### NodeArtifacts
 
@@ -260,15 +260,15 @@ It supports:
 
 Uses:
 
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
 
 ### EKG
 
-Uses `/webui/api/ekg_stats` to show runtime health trends.
+Uses `/api/ekg_stats` to show runtime health trends.
 
 For windows, rankings, error signatures, and escalation semantics, see:
 
@@ -278,38 +278,38 @@ For windows, rankings, error signatures, and escalation semantics, see:
 
 Current registered endpoints:
 
-- `/webui/api/config`
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/runtime`
-- `/webui/api/version`
-- `/webui/api/upload`
-- `/webui/api/nodes`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
-- `/webui/api/cron`
-- `/webui/api/skills`
-- `/webui/api/sessions`
-- `/webui/api/memory`
-- `/webui/api/subagent_profiles`
-- `/webui/api/subagents_runtime`
-- `/webui/api/subagents_runtime/live`
-- `/webui/api/tool_allowlist_groups`
-- `/webui/api/task_audit`
-- `/webui/api/task_queue`
-- `/webui/api/ekg_stats`
-- `/webui/api/exec_approvals`
-- `/webui/api/logs/stream`
-- `/webui/api/logs/recent`
+- `/api/config`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/runtime`
+- `/api/version`
+- `/api/upload`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
+- `/api/cron`
+- `/api/skills`
+- `/api/sessions`
+- `/api/memory`
+- `/api/subagent_profiles`
+- `/api/subagents_runtime`
+- `/api/subagents_runtime/live`
+- `/api/tool_allowlist_groups`
+- `/api/task_audit`
+- `/api/task_queue`
+- `/api/ekg_stats`
+- `/api/exec_approvals`
+- `/api/logs/stream`
+- `/api/logs/recent`
 
-`/webui/api/nodes` now also includes:
+`/api/nodes` now also includes:
 
 - `p2p`
 - `dispatches`
@@ -318,7 +318,7 @@ Current registered endpoints:
 
 Those fields are used by the Dashboard, Nodes, NodeArtifacts, and TaskAudit pages.
 
-`/webui/api/runtime` is now the live runtime snapshot websocket used by AppContext to aggregate:
+`/api/runtime` is now the live runtime snapshot websocket used by AppContext to aggregate:
 
 - version
 - nodes

@@ -113,7 +113,7 @@ Agent 间通信不是简单字符串转发，而是通过 bus、thread、message
 Gateway 在 `pkg/api/server.go` 中暴露两类能力：
 
 - 节点注册与心跳接口
-- WebUI 页面和 `/webui/api/*` 控制接口
+- WebUI 页面和 `/api/*` 控制接口
 
 它既是运行时的 API 门户，也是静态前端的宿主。
 

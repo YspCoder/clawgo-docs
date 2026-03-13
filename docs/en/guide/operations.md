@@ -34,7 +34,7 @@ The Gateway HTTP wrapper now also enables permissive CORS by default:
 
 That makes it easier to:
 
-- call `/webui/api/*` from an external console
+- call `/api/*` from an external console
 - place another frontend behind a reverse proxy
 - build lightweight device-side or local bridge integrations
 
@@ -42,8 +42,8 @@ That makes it easier to:
 
 ### Config and Version
 
-- `/webui/api/config`
-- `/webui/api/version`
+- `/api/config`
+- `/api/version`
 
 Risk confirmation on config writes now covers not only the default provider, but also:
 
@@ -52,24 +52,24 @@ Risk confirmation on config writes now covers not only the default provider, but
 
 ### Chat and Upload
 
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/upload`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/upload`
 
 ### Runtime Resources
 
-- `/webui/api/nodes`
-- `/webui/api/runtime`
-- `/webui/api/sessions`
-- `/webui/api/memory`
-- `/webui/api/subagents_runtime`
-- `/webui/api/subagents_runtime/live`
-- `/webui/api/subagent_profiles`
-- `/webui/api/tool_allowlist_groups`
+- `/api/nodes`
+- `/api/runtime`
+- `/api/sessions`
+- `/api/memory`
+- `/api/subagents_runtime`
+- `/api/subagents_runtime/live`
+- `/api/subagent_profiles`
+- `/api/tool_allowlist_groups`
 
-`/webui/api/nodes` now returns more than the node list and trees. It also includes a `p2p` summary with:
+`/api/nodes` now returns more than the node list and trees. It also includes a `p2p` summary with:
 
 - `enabled`
 - `transport`
@@ -86,22 +86,22 @@ Recent versions also add:
 
 There are also dedicated node runtime endpoints:
 
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
 
 Recent versions also add dedicated provider operations endpoints:
 
-- `/webui/api/provider/oauth/start`
-- `/webui/api/provider/oauth/complete`
-- `/webui/api/provider/oauth/import`
-- `/webui/api/provider/oauth/accounts`
-- `/webui/api/provider/runtime`
-- `/webui/api/provider/runtime/summary`
+- `/api/provider/oauth/start`
+- `/api/provider/oauth/complete`
+- `/api/provider/oauth/import`
+- `/api/provider/oauth/accounts`
+- `/api/provider/runtime`
+- `/api/provider/runtime/summary`
 
 These are used for:
 
@@ -112,12 +112,12 @@ These are used for:
 
 ### Audit and Logs
 
-- `/webui/api/task_audit`
-- `/webui/api/task_queue`
-- `/webui/api/ekg_stats`
-- `/webui/api/exec_approvals`
-- `/webui/api/logs/recent`
-- `/webui/api/logs/stream`
+- `/api/task_audit`
+- `/api/task_queue`
+- `/api/ekg_stats`
+- `/api/exec_approvals`
+- `/api/logs/recent`
+- `/api/logs/stream`
 
 For a dedicated explanation of EKG metrics, windows, and rankings, see:
 
@@ -133,12 +133,12 @@ Node audit now also includes:
 
 The replay endpoint can resend a historical node dispatch through the current node dispatch handler.
 
-`/webui/api/runtime` and `/webui/api/subagents_runtime/live` now provide websocket-based live snapshots for the frontend runtime overview and subagent detail views.
+`/api/runtime` and `/api/subagents_runtime/live` now provide websocket-based live snapshots for the frontend runtime overview and subagent detail views.
 
 ### Automation
 
-- `/webui/api/cron`
-- `/webui/api/skills`
+- `/api/cron`
+- `/api/skills`
 
 ## Sentinel
 

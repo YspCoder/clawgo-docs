@@ -114,6 +114,6 @@ workspace/memory/skill-audit.jsonl
 
 ## EKG
 
-EKG 是运行态监控面的一部分，后端通过 `/webui/api/ekg_stats` 暴露数据，前端有专门页面展示。
+EKG 是运行态监控面的一部分，后端通过 `/api/ekg_stats` 暴露数据，前端有专门页面展示。
 
 它的意义是把 agent runtime 的健康状况变成可以观察的趋势数据。

@@ -1,6 +1,6 @@
 # WebUI API 参考
 
-这页按接口分组整理 `pkg/api/server.go` 当前显式注册的 `/webui/api/*` 能力。
+这页按接口分组整理 `pkg/api/server.go` 当前显式注册的 `/api/*` 能力。
 
 ## 鉴权
 
@@ -11,11 +11,11 @@
 
 ## 配置类
 
-### `GET /webui/api/config`
+### `GET /api/config`
 
 读取当前配置。
 
-### `POST /webui/api/config`
+### `POST /api/config`
 
 写入配置，并触发后续 hook。WebUI 侧支持高风险变更确认。
 
@@ -26,7 +26,7 @@
 
 当这些字段被改动且未确认时，接口会返回 `requires_confirm: true`。
 
-### `GET /webui/api/version`
+### `GET /api/version`
 
 返回 Gateway/WebUI 版本信息。
 
@@ -40,7 +40,7 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 
 ## 聊天与上传
 
-### `POST /webui/api/chat`
+### `POST /api/chat`
 
 向指定 session 投递消息。
 
@@ -49,15 +49,15 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - 主聊天面板发送消息
 - 携带上传文件后的媒体引用
 
-### `GET /webui/api/chat/history`
+### `GET /api/chat/history`
 
 读取指定 session 历史消息。
 
-### `GET /webui/api/chat/stream`
+### `GET /api/chat/stream`
 
 提供聊天流式输出或事件流。
 
-### `GET /webui/api/chat/live`
+### `GET /api/chat/live`
 
 基于 websocket 的聊天流接口。
 
@@ -67,13 +67,13 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - `chat_done`
 - `chat_error`
 
-### `POST /webui/api/upload`
+### `POST /api/upload`
 
 上传附件，返回服务端可引用路径。
 
 ## 资源与运行态
 
-### `GET /webui/api/tools`
+### `GET /api/tools`
 
 返回工具目录。当前 MCP 页面会读取：
 
@@ -81,7 +81,7 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - `mcp_tools`
 - `mcp_server_checks`
 
-### `GET /webui/api/runtime`
+### `GET /api/runtime`
 
 基于 websocket 的 runtime 汇总快照。
 
@@ -105,7 +105,7 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 
 WebUI 会用它来裁剪 channel settings 路由和菜单。
 
-### `GET /webui/api/nodes`
+### `GET /api/nodes`
 
 查询节点与拓扑相关信息。
 
@@ -132,7 +132,7 @@ WebUI 会用它来裁剪 channel settings 路由和菜单。
 - 节点告警
 - 产物 retention 摘要
 
-### `GET /webui/api/node_dispatches`
+### `GET /api/node_dispatches`
 
 读取节点派发审计。
 
@@ -144,7 +144,7 @@ WebUI 会用它来裁剪 channel settings 路由和菜单。
 - `artifact_kinds`
 - `artifacts`
 
-### `POST /webui/api/node_dispatches/replay`
+### `POST /api/node_dispatches/replay`
 
 把一条历史节点派发重新送回当前 node dispatch handler。
 
@@ -154,7 +154,7 @@ WebUI 会用它来裁剪 channel settings 路由和菜单。
 - 回放一次失败请求
 - 检查 P2P / relay 选择变化
 
-### `GET /webui/api/node_artifacts`
+### `GET /api/node_artifacts`
 
 读取节点产物列表与 retention 摘要。
 
@@ -165,19 +165,19 @@ WebUI 会用它来裁剪 channel settings 路由和菜单。
 - `kind`
 - `limit`
 
-### `GET /webui/api/node_artifacts/export`
+### `GET /api/node_artifacts/export`
 
 导出当前筛选命中的节点产物。
 
-### `GET /webui/api/node_artifacts/download`
+### `GET /api/node_artifacts/download`
 
 下载单个节点产物。
 
-### `POST /webui/api/node_artifacts/delete`
+### `POST /api/node_artifacts/delete`
 
 删除单个节点产物记录及关联文件。
 
-### `POST /webui/api/node_artifacts/prune`
+### `POST /api/node_artifacts/prune`
 
 按筛选条件触发一次 prune。
 
@@ -188,19 +188,19 @@ WebUI 会用它来裁剪 channel settings 路由和菜单。
 - `kind`
 - `keep_latest`
 
-### `GET /webui/api/sessions`
+### `GET /api/sessions`
 
 查询 session 列表与历史。
 
-### `GET/POST /webui/api/memory`
+### `GET/POST /api/memory`
 
 查看或修改 memory 文件。
 
-### `GET/POST /webui/api/subagent_profiles`
+### `GET/POST /api/subagent_profiles`
 
 管理 profile 化 subagent。
 
-### `GET/POST /webui/api/subagents_runtime`
+### `GET/POST /api/subagents_runtime`
 
 查询 subagent runtime 状态，或执行运行时动作。
 
@@ -211,7 +211,7 @@ WebUI 当前会用它做：
 - 读取 prompt file
 - 获取 registry / topology
 
-### `GET /webui/api/subagents_runtime/live`
+### `GET /api/subagents_runtime/live`
 
 基于 websocket 的 subagent 实时详情接口。
 
@@ -230,23 +230,23 @@ WebUI 当前会用它做：
 - inbox
 - preview task 对应的 stream 摘要
 
-### `GET /webui/api/tool_allowlist_groups`
+### `GET /api/tool_allowlist_groups`
 
 获取工具白名单分组定义，供 profile 编辑器使用。
 
-### `POST /webui/api/provider/oauth/start`
+### `POST /api/provider/oauth/start`
 
 启动一次 provider OAuth 登录流，返回授权地址和 flow id。
 
-### `POST /webui/api/provider/oauth/complete`
+### `POST /api/provider/oauth/complete`
 
 提交 OAuth 回调参数，完成一次登录并把 credential 信息写回 provider 配置。
 
-### `POST /webui/api/provider/oauth/import`
+### `POST /api/provider/oauth/import`
 
 导入 auth JSON，并更新 provider 的 credential 与 models。
 
-### `GET/POST /webui/api/provider/oauth/accounts`
+### `GET/POST /api/provider/oauth/accounts`
 
 读取或维护某个 provider 的 OAuth 账户。
 
@@ -256,7 +256,7 @@ WebUI 当前会用它做：
 - `delete`
 - `clear_cooldown`
 
-### `GET/POST /webui/api/provider/runtime`
+### `GET/POST /api/provider/runtime`
 
 读取 provider runtime 明细，或执行运维动作。
 
@@ -267,11 +267,11 @@ WebUI 当前会用它做：
 - `refresh_now`
 - `rerank`
 
-### `GET /webui/api/provider/runtime/summary`
+### `GET /api/provider/runtime/summary`
 
 返回 provider runtime 汇总，供 Providers 页面总览使用。
 
-### `POST /webui/api/mcp/install`
+### `POST /api/mcp/install`
 
 安装一个 MCP server 包，并返回解析出的可执行文件信息。
 
@@ -294,7 +294,7 @@ WebUI 当前会用它做：
 
 ## 调度与自动化
 
-### `GET/POST /webui/api/cron`
+### `GET/POST /api/cron`
 
 支持：
 
@@ -306,33 +306,33 @@ WebUI 当前会用它做：
 - `disable`
 - `delete`
 
-### `GET/POST /webui/api/skills`
+### `GET/POST /api/skills`
 
 查看、安装、卸载或刷新 skills。
 
 ## 审计与日志
 
-### `GET /webui/api/task_audit`
+### `GET /api/task_audit`
 
 读取任务审计明细。
 
-### `GET /webui/api/task_queue`
+### `GET /api/task_queue`
 
 读取任务队列或近期任务状态。
 
-### `GET /webui/api/ekg_stats`
+### `GET /api/ekg_stats`
 
 读取运行态 EKG 统计。
 
-### `GET/POST /webui/api/exec_approvals`
+### `GET/POST /api/exec_approvals`
 
 与执行审批流相关。
 
-### `GET /webui/api/logs/recent`
+### `GET /api/logs/recent`
 
 读取最近日志。
 
-### `GET /webui/api/logs/stream`
+### `GET /api/logs/stream`
 
 以流的方式读取日志。
 

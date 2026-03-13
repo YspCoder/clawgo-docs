@@ -94,6 +94,6 @@ That is why the WebUI can reconstruct topology, internal streams, and task state
 `pkg/api/server.go` exposes two broad surfaces:
 
 - node registration and heartbeat endpoints
-- WebUI pages and `/webui/api/*` endpoints
+- WebUI pages and `/api/*` endpoints
 
 It is both the runtime API gateway and the host for the static UI.

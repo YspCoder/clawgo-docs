@@ -24,7 +24,7 @@ From the current implementation, those signals are consumed by:
 
 - the WebUI EKG page
 - the Dashboard summary
-- `/webui/api/ekg_stats`
+- `/api/ekg_stats`
 - the session planner for task hints and provider-selection assistance
 
 ## What You See In The WebUI
@@ -56,7 +56,7 @@ The Dashboard also uses the `24h` EKG summary for its overview cards.
 Core endpoint:
 
 ```text
-GET /webui/api/ekg_stats?window=24h
+GET /api/ekg_stats?window=24h
 ```
 
 Common response fields include:

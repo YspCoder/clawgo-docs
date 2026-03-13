@@ -55,11 +55,11 @@ Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
 
 它会调用：
 
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/subagents_runtime`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/subagents_runtime`
 
 这也是最能体现“主通道与内部协作流分离”的页面。
 
@@ -84,7 +84,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 最近这个页面还会订阅：
 
-- `/webui/api/subagents_runtime/live`
+- `/api/subagents_runtime/live`
 
 用于实时刷新：
 
@@ -143,8 +143,8 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 后端接口：
 
-- `GET /webui/api/config`
-- `POST /webui/api/config`
+- `GET /api/config`
+- `POST /api/config`
 
 ### Providers
 
@@ -163,12 +163,12 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/provider/oauth/start`
-- `/webui/api/provider/oauth/complete`
-- `/webui/api/provider/oauth/import`
-- `/webui/api/provider/oauth/accounts`
-- `/webui/api/provider/runtime`
-- `/webui/api/provider/runtime/summary`
+- `/api/provider/oauth/start`
+- `/api/provider/oauth/complete`
+- `/api/provider/oauth/import`
+- `/api/provider/oauth/accounts`
+- `/api/provider/runtime`
+- `/api/provider/runtime/summary`
 
 ### MCP
 
@@ -191,9 +191,9 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/tools`
-- `/webui/api/mcp/install`
-- `/webui/api/config`
+- `/api/tools`
+- `/api/mcp/install`
+- `/api/config`
 
 ### Logs
 
@@ -201,8 +201,8 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 后端接口：
 
-- `/webui/api/logs/stream`
-- `/webui/api/logs/recent`
+- `/api/logs/stream`
+- `/api/logs/recent`
 
 ### Skills
 
@@ -210,7 +210,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/skills`
+- `/api/skills`
 
 ### Memory
 
@@ -218,7 +218,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/memory`
+- `/api/memory`
 
 ### Cron
 
@@ -233,7 +233,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/cron`
+- `/api/cron`
 
 ### SubagentProfiles
 
@@ -258,9 +258,9 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/subagent_profiles`
-- `/webui/api/tool_allowlist_groups`
-- `/webui/api/subagents_runtime`
+- `/api/subagent_profiles`
+- `/api/tool_allowlist_groups`
+- `/api/subagents_runtime`
 
 ### TaskAudit
 
@@ -289,10 +289,10 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/task_queue`
-- `/webui/api/task_audit`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
+- `/api/task_queue`
+- `/api/task_audit`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
 
 ### Nodes
 
@@ -309,9 +309,9 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/nodes`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_artifacts`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_artifacts`
 
 ### NodeArtifacts
 
@@ -328,15 +328,15 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 接口：
 
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
 
 ### EKG
 
-对应 `/webui/api/ekg_stats`，用于展示运行时状态趋势。
+对应 `/api/ekg_stats`，用于展示运行时状态趋势。
 
 如果你要单独理解窗口、排名项、错误签名和 escalation 的含义，直接看：
 
@@ -350,38 +350,38 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 当前后端显式注册了这些接口：
 
-- `/webui/api/config`
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/runtime`
-- `/webui/api/version`
-- `/webui/api/upload`
-- `/webui/api/nodes`
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
-- `/webui/api/cron`
-- `/webui/api/skills`
-- `/webui/api/sessions`
-- `/webui/api/memory`
-- `/webui/api/subagent_profiles`
-- `/webui/api/subagents_runtime`
-- `/webui/api/subagents_runtime/live`
-- `/webui/api/tool_allowlist_groups`
-- `/webui/api/task_audit`
-- `/webui/api/task_queue`
-- `/webui/api/ekg_stats`
-- `/webui/api/exec_approvals`
-- `/webui/api/logs/stream`
-- `/webui/api/logs/recent`
+- `/api/config`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/runtime`
+- `/api/version`
+- `/api/upload`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
+- `/api/cron`
+- `/api/skills`
+- `/api/sessions`
+- `/api/memory`
+- `/api/subagent_profiles`
+- `/api/subagents_runtime`
+- `/api/subagents_runtime/live`
+- `/api/tool_allowlist_groups`
+- `/api/task_audit`
+- `/api/task_queue`
+- `/api/ekg_stats`
+- `/api/exec_approvals`
+- `/api/logs/stream`
+- `/api/logs/recent`
 
-`/webui/api/nodes` 最近除了 `nodes` 和 `trees` 之外，还会带上：
+`/api/nodes` 最近除了 `nodes` 和 `trees` 之外，还会带上：
 
 - `p2p`
 - `dispatches`
@@ -390,7 +390,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 用于 Dashboard、Nodes、NodeArtifacts 和 TaskAudit 页面展示。
 
-`/webui/api/runtime` 现在是一个基于 websocket 的 live runtime snapshot 入口，AppContext 会用它聚合：
+`/api/runtime` 现在是一个基于 websocket 的 live runtime snapshot 入口，AppContext 会用它聚合：
 
 - version
 - nodes

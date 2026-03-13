@@ -223,7 +223,7 @@ Gateway 暴露的基础节点接口包括：
 - Nodes 页面会展示节点详情、远端 agent 树、最近派发、P2P 会话和产物
 - NodeArtifacts 页面会展示产物列表、导出、下载、删除和 prune
 - TaskAudit 页面会追加 node dispatch 审计视图
-- `/webui/api/nodes` 会返回 `p2p`、`dispatches`、`alerts`、`artifact_retention`
+- `/api/nodes` 会返回 `p2p`、`dispatches`、`alerts`、`artifact_retention`
 
 Dashboard 当前会展示：
 
@@ -269,8 +269,8 @@ Nodes 详情页当前能直接查看：
 
 - `status` 输出里的 `Nodes Dispatch Fallbacks`
 - `nodes-dispatch-audit.jsonl` 里的 `used_transport` 和 `fallback_from`
-- `/webui/api/nodes` 返回的 `p2p.nodes[]` 会话状态
-- `/webui/api/node_dispatches` 返回的节点派发审计
+- `/api/nodes` 返回的 `p2p.nodes[]` 会话状态
+- `/api/node_dispatches` 返回的节点派发审计
 
 ### 节点产物越来越多
 

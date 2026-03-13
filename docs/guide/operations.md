@@ -43,7 +43,7 @@ WebUI 与 API 受 `gateway.token` 保护。
 
 这更适合：
 
-- 外部控制台直接调 `/webui/api/*`
+- 外部控制台直接调 `/api/*`
 - 反向代理前再挂一层前端
 - 设备侧或本地 bridge 做轻量集成
 
@@ -51,8 +51,8 @@ WebUI 与 API 受 `gateway.token` 保护。
 
 ### 配置与版本
 
-- `/webui/api/config`
-- `/webui/api/version`
+- `/api/config`
+- `/api/version`
 
 其中配置写入的高风险确认现在不只覆盖默认 provider，也会覆盖：
 
@@ -61,24 +61,24 @@ WebUI 与 API 受 `gateway.token` 保护。
 
 ### 对话与上传
 
-- `/webui/api/chat`
-- `/webui/api/chat/history`
-- `/webui/api/chat/stream`
-- `/webui/api/chat/live`
-- `/webui/api/upload`
+- `/api/chat`
+- `/api/chat/history`
+- `/api/chat/stream`
+- `/api/chat/live`
+- `/api/upload`
 
 ### 运行资源
 
-- `/webui/api/nodes`
-- `/webui/api/runtime`
-- `/webui/api/sessions`
-- `/webui/api/memory`
-- `/webui/api/subagents_runtime`
-- `/webui/api/subagents_runtime/live`
-- `/webui/api/subagent_profiles`
-- `/webui/api/tool_allowlist_groups`
+- `/api/nodes`
+- `/api/runtime`
+- `/api/sessions`
+- `/api/memory`
+- `/api/subagents_runtime`
+- `/api/subagents_runtime/live`
+- `/api/subagent_profiles`
+- `/api/tool_allowlist_groups`
 
-其中 `/webui/api/nodes` 现在除了节点列表和拓扑，还会返回 `p2p` 摘要，包含：
+其中 `/api/nodes` 现在除了节点列表和拓扑，还会返回 `p2p` 摘要，包含：
 
 - `enabled`
 - `transport`
@@ -95,22 +95,22 @@ WebUI 与 API 受 `gateway.token` 保护。
 
 另外还有单独的节点运行态接口：
 
-- `/webui/api/node_dispatches`
-- `/webui/api/node_dispatches/replay`
-- `/webui/api/node_artifacts`
-- `/webui/api/node_artifacts/export`
-- `/webui/api/node_artifacts/download`
-- `/webui/api/node_artifacts/delete`
-- `/webui/api/node_artifacts/prune`
+- `/api/node_dispatches`
+- `/api/node_dispatches/replay`
+- `/api/node_artifacts`
+- `/api/node_artifacts/export`
+- `/api/node_artifacts/download`
+- `/api/node_artifacts/delete`
+- `/api/node_artifacts/prune`
 
 Provider 侧这轮也新增了独立运维接口：
 
-- `/webui/api/provider/oauth/start`
-- `/webui/api/provider/oauth/complete`
-- `/webui/api/provider/oauth/import`
-- `/webui/api/provider/oauth/accounts`
-- `/webui/api/provider/runtime`
-- `/webui/api/provider/runtime/summary`
+- `/api/provider/oauth/start`
+- `/api/provider/oauth/complete`
+- `/api/provider/oauth/import`
+- `/api/provider/oauth/accounts`
+- `/api/provider/runtime`
+- `/api/provider/runtime/summary`
 
 这组接口主要用于：
 
@@ -121,12 +121,12 @@ Provider 侧这轮也新增了独立运维接口：
 
 ### 运维与审计
 
-- `/webui/api/task_audit`
-- `/webui/api/task_queue`
-- `/webui/api/ekg_stats`
-- `/webui/api/exec_approvals`
-- `/webui/api/logs/recent`
-- `/webui/api/logs/stream`
+- `/api/task_audit`
+- `/api/task_queue`
+- `/api/ekg_stats`
+- `/api/exec_approvals`
+- `/api/logs/recent`
+- `/api/logs/stream`
 
 如果你要专门看 EKG 指标、窗口和 provider / errsig 排名，直接看：
 
@@ -142,12 +142,12 @@ Provider 侧这轮也新增了独立运维接口：
 
 其中 replay 接口可以把一次历史节点派发重新送回当前 node dispatch handler。
 
-`/webui/api/runtime` 和 `/webui/api/subagents_runtime/live` 现在都支持 websocket 形式的实时快照，用于前端 runtime 汇总和 subagent 细节联动。
+`/api/runtime` 和 `/api/subagents_runtime/live` 现在都支持 websocket 形式的实时快照，用于前端 runtime 汇总和 subagent 细节联动。
 
 ### 自动化
 
-- `/webui/api/cron`
-- `/webui/api/skills`
+- `/api/cron`
+- `/api/skills`
 
 ## status 命令的运维价值
 

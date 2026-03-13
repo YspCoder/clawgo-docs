@@ -23,7 +23,7 @@ The validation should satisfy all of the following:
 1. two remote nodes register successfully to the same gateway
 2. remote node tasks succeed in `websocket_tunnel` mode
 3. remote node tasks succeed in `webrtc` mode
-4. in `webrtc` mode, `/webui/api/nodes` reports `p2p.active_sessions > 0`
+4. in `webrtc` mode, `/api/nodes` reports `p2p.active_sessions > 0`
 5. Dashboard and Subagents show node P2P session state and recent dispatch path
 
 ## Topology
@@ -207,7 +207,7 @@ From the gateway machine:
 
 ```bash
 curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://<gateway-host>:18790/webui/api/nodes
+  http://<gateway-host>:18790/api/nodes
 ```
 
 Expected:
@@ -225,7 +225,7 @@ The more stable path is to dispatch directly to the remote node branch through `
 curl -s \
   -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
   -H 'Content-Type: application/json' \
-  http://<gateway-host>:18790/webui/api/subagents_runtime \
+  http://<gateway-host>:18790/api/subagents_runtime \
   -d '{
     "action": "dispatch_and_wait",
     "agent_id": "node.<node-id>.main",
@@ -257,7 +257,7 @@ Then inspect:
 
 ```bash
 curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://<gateway-host>:18790/webui/api/nodes
+  http://<gateway-host>:18790/api/nodes
 ```
 
 Expected `p2p` values include:
@@ -298,7 +298,7 @@ The remote node branch card or tooltip should show:
 
 Symptom:
 
-- config looks updated, but `/webui/api/nodes` still behaves like the old runtime
+- config looks updated, but `/api/nodes` still behaves like the old runtime
 
 Action:
 
@@ -314,7 +314,7 @@ Symptom:
 
 Action:
 
-- use `/webui/api/subagents_runtime`
+- use `/api/subagents_runtime`
 - use `dispatch_and_wait`
 - target `node.<id>.main` explicitly
 
@@ -331,7 +331,7 @@ Check:
 
 Check:
 
-- the `p2p` status in `/webui/api/nodes`
+- the `p2p` status in `/api/nodes`
 - `used_transport` in `nodes-dispatch-audit.jsonl`
 - `fallback_from` in `nodes-dispatch-audit.jsonl`
 - `Nodes Dispatch Fallbacks` in `clawgo status`
