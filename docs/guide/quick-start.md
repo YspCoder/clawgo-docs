@@ -31,8 +31,7 @@ curl -fsSL https://clawgo.dev/install.sh | bash -s -- --variant telegram
 - 根据系统与架构下载最新 release 二进制
 - 支持 `full` / `none` / `telegram` / `discord` / `feishu` / `maixcam` / `qq` / `dingtalk` / `whatsapp` 这些安装变体
 - 文档站会同步托管一份脚本，所以可以直接通过 `https://clawgo.dev/install.sh` 安装
-- 不再单独下载 `webui.tar.gz`
-- 安装完成后会调用 `clawgo onboard --sync-webui`，把嵌入式 WebUI 同步到 `~/.clawgo/workspace/webui`
+- 可选安装独立 WebUI 发布包
 - 可选执行 OpenClaw 到 ClawGo 的迁移
 - 如果还没有配置文件，会提示是否继续执行 `clawgo onboard`
 
@@ -59,12 +58,6 @@ clawgo onboard
 - 在 `~/.clawgo/config.json` 生成默认配置
 - 自动生成 `gateway.token`
 - 将内置工作区模板拷贝到 `~/.clawgo/workspace`
-
-如果只是升级后刷新嵌入式 WebUI，不想重建配置，可以执行：
-
-```bash
-clawgo onboard --sync-webui
-```
 
 默认工作区中会包含：
 
@@ -164,13 +157,17 @@ make dev
 
 ## WebUI 入口
 
-默认地址：
+WebUI 当前建议独立部署，前端仓库：
+
+- [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
+
+接入时通常只需要把 `gateway.token` 带给前端，并让它请求 Gateway 的 `/api/*`。
+
+示例地址：
 
 ```text
-http://<host>:<port>/webui?token=<gateway.token>
+https://<your-webui-host>?token=<gateway.token>
 ```
-
-默认端口来自 `gateway.port`，默认值是 `18790`。
 
 ## 第一次排查建议
 

@@ -11,13 +11,22 @@ The frontend lives in `webui/` and is built with:
 - Tailwind CSS 4
 - i18next
 
+The standalone frontend repository is:
+
+- [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
+
 ## Access
 
-Usually served by the Gateway:
+The docs now assume the WebUI is deployed separately instead of being mounted under Gateway `/webui`.
 
 ```text
-http://<host>:<port>/webui?token=<gateway.token>
+https://<your-webui-host>?token=<gateway.token>
 ```
+
+Common access patterns:
+
+- pass `?token=<gateway.token>` in the WebUI URL
+- or let the frontend send `Authorization: Bearer <gateway.token>` to `/api/*`
 
 The header now also includes two utility actions:
 
@@ -327,15 +336,15 @@ Those fields are used by the Dashboard, Nodes, NodeArtifacts, and TaskAudit page
 - ekg summary
 - subagent runtime
 
-## Build and Embed
+## Build and Release
 
-The WebUI is not assumed to be deployed separately. The Makefile flow:
+The recommended deployment model now treats WebUI as a separate frontend project:
 
-1. builds `webui/dist`
-2. syncs it into `cmd/clawgo/workspace/webui`
-3. lets Go `embed` package those assets into release builds
+1. build it from [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
+2. deploy it to your own static host or Pages setup
+3. let the frontend call Gateway `/api/*` directly
 
-The frontend now also lazy-loads routes and splits vendor bundles into manual chunks such as:
+The frontend lazy-loads routes and splits vendor bundles into manual chunks such as:
 
 - `react-vendor`
 - `motion`

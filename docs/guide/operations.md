@@ -34,7 +34,7 @@ WebUI 与 API 受 `gateway.token` 保护。
 常见访问方式：
 
 - URL query 中附带 `?token=...`
-- 访问 `/webui` 后由服务端设置 Cookie
+- 或请求头里带 `Authorization: Bearer <gateway.token>`
 
 最近 Gateway 的 HTTP 包装层也统一放开了通用 CORS：
 
@@ -249,5 +249,5 @@ clawgo gateway
 1. `clawgo config check`
 2. `clawgo status`
 3. `clawgo gateway status`
-4. 打开 `/webui`
+4. 打开你独立部署的 WebUI
 5. 检查 Logs、Task Audit、Subagents、EKG

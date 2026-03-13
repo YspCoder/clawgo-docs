@@ -32,8 +32,7 @@ The script:
 - downloads the latest release binary
 - supports `full`, `none`, `telegram`, `discord`, `feishu`, `maixcam`, `qq`, `dingtalk`, and `whatsapp` install variants
 - is mirrored by the docs site, so you can install directly from `https://clawgo.dev/install.sh`
-- no longer downloads `webui.tar.gz` separately
-- runs `clawgo onboard --sync-webui` after install so the embedded WebUI is refreshed into `~/.clawgo/workspace/webui`
+- can optionally install the standalone WebUI package
 - optionally migrates from OpenClaw
 - prompts for `clawgo onboard` only when no config exists yet
 
@@ -60,12 +59,6 @@ It will:
 - create `~/.clawgo/config.json`
 - generate `gateway.token`
 - copy the default workspace template into `~/.clawgo/workspace`
-
-If you only want to refresh the embedded WebUI after an upgrade, run:
-
-```bash
-clawgo onboard --sync-webui
-```
 
 ## Configure A Provider
 
@@ -141,13 +134,17 @@ make dev
 
 ## WebUI
 
-Default URL:
+The recommended WebUI deployment is now separate. Frontend repository:
+
+- [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
+
+In practice, pass `gateway.token` to the frontend and let it call Gateway `/api/*`.
+
+Example URL:
 
 ```text
-http://<host>:<port>/webui?token=<gateway.token>
+https://<your-webui-host>?token=<gateway.token>
 ```
-
-The default port is `18790`.
 
 ## First Checks
 

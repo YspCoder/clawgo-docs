@@ -7,7 +7,7 @@ This page groups the currently registered `/api/*` endpoints from `pkg/api/serve
 Access requires either:
 
 - `?token=<gateway.token>` in the URL, or
-- a token cookie set after visiting `/webui`
+- `Authorization: Bearer <gateway.token>` in the request headers
 
 ## Config
 

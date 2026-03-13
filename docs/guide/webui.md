@@ -11,15 +11,24 @@
 - Tailwind CSS 4
 - i18next
 
+当前独立部署的前端仓库是：
+
+- [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
+
 ## 访问方式
 
-正常情况下由 Gateway 托管：
+当前文档以“WebUI 独立部署”为准，不再假设它由 Gateway 挂在 `/webui` 下。
 
 ```text
-http://<host>:<port>/webui?token=<gateway.token>
+https://<your-webui-host>?token=<gateway.token>
 ```
 
-Gateway 会在 `/webui` 首次访问时写入 `clawgo_webui_token` Cookie。
+常见接入方式：
+
+- 在 WebUI 地址上带 `?token=<gateway.token>`
+- 或由前端在请求 `/api/*` 时附带 `Authorization: Bearer <gateway.token>`
+
+后端 API 仍然是 Gateway 暴露的 `/api/*`，只是前端不再要求和 Gateway 静态资源一起部署。
 
 顶部 Header 最近还加了两个常用动作：
 
@@ -399,20 +408,18 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - ekg summary
 - subagents runtime
 
-## 构建与嵌入
+## 构建与发布
 
-WebUI 不是独立部署前提。仓库里的 Makefile 会：
+当前更推荐把 WebUI 当成独立前端项目部署：
 
-1. 构建 `webui/dist`
-2. 同步到 `cmd/clawgo/workspace/webui`
-3. 让 Go 的 `embed` 机制在发布时带上这些静态资源
+1. 从 [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web) 构建前端
+2. 部署到自己的静态站点或 Pages
+3. 让前端直接请求 Gateway 的 `/api/*`
 
-最近前端路由也改成了按页面懒加载，并在 Vite 构建里拆出了手工 chunk，例如：
+前端路由已经按页面懒加载，并在 Vite 构建里拆出了手工 chunk，例如：
 
 - `react-vendor`
 - `motion`
 - `icons`
 
 这样首屏不会一次把所有页面代码都下载下来。
-
-因此 release 包同时能分发 runtime 和控制台。

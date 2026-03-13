@@ -7,7 +7,7 @@
 访问前提：
 
 - URL 上带 `?token=<gateway.token>`，或
-- 先访问 `/webui`，由服务端写入 token Cookie
+- 请求头带 `Authorization: Bearer <gateway.token>`
 
 ## 配置类
 

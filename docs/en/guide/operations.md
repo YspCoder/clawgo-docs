@@ -27,6 +27,11 @@ POST /nodes/heartbeat
 
 Both require token-based auth.
 
+Common auth patterns for the API:
+
+- `?token=<gateway.token>`
+- `Authorization: Bearer <gateway.token>`
+
 The Gateway HTTP wrapper now also enables permissive CORS by default:
 
 - `Access-Control-Allow-Origin: *`
@@ -201,5 +206,5 @@ attempts to register the gateway service for the current platform.
 1. `clawgo config check`
 2. `clawgo status`
 3. `clawgo gateway status`
-4. open `/webui`
+4. open your separately deployed WebUI
 5. inspect Logs, Task Audit, Subagents, and EKG
