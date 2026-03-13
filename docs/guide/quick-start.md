@@ -113,6 +113,12 @@ clawgo provider
 
 代码中默认假设你前面还有一个兼容 OpenAI 风格接口的代理层，例如 README 中提到的 CLIProxyAPI。
 
+最近还有一个对多 provider 场景比较实用的变化：
+
+- 即使你没有显式写 `agents.defaults.proxy_fallbacks`
+- 运行时也会根据当前已声明的 provider 自动推断 fallback 链
+- 显式 `proxy_fallbacks` 仍然适合在你想强约束优先级时使用
+
 ## 启动方式
 
 ### 交互式 Agent

@@ -56,6 +56,13 @@
 - `execution`
 - `summary_policy`
 
+关于 provider fallback，需要额外注意：
+
+- `proxy` 仍然决定主 provider
+- `proxy_fallbacks` 适合手工指定强约束顺序
+- 如果你没有写 `proxy_fallbacks`，运行时现在也会根据已声明的 provider 自动推断候选链
+- 自动推断更适合“配了多个 provider，希望系统自己兜底”的场景
+
 ### heartbeat
 
 - `enabled`
@@ -258,6 +265,7 @@ ClawGo 的路由器支持基于关键字的主 agent 派发。
 - `auth=oauth` 时必须提供 `oauth.provider`
 - `auth=hybrid` 表示 API key 和 OAuth 账户都可以参与候选 provider 排序
 - `runtime_persist` / `runtime_history_*` 用于保留 provider runtime 事件和候选排序历史
+- 多 provider 部署下，已声明的 provider 现在还能参与自动 fallback 推断，不再完全依赖手工维护 `proxy_fallbacks`
 
 `responses` 进一步包含：
 

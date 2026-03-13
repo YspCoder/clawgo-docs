@@ -54,6 +54,13 @@ Important fields:
 - `execution`
 - `summary_policy`
 
+Provider fallback behavior now has one more practical rule:
+
+- `proxy` still selects the primary provider
+- `proxy_fallbacks` is the explicit way to enforce a strict order
+- if `proxy_fallbacks` is omitted, the runtime can now infer candidates from declared providers
+- that inferred chain is useful when you want several providers available without hand-maintaining every fallback entry
+
 ### `context_compaction`
 
 - `enabled`
@@ -235,6 +242,7 @@ Notes:
 - `auth=oauth` requires `oauth.provider`
 - `auth=hybrid` means API key and OAuth accounts can both participate in provider candidate selection
 - `runtime_persist` and `runtime_history_*` retain provider runtime events and candidate-order history
+- in multi-provider setups, declared providers can also join the automatic fallback chain even when `proxy_fallbacks` is omitted
 
 ## gateway
 

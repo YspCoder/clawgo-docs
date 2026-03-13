@@ -36,6 +36,17 @@ WebUI 与 API 受 `gateway.token` 保护。
 - URL query 中附带 `?token=...`
 - 访问 `/webui` 后由服务端设置 Cookie
 
+最近 Gateway 的 HTTP 包装层也统一放开了通用 CORS：
+
+- `Access-Control-Allow-Origin: *`
+- 支持常见 `GET/POST/PUT/PATCH/DELETE/OPTIONS`
+
+这更适合：
+
+- 外部控制台直接调 `/webui/api/*`
+- 反向代理前再挂一层前端
+- 设备侧或本地 bridge 做轻量集成
+
 ## WebUI API 能力分组
 
 ### 配置与版本

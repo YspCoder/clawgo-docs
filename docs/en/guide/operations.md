@@ -27,6 +27,17 @@ POST /nodes/heartbeat
 
 Both require token-based auth.
 
+The Gateway HTTP wrapper now also enables permissive CORS by default:
+
+- `Access-Control-Allow-Origin: *`
+- common `GET/POST/PUT/PATCH/DELETE/OPTIONS` methods are allowed
+
+That makes it easier to:
+
+- call `/webui/api/*` from an external console
+- place another frontend behind a reverse proxy
+- build lightweight device-side or local bridge integrations
+
 ## WebUI API Groups
 
 ### Config and Version

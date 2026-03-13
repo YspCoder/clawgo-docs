@@ -98,6 +98,12 @@ A minimal working example usually looks like:
 }
 ```
 
+Recent multi-provider behavior is also more forgiving:
+
+- even if you do not explicitly set `agents.defaults.proxy_fallbacks`
+- the runtime can infer a fallback chain from the currently declared providers
+- explicit `proxy_fallbacks` is still the right choice when you want a strict order
+
 ## Startup Modes
 
 ### Interactive Agent
