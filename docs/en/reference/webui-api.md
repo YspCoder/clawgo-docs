@@ -15,6 +15,13 @@ Access requires either:
 - `POST /api/config`
 - `GET /api/version`
 
+`GET /api/config?mode=normalized` returns the normalized schema first and also includes:
+
+- `config`
+- `raw_config`
+
+`POST /api/config?mode=normalized` accepts the normalized schema and applies it back to the real config file.
+
 `POST /api/config` supports risky-change confirmation. Recent changes expanded that logic to include named providers under `providers.proxies.<name>`, not only the default provider. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
 
 The WebUI header version-check action compares this version payload with the latest GitHub release.
@@ -126,6 +133,7 @@ Additional provider-management APIs:
 - `POST /api/provider/oauth/complete`
 - `POST /api/provider/oauth/import`
 - `GET/POST /api/provider/oauth/accounts`
+- `POST /api/provider/models`
 - `GET/POST /api/provider/runtime`
 - `GET /api/provider/runtime/summary`
 
@@ -147,6 +155,7 @@ Typical provider runtime actions include:
 - `GET /api/task_queue`
 - `GET /api/ekg_stats`
 - `GET/POST /api/exec_approvals`
+- `GET /api/logs/live`
 - `GET /api/logs/recent`
 - `GET /api/logs/stream`
 
@@ -155,7 +164,7 @@ Typical provider runtime actions include:
 | Page | Main APIs |
 | --- | --- |
 | MCP | `tools`, `mcp/install`, `config` |
-| Providers | `provider/oauth/start`, `provider/oauth/complete`, `provider/oauth/import`, `provider/oauth/accounts`, `provider/runtime`, `provider/runtime/summary` |
+| Providers | `provider/oauth/start`, `provider/oauth/complete`, `provider/oauth/import`, `provider/oauth/accounts`, `provider/models`, `provider/runtime`, `provider/runtime/summary` |
 | Chat | `chat`, `chat/history`, `chat/stream`, `chat/live`, `subagents_runtime` |
 | Config | `config` |
 | Cron | `cron` |
@@ -167,7 +176,7 @@ Typical provider runtime actions include:
 | NodeArtifacts | `node_artifacts`, `node_artifacts/export`, `node_artifacts/download`, `node_artifacts/delete`, `node_artifacts/prune` |
 | TaskAudit | `task_queue`, `task_audit`, `node_dispatches`, `node_dispatches/replay` |
 | EKG | `ekg_stats` |
-| Logs | `logs/recent`, `logs/stream` |
+| Logs | `logs/live`, `logs/recent`, `logs/stream` |
 
 ## Usage Notes
 

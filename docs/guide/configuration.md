@@ -23,6 +23,21 @@
 
 这意味着配置是“有 schema 的”，不是自由 JSON。
 
+最近 WebUI 和部分运行态接口会优先消费一个统一的 normalized view：
+
+- `core.default_provider`
+- `core.default_model`
+- `core.main_agent_id`
+- `core.subagents`
+- `runtime.router`
+- `runtime.providers`
+
+这层 normalized schema 主要用于：
+
+- 让 WebUI 配置编辑更稳定
+- 让远端节点读取主 agent / subagent 拓扑时不必依赖旧字段细节
+- 把“核心配置”和“运行时配置”分开组织
+
 ## 顶层结构
 
 顶层 `Config` 包含：

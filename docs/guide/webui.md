@@ -107,6 +107,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 - 表单模式
 - Raw JSON 模式
+- normalized schema 模式
 - 按热更新字段过滤
 - 差异对比
 - 提交高风险配置前确认
@@ -155,6 +156,18 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `GET /api/config`
 - `POST /api/config`
 
+最近这个页面保存配置时会优先走 normalized schema：
+
+- `GET /api/config?mode=normalized`
+- `POST /api/config?mode=normalized`
+
+这层视图会把配置拆成：
+
+- `core.*`
+- `runtime.*`
+
+更适合前端按“核心设置 / 运行时策略”组织表单。
+
 ### Providers
 
 独立的 provider 工作台，专门管理：
@@ -176,6 +189,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - `/api/provider/oauth/complete`
 - `/api/provider/oauth/import`
 - `/api/provider/oauth/accounts`
+- `/api/provider/models`
 - `/api/provider/runtime`
 - `/api/provider/runtime/summary`
 
@@ -210,6 +224,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 
 后端接口：
 
+- `/api/logs/live`
 - `/api/logs/stream`
 - `/api/logs/recent`
 
@@ -407,6 +422,7 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - task queue
 - ekg summary
 - subagents runtime
+- providers runtime summary
 
 ## 构建与发布
 

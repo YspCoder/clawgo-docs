@@ -15,9 +15,22 @@
 
 读取当前配置。
 
+如果带上：
+
+```text
+?mode=normalized
+```
+
+返回值会优先走 normalized schema，并同时带上：
+
+- `config`
+- `raw_config`
+
 ### `POST /api/config`
 
 写入配置，并触发后续 hook。WebUI 侧支持高风险变更确认。
+
+如果带上 `?mode=normalized`，请求体应符合 normalized schema，服务端会把它重新应用回真实配置。
 
 最近的实现里，高风险字段会动态收集，除了默认 provider 之外，也包括：
 
@@ -234,6 +247,16 @@ WebUI 当前会用它做：
 
 获取工具白名单分组定义，供 profile 编辑器使用。
 
+### `POST /api/provider/models`
+
+更新某个 provider 的 models 列表。
+
+请求体常见字段：
+
+- `provider`
+- `model`
+- `models`
+
 ### `POST /api/provider/oauth/start`
 
 启动一次 provider OAuth 登录流，返回授权地址和 flow id。
@@ -291,6 +314,14 @@ WebUI 当前会用它做：
 - `output`
 - `bin_name`
 - `bin_path`
+
+### `GET /api/logs/live`
+
+基于 websocket 的实时日志接口。
+
+返回类型：
+
+- `log_entry`
 
 ## 调度与自动化
 

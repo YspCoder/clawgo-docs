@@ -21,6 +21,21 @@ Load strategy:
 - use strict decoding, so unknown fields fail
 - apply environment variable overrides for fields with `env` tags
 
+Recent WebUI and runtime-facing APIs also prefer a unified normalized view:
+
+- `core.default_provider`
+- `core.default_model`
+- `core.main_agent_id`
+- `core.subagents`
+- `runtime.router`
+- `runtime.providers`
+
+That normalized schema mainly exists to:
+
+- make WebUI config editing more stable
+- let remote node views read main-agent and subagent topology without depending on old field layout
+- separate core configuration from runtime-oriented settings
+
 ## Top-Level Structure
 
 The top-level `Config` includes:

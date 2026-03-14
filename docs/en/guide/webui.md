@@ -94,6 +94,7 @@ Configuration workspace with:
 
 - form mode
 - raw JSON mode
+- normalized schema mode
 - hot-reload field filtering
 - diff view
 - risky change confirmation
@@ -137,6 +138,18 @@ There is also an important channel-page behavior change:
 - a single-channel build no longer exposes unrelated channel forms
 - a `-nochannels` / `none` build hides channel settings and falls back to the generic config page
 
+The config page now prefers the normalized schema when reading and saving:
+
+- `GET /api/config?mode=normalized`
+- `POST /api/config?mode=normalized`
+
+That view separates configuration into:
+
+- `core.*`
+- `runtime.*`
+
+which is a better fit for frontend form sections.
+
 ### Providers
 
 Dedicated provider workspace for managing:
@@ -158,6 +171,7 @@ Uses:
 - `/api/provider/oauth/complete`
 - `/api/provider/oauth/import`
 - `/api/provider/oauth/accounts`
+- `/api/provider/models`
 - `/api/provider/runtime`
 - `/api/provider/runtime/summary`
 
@@ -189,6 +203,12 @@ Uses:
 ### Logs
 
 Recent logs and log streaming.
+
+Uses:
+
+- `/api/logs/live`
+- `/api/logs/stream`
+- `/api/logs/recent`
 
 ### Skills
 
@@ -335,6 +355,7 @@ Those fields are used by the Dashboard, Nodes, NodeArtifacts, and TaskAudit page
 - task queue
 - ekg summary
 - subagent runtime
+- provider runtime summary
 
 ## Build and Release
 
