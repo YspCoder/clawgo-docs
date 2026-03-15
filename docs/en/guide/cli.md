@@ -82,7 +82,7 @@ clawgo status
 It reports:
 
 - config and workspace status
-- active model, proxy, and effective provider
+- active model and effective provider
 - the active provider `api_base`
 - whether the active provider API key is set
 - logging configuration
@@ -96,8 +96,8 @@ It reports:
 
 Note:
 
-- if `agents.defaults.proxy` points to `providers.proxies.<name>`, `status` now reports the active provider details
-- it no longer only reflects the default `providers.proxy` slot
+- `status` reports the currently active provider details
+- that is more accurate than inspecting only one configured default slot
 
 ## `provider`
 
@@ -113,7 +113,7 @@ clawgo provider backup
 ### Read
 
 ```bash
-clawgo config get providers.proxy.api_base
+clawgo config get models.providers.openai.api_base
 ```
 
 ### Write

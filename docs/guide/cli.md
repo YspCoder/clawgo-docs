@@ -94,7 +94,7 @@ clawgo status
 
 - 配置文件路径
 - workspace 路径
-- 当前 model、proxy 与实际生效的 provider
+- 当前 model 与实际生效的 provider
 - 当前 provider 的 `api_base`
 - 当前 provider 的 API key 是否已配置
 - 日志配置
@@ -110,8 +110,8 @@ clawgo status
 
 注意：
 
-- 如果 `agents.defaults.proxy` 指向 `providers.proxies.<name>`，`status` 现在会显示当前生效 provider 的 `api_base` 和 key 状态
-- 它不再只盯着 `providers.proxy` 这个默认槽位
+- `status` 会按当前激活 provider 输出 `api_base` 和 key 状态
+- 这比只看配置文件里某个默认 provider 槽位更接近真实运行态
 
 ## provider
 
@@ -131,14 +131,14 @@ clawgo provider backup
 - `timeout_sec`
 - `supports_responses_compact`
 
-并可选择是否将其设为 `agents.defaults.proxy`。
+并可选择是否更新默认 `agents.defaults.model.primary` 所指向的 provider/model。
 
 ## config
 
 ### 查询
 
 ```bash
-clawgo config get providers.proxy.api_base
+clawgo config get models.providers.openai.api_base
 ```
 
 ### 设置

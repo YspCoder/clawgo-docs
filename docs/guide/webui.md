@@ -112,12 +112,12 @@ tooltip 预览也做了收敛，当前更偏向展示最近一条内部流，而
 - 差异对比
 - 提交高风险配置前确认
 
-高风险确认现在会覆盖命名 provider 的敏感字段，而不只是默认 provider：
+高风险确认现在会覆盖 `models.providers.<name>` 下的敏感字段，例如：
 
-- `providers.proxy.api_base`
-- `providers.proxy.api_key`
-- `providers.proxies.<name>.api_base`
-- `providers.proxies.<name>.api_key`
+- `models.providers.openai.api_base`
+- `models.providers.openai.api_key`
+- `models.providers.<name>.api_base`
+- `models.providers.<name>.api_key`
 
 当切到 `gateway` 配置页时，表单模式现在还能直接编辑 Node P2P：
 

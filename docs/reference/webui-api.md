@@ -32,10 +32,12 @@
 
 如果带上 `?mode=normalized`，请求体应符合 normalized schema，服务端会把它重新应用回真实配置。
 
-最近的实现里，高风险字段会动态收集，除了默认 provider 之外，也包括：
+最近的实现里，高风险字段会动态收集，覆盖 `models.providers.<name>` 下的敏感字段，例如：
 
-- `providers.proxies.<name>.api_base`
-- `providers.proxies.<name>.api_key`
+- `models.providers.openai.api_base`
+- `models.providers.openai.api_key`
+- `models.providers.<name>.api_base`
+- `models.providers.<name>.api_key`
 
 当这些字段被改动且未确认时，接口会返回 `requires_confirm: true`。
 

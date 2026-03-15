@@ -1,35 +1,61 @@
-# Subagent 与 Skills
+# Agents、NPC 与 Skills
 
-## Subagent 的角色
+## 当前配置核心已经是 `agents.agents`
 
-ClawGo 不是只让一个 agent 自言自语。它通过 `agents.subagents` 把角色拆成多个执行单元。
+这一页虽然沿用旧路径，但当前代码里的真实配置已经从 `agents.subagents` 切到 `agents.agents`。
 
-示例角色通常包括：
+每个条目都可以是：
 
-- `main`: 编排与汇总
-- `coder`: 编码执行
-- `tester`: 测试与回归
+- `agent`
+- `npc`
+- 远端 `node` 分支
 
-从 `config.example.json` 可以看出，每个 subagent 都有独立：
+这比旧的“main + coder + tester 的 subagent 树”更接近现在的产品模型。
 
-- `role`
-- `display_name`
-- `system_prompt_file`
-- `memory_namespace`
+## `main`、`agent`、`npc` 的区别
+
+### `main`
+
+`main` 仍然是主入口，但现在更准确的角色是 world mind：
+
+- 接收用户输入
+- 汇总 actor intent
+- 进行仲裁
+- 决定哪些变化写入世界
+
+### `agent`
+
+普通 `agent` 更适合承担明确执行工作，例如：
+
+- `coder`
+- `tester`
+- provider-bound 工具型角色
+- 远端节点上的 branch agent
+
+常见字段：
+
+- `type`
+- `prompt_file`
+- `runtime.provider`
 - `tools.allowlist`
-- `runtime` 参数
+- `memory_namespace`
 
-## 运行模式
+### `npc`
 
-Subagent 主要有两类：
+`npc` 是 world runtime 里的自治角色，常见字段：
 
-### 本地 subagent
+- `kind: "npc"`
+- `persona`
+- `home_location`
+- `default_goals`
+- `perception_scope`
+- `world_tags`
 
-由本地 provider 和本地工具直接执行。
+NPC 的核心意义不是直接跑工具，而是根据可见世界切片产出 intent。
 
-### 远端 node-backed branch
+## 远端 node branch 仍然成立
 
-通过：
+如果一个 agent 走远端节点执行，可以配置：
 
 ```json
 {
@@ -39,140 +65,78 @@ Subagent 主要有两类：
 }
 ```
 
-挂到主拓扑里，成为一个受控远端分支。
+这类配置仍然属于 `agents.agents.<id>`，只是 runtime class 不再局限于本地 actor。
 
-## Subagent 工具权限
+## prompt 文件现在应当用 `prompt_file`
 
-每个 subagent 可配置：
+最近代码里的约束已经切到：
 
-- `tools.allowlist`
-- `tools.denylist`
-- `tools.max_parallel_calls`
+- 用 `prompt_file` 定义 agent 角色
+- 路径必须是 workspace 内相对路径
+- 启用状态下不能为空
 
-这比“全局给所有工具”更适合工程场景，例如：
-
-- `main` 只负责路由、会话、记忆查询
-- `coder` 才有文件和 shell 能力
-- `tester` 多拿 process manager
-
-最近的实现里还有一个重要例外：
-
-- `skill_exec` 会被自动注入到 subagent 的可用工具集合
-
-也就是说，即使它不在显式 allowlist 中，subagent 仍然可以执行 skill。WebUI 的 `SubagentProfiles` 页面现在也会把这一点作为 inherited tool 展示出来。
-
-## notify_main_policy
-
-示例配置里能看到：
-
-- `final_only`
-- `on_blocked`
-- `internal_only`
-
-这决定子代理在什么时机把状态回传给主代理。
-
-## Profile 化管理
-
-WebUI 里有 `SubagentProfiles` 页面，对应后端的 profile store。它解决的是“运行期可维护的 subagent 模版”问题，而不只是静态配置。
-
-可管理项包括：
-
-- `agent_id`
-- `name`
-- `notify_main_policy`
-- `role`
-- `system_prompt_file`
-- `tool_allowlist`
-- `memory_namespace`
-- `max_retries`
-- `retry_backoff_ms`
-- `max_task_chars`
-- `max_result_chars`
-- `status`
-
-最近这个页面已经不再鼓励直接编辑 inline prompt，而是要求用 `system_prompt_file` 驱动角色定义。
-
-如果你启用 profile 或配置里的 subagent，当前实现更推荐这类路径：
+更推荐的目录约定仍然是：
 
 ```text
 agents/<agent_id>/AGENT.md
 ```
 
-并且要求：
+## 工具权限
 
-- 路径是相对 workspace 的相对路径
-- 路径不能越出 workspace
-- 改 subagent 角色时要同步更新对应 `AGENT.md`
+每个 actor 仍然可以通过以下字段控制工具权限：
 
-## Skills 的作用
+- `tools.allowlist`
+- `tools.denylist`
+- `tools.max_parallel_calls`
 
-Skill 是放在 workspace 或全局目录中的可复用能力包，通常以 `SKILL.md` 为入口说明。
+工程上常见做法：
 
-当前代码中 loader 会从多个位置加载 skills：
+- `main` 只持有低风险调度和查询工具
+- `coder` 持有 filesystem / shell / repo 类工具
+- `tester` 持有验证与进程控制工具
+
+## Skills 仍然是重要扩展点
+
+Skills 仍然以 `SKILL.md` 为中心，由 `skill_exec` 暴露给运行时。
+
+当前加载来源仍包括：
 
 - workspace skills
 - global skills
 - builtin skills
 
-`skill_exec` 工具负责把这些 skills 暴露给运行时，并且最近的审计记录中会额外记录：
+审计里也会记录：
 
 - `caller_agent`
 - `caller_scope`
 
-这让你在任务审计里能区分 skill 是由主 agent 还是某个 subagent 触发的。
+这样你能知道 skill 是被哪个 actor 触发的。
 
-仓库自带的 workspace skills 包括：
+## `spec-coding`
 
-- `tmux`
-- `healthcheck`
-- `clawhub`
-- `context7`
-- `github`
-- `skill-creator`
-- `spec-coding`
+当前最重要的工程技能仍然是 `spec-coding`。
 
-### `spec-coding`
-
-最近工作区里的核心编码技能已经切到 `spec-coding`。
-
-它服务的是“非 trivial 编码任务”的规范化流程，会围绕当前编码项目根目录维护：
+它面向非 trivial 编码任务，会在当前编码项目根目录维护：
 
 - `spec.md`
 - `tasks.md`
 - `checklist.md`
 
-这些文件不是放在 ClawGo 仓库根目录常驻共享，而是放在你当前真正编码的项目根目录里。模板来源则在：
+模板来自：
 
 ```text
 workspace/skills/spec-coding/templates
 ```
 
-运行时还会有两个联动行为：
+运行时最近的联动行为包括：
 
-- 当上下文判断当前请求属于 spec-driven coding 时，会自动补齐缺失的 `spec.md` / `tasks.md` / `checklist.md`
-- 编码任务完成或返工时，会回写 `tasks.md` 和 `checklist.md`，把任务标记为完成或重新打开
-
-## Skills CLI
-
-命令层支持：
-
-- `skills list`
-- `skills install`
-- `skills remove`
-- `skills search`
-- `skills show`
-
-安装器支持从 GitHub 安装 skill。
-
-## 需要注意的一点
-
-当前 `skills install-builtin` 代码中硬编码的默认 builtin 列表还是 `weather/news/stock/calculator`，但仓库现有 workspace skills 已明显不是这一套。文档和帮助信息在这一点上与代码现状有偏差，使用时应优先检查实际目录与 loader 逻辑。
+- 缺失时自动补齐 spec 文件
+- 编码完成或返工时回写 `tasks.md` / `checklist.md`
 
 ## 推荐实践
 
-- 用 `main` 作为总控，只暴露少量安全工具
-- 把高风险执行集中给 `coder` / `tester`
-- 所有角色都用 `system_prompt_file` 管理，而不是直接把 prompt 写死在 JSON 里
-- 将 memory namespace 与 agent role 对齐，方便后续检索与审计
-- 对远端 node 分支设置清晰的 `parent_agent_id`
-- 对多文件或多阶段编码任务，优先启用 `spec-coding`，让 `spec.md` / `tasks.md` / `checklist.md` 跟实现一起演进
+- 用 `main` 负责 world-level 判断，不要让它承担所有高风险执行
+- 把执行型角色建成 `agent`
+- 把自治世界角色建成 `npc`
+- 所有 prompt 尽量走 `prompt_file`
+- 对多阶段工程任务优先使用 `spec-coding`

@@ -38,7 +38,7 @@ export default defineConfig({
               { text: '概念总览', link: '/concepts/' },
               { text: '架构总览', link: '/guide/architecture' },
               { text: '运行时、存储与恢复', link: '/guide/runtime-storage' },
-              { text: 'Subagent 与 Skills', link: '/guide/subagents-and-skills' }
+              { text: 'Agents、NPC 与 Skills', link: '/guide/subagents-and-skills' }
             ]
           },
           {
@@ -126,7 +126,7 @@ export default defineConfig({
               { text: 'Concept Overview', link: '/en/concepts/' },
               { text: 'Architecture', link: '/en/guide/architecture' },
               { text: 'Runtime, Storage, and Recovery', link: '/en/guide/runtime-storage' },
-              { text: 'Subagents and Skills', link: '/en/guide/subagents-and-skills' }
+              { text: 'Agents, NPCs, and Skills', link: '/en/guide/subagents-and-skills' }
             ]
           },
           {

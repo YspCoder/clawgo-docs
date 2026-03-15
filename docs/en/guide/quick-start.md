@@ -1,16 +1,15 @@
 # Quick Start
 
-## Project Positioning
+## Set The Right Expectation First
 
-ClawGo is an agent runtime written in Go. The codebase is centered around:
+ClawGo is now better understood as a **World Runtime** than as a plain CLI chat tool.
 
-- `pkg/agent`: main loop, task planning, context building, routing, and recovery
-- `pkg/tools`: built-in tool system
-- `pkg/api`: Gateway HTTP API and WebUI API
-- `pkg/channels`: Telegram, Discord, Feishu, DingTalk, WhatsApp, QQ, and MaixCam
-- `pkg/cron`: scheduled tasks
-- `pkg/nodes`: remote nodes and relay/router logic
-- `webui`: React + Vite operations console
+Its core capabilities include:
+
+- maintaining long-running world state and NPC state
+- processing world events through `main`
+- letting `agent` and `npc` actors cooperate in one runtime
+- persisting execution records, provider runtime, and world snapshots together
 
 ## Installation
 
@@ -20,21 +19,23 @@ ClawGo is an agent runtime written in Go. The codebase is centered around:
 curl -fsSL https://clawgo.dev/install.sh | bash
 ```
 
-If you only want one channel-specific variant, you can now pass it explicitly:
+Install a specific variant:
 
 ```bash
 curl -fsSL https://clawgo.dev/install.sh | bash -s -- --variant telegram
 ```
 
-The script:
+Current major variants include:
 
-- detects OS and architecture
-- downloads the latest release binary
-- supports `full`, `none`, `telegram`, `discord`, `feishu`, `maixcam`, `qq`, `dingtalk`, and `whatsapp` install variants
-- is mirrored by the docs site, so you can install directly from `https://clawgo.dev/install.sh`
-- can optionally install the standalone WebUI package
-- optionally migrates from OpenClaw
-- prompts for `clawgo onboard` only when no config exists yet
+- `full`
+- `none`
+- `telegram`
+- `discord`
+- `feishu`
+- `maixcam`
+- `qq`
+- `dingtalk`
+- `whatsapp`
 
 ### Option 2: Build From Source
 
@@ -43,8 +44,6 @@ git clone https://github.com/YspCoder/clawgo.git
 cd clawgo
 make build
 ```
-
-The default binary output is `build/clawgo-<platform>-<arch>`.
 
 ## Onboarding
 
@@ -57,12 +56,62 @@ clawgo onboard
 It will:
 
 - create `~/.clawgo/config.json`
+- create `~/.clawgo/workspace`
 - generate `gateway.token`
-- copy the default workspace template into `~/.clawgo/workspace`
+- copy the built-in workspace template
+
+## Minimal Working Config
+
+The real config center now lives in `agents.agents` and `models.providers`.
+
+A minimal example:
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.clawgo/workspace",
+      "model": {
+        "primary": "openai/gpt-5.4"
+      }
+    },
+    "agents": {
+      "main": {
+        "enabled": true,
+        "type": "agent",
+        "role": "orchestrator",
+        "prompt_file": "agents/main/AGENT.md"
+      },
+      "guard": {
+        "enabled": true,
+        "kind": "npc",
+        "persona": "A cautious town guard",
+        "home_location": "gate",
+        "default_goals": ["patrol the square"]
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "openai": {
+        "api_key": "YOUR_KEY",
+        "api_base": "https://api.openai.com/v1",
+        "models": ["gpt-5.4"],
+        "auth": "bearer",
+        "timeout_sec": 90
+      }
+    }
+  }
+}
+```
+
+This means:
+
+- the default model comes from `agents.defaults.model.primary`
+- actors and NPCs live under `agents.agents`
+- providers are declared under `models.providers`
 
 ## Configure A Provider
-
-The most important part is configuring `providers` and `agents.defaults.proxy`.
 
 Interactive setup:
 
@@ -70,45 +119,24 @@ Interactive setup:
 clawgo provider
 ```
 
-A minimal working example usually looks like:
+Recent multi-provider behavior is also more practical now:
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "proxy": "proxy"
-    }
-  },
-  "providers": {
-    "proxy": {
-      "api_key": "YOUR_KEY",
-      "api_base": "http://localhost:8080/v1",
-      "models": ["glm-4.7"],
-      "auth": "bearer",
-      "timeout_sec": 90
-    }
-  }
-}
-```
+- the primary provider is derived from `agents.defaults.model.primary`
+- even without an explicit fallback list, the runtime can infer candidates from declared providers
+- maintain an explicit fallback order only when you need strict control
 
-Recent multi-provider behavior is also more forgiving:
+## Start The Runtime
 
-- even if you do not explicitly set `agents.defaults.proxy_fallbacks`
-- the runtime can infer a fallback chain from the currently declared providers
-- explicit `proxy_fallbacks` is still the right choice when you want a strict order
-
-## Startup Modes
-
-### Interactive Agent
+### Interactive Mode
 
 ```bash
 clawgo agent
 ```
 
-Direct one-shot message:
+One-shot message:
 
 ```bash
-clawgo agent -m "Hello"
+clawgo agent -m "I walk to the gate and inspect what the guard is doing"
 ```
 
 ### Gateway Mode
@@ -119,45 +147,50 @@ clawgo gateway run
 
 This starts the fuller runtime surface:
 
-- Gateway HTTP server
-- WebUI API
-- Channel manager
-- Cron service
-- Heartbeat service
-- Sentinel
-
-### Development Mode
-
-```bash
-make dev
-```
+- Gateway API
+- runtime snapshot and runtime live
+- channels
+- cron
+- sentinel
 
 ## WebUI
 
-The recommended WebUI deployment is now separate. Frontend repository:
+The WebUI is now intended to be deployed separately. Frontend repository:
 
 - [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
 
-In practice, pass `gateway.token` to the frontend and let it call Gateway `/api/*`.
-
-Example URL:
+The frontend should call Gateway `/api/*` with `gateway.token`, for example:
 
 ```text
 https://<your-webui-host>?token=<gateway.token>
 ```
 
-## First Checks
+## First Validation
 
-After startup, run:
+Start with:
 
 ```bash
 clawgo status
 clawgo config check
 ```
 
-Those two commands give the fastest signal on:
+If you want to verify that the world runtime is actually active, also check:
 
-- config availability
-- workspace availability
-- provider configuration
-- log, heartbeat, cron, and node state
+- `~/.clawgo/workspace/agents/runtime/world_state.json`
+- `~/.clawgo/workspace/agents/runtime/npc_state.json`
+- `~/.clawgo/workspace/agents/runtime/world_events.jsonl`
+
+## A Better First Prompt For The Current Model
+
+Try this:
+
+```bash
+clawgo agent -m "I enter the square, inspect the guard and merchant, and summarize the current world snapshot"
+```
+
+That validates:
+
+- world event ingestion
+- world-level decision making by `main`
+- NPC intent plus rendered output
+- world store persistence

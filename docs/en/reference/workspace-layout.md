@@ -22,7 +22,7 @@ Typical contents:
 - `sessions/`
 - `gateway.pid`
 
-## Workspace
+## `workspace/`
 
 Default workspace:
 
@@ -30,7 +30,7 @@ Default workspace:
 ~/.clawgo/workspace
 ```
 
-Typical seeded contents include:
+Seeded template contents typically include:
 
 - `AGENTS.md`
 - `BOOT.md`
@@ -44,7 +44,68 @@ Typical seeded contents include:
 - `memory/`
 - `skills/`
 
-One especially important recent skill under `skills/` is:
+## `workspace/agents/runtime/`
+
+This is now the most important runtime directory.
+
+The world runtime and actor runtime currently persist:
+
+- `world_state.json`
+- `npc_state.json`
+- `world_events.jsonl`
+- `agent_runs.jsonl`
+- `agent_events.jsonl`
+- `agent_messages.jsonl`
+
+Meaning:
+
+- `world_state.json` stores structured world state
+- `npc_state.json` stores NPC state
+- `world_events.jsonl` stores the world event stream
+- `agent_runs.jsonl` and `agent_events.jsonl` store actor runtime records
+- `agent_messages.jsonl` stores actor-to-actor messages
+
+## `workspace/memory/`
+
+This is the audit and observability directory. Common files include:
+
+- `heartbeat.log`
+- `trigger-audit.jsonl`
+- `trigger-stats.json`
+- `skill-audit.jsonl`
+- `nodes-audit.jsonl`
+- `nodes-state.json`
+- `nodes-dispatch-audit.jsonl`
+
+## `sessions/`
+
+Session indexes and history live under:
+
+```text
+~/.clawgo/sessions/
+```
+
+This is more about CLI and session history than world persistence itself.
+
+## `logs/`
+
+Default log path:
+
+```text
+~/.clawgo/logs/clawgo.log
+```
+
+## `cron/`
+
+Cron storage file:
+
+```text
+~/.clawgo/cron/jobs.json
+```
+
+## `skills/`
+
+One especially important template skill under `workspace/skills/` is:
 
 - `spec-coding`
 
@@ -55,34 +116,36 @@ It provides:
 - `templates/tasks.md`
 - `templates/checklist.md`
 
-## Runtime Files
-
-Common runtime files include:
-
-- `workspace/memory/heartbeat.log`
-- `workspace/memory/trigger-audit.jsonl`
-- `workspace/memory/skill-audit.jsonl`
-- `workspace/memory/nodes-state.json`
-- `subagent_runs.jsonl`
-- `subagent_events.jsonl`
-- `threads.jsonl`
-- `agent_messages.jsonl`
-
 ## Spec Files In The Active Coding Project
 
-Recent non-trivial coding work can also maintain these files in the current coding project root:
+Recent non-trivial coding work may create these files in the active coding project root:
 
 - `spec.md`
 - `tasks.md`
 - `checklist.md`
 
-These are not meant to live permanently in `~/.clawgo/workspace/`, and they are no longer kept as repo-root docs inside ClawGo itself.
+These are runtime collaboration artifacts, not permanent files in `~/.clawgo/workspace/`.
 
-Typical source:
+## Template Directories vs Runtime Directories
 
-- `workspace/skills/spec-coding/templates/*`
+Inside the repo:
 
-In practice:
+```text
+/Users/lpf/Desktop/project/clawgo/workspace
+```
 
-- `workspace/skills/spec-coding/templates/` is the template source
-- `spec.md`, `tasks.md`, and `checklist.md` in the active coding project are runtime collaboration artifacts
+is the template source.
+
+At runtime, the actual working directory is usually:
+
+```text
+~/.clawgo/workspace
+```
+
+During release builds, templates are also synced into:
+
+```text
+cmd/workspace
+```
+
+for embedding.

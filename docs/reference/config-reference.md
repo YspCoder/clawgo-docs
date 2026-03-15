@@ -1,6 +1,6 @@
 # 配置参考
 
-这页是对 [配置说明](/guide/configuration) 的压缩索引版，更偏“字段手册”。
+这页是对 [配置说明](/guide/configuration) 的字段索引版。
 
 ## 顶层键
 
@@ -8,7 +8,7 @@
 {
   "agents": {},
   "channels": {},
-  "providers": {},
+  "models": {},
   "gateway": {},
   "cron": {},
   "tools": {},
@@ -18,40 +18,37 @@
 }
 ```
 
-## agents
-
-### `agents.defaults`
+## `agents.defaults`
 
 | 字段 | 作用 |
 | --- | --- |
 | `workspace` | 工作区路径 |
-| `proxy` | 默认 provider 名称 |
-| `proxy_fallbacks` | provider 回退链 |
+| `model.primary` | 默认模型引用，格式为 `provider/model` |
 | `max_tokens` | 默认 token 上限 |
 | `temperature` | 默认温度 |
-| `max_tool_iterations` | 单轮工具迭代上限 |
+| `max_tool_iterations` | 工具迭代上限 |
 
-### `agents.defaults.heartbeat`
+## `agents.defaults.heartbeat`
 
 | 字段 | 作用 |
 | --- | --- |
-| `enabled` | 是否开启心跳 |
+| `enabled` | 是否启用心跳 |
 | `every_sec` | 心跳周期 |
 | `ack_max_chars` | ACK 最大字符数 |
 | `prompt_template` | 心跳提示模板 |
 
-### `agents.defaults.context_compaction`
+## `agents.defaults.context_compaction`
 
 | 字段 | 作用 |
 | --- | --- |
 | `enabled` | 是否启用压缩 |
 | `mode` | `summary` / `responses_compact` / `hybrid` |
-| `trigger_messages` | 触发压缩的消息数 |
-| `keep_recent_messages` | 保留的最近消息数 |
-| `max_summary_chars` | 摘要最大字符数 |
-| `max_transcript_chars` | 转录最大字符数 |
+| `trigger_messages` | 触发阈值 |
+| `keep_recent_messages` | 保留最近消息数 |
+| `max_summary_chars` | 摘要最大长度 |
+| `max_transcript_chars` | 转录最大长度 |
 
-### `agents.defaults.execution`
+## `agents.defaults.execution`
 
 | 字段 | 作用 |
 | --- | --- |
@@ -60,47 +57,48 @@
 | `tool_parallel_safe_names` | 可安全并发的工具名 |
 | `tool_max_parallel_calls` | 工具并发调用上限 |
 
-### `agents.router`
-
-| 字段 | 作用 |
-| --- | --- |
-| `enabled` | 是否启用路由器 |
-| `main_agent_id` | 主 agent ID |
-| `strategy` | `rules_first` / `round_robin` / `manual` |
-| `policy.intent_max_input_chars` | 意图识别输入上限 |
-| `policy.max_rounds_without_user` | 无用户参与时最大轮数 |
-| `rules` | 关键字到 agent 的规则 |
-| `max_hops` | 最大跳数 |
-| `default_timeout_sec` | 默认超时 |
-| `default_wait_reply` | 是否等待回复 |
-| `sticky_thread_owner` | 是否粘住 thread owner |
-
-### `agents.subagents.<id>`
+## `agents.agents.<id>`
 
 | 字段 | 作用 |
 | --- | --- |
 | `enabled` | 是否启用 |
-| `type` | `router` / `worker` |
-| `transport` | 本地或 `node` |
-| `node_id` | 节点 ID |
-| `parent_agent_id` | 父 agent |
-| `notify_main_policy` | 主代理通知策略 |
+| `kind` | actor kind，例如 `npc` |
+| `type` | actor type，例如 `agent` |
+| `transport` | `local` 或 `node` |
+| `node_id` | 远端节点 ID |
+| `parent_agent_id` | 父 actor |
 | `display_name` | 显示名称 |
 | `role` | 角色 |
-| `system_prompt_file` | prompt 文件路径 |
+| `description` | 描述 |
+| `persona` | NPC 人设 |
+| `traits` | 特征标签 |
+| `faction` | 阵营 |
+| `home_location` | NPC 初始地点 |
+| `default_goals` | 默认目标 |
+| `perception_scope` | 感知范围 |
+| `schedule_hint` | 调度提示 |
+| `world_tags` | 世界标签 |
+| `prompt_file` | prompt 文件 |
 | `memory_namespace` | 记忆命名空间 |
-| `accept_from` | 接收来源 |
-| `can_talk_to` | 允许通信对象 |
 | `tools.allowlist` | 工具白名单 |
 | `tools.denylist` | 工具黑名单 |
-| `runtime.*` | 模型、重试、并发等运行时参数 |
+| `tools.max_parallel_calls` | actor 级工具并发上限 |
+| `runtime.provider` | actor 绑定 provider |
+| `runtime.model` | actor 绑定 model |
+| `runtime.timeout_sec` | 超时秒数 |
+| `runtime.max_retries` | 最大重试次数 |
+| `runtime.retry_backoff_ms` | 重试退避 |
+| `runtime.max_task_chars` | 最大任务长度 |
+| `runtime.max_result_chars` | 最大结果长度 |
+| `runtime.max_parallel_runs` | actor 运行并发上限 |
 
 说明：
 
-- 启用的 subagent 应配置 `system_prompt_file`
-- `system_prompt_file` 必须是 workspace 内的相对路径
+- 世界角色通过 `kind: "npc"` 进入 runtime
+- 执行型 agent 通常使用 `prompt_file`
+- `prompt_file` 必须是 workspace 内相对路径
 
-## channels
+## `channels`
 
 公共字段：
 
@@ -120,9 +118,7 @@
 - `qq`
 - `maixcam`
 
-## providers
-
-### `providers.proxy` / `providers.proxies.<name>`
+## `models.providers.<name>`
 
 | 字段 | 作用 |
 | --- | --- |
@@ -132,32 +128,13 @@
 | `supports_responses_compact` | 是否支持 compact responses |
 | `auth` | `bearer` / `oauth` / `hybrid` / `none` |
 | `timeout_sec` | 超时秒数 |
-| `runtime_persist` | 是否持久化 provider runtime 事件 |
-| `runtime_history_file` | runtime 历史文件路径 |
-| `runtime_history_max` | 持久化历史上限 |
-| `oauth.*` | OAuth 登录与账户刷新配置 |
-| `responses.*` | responses API 细节参数 |
+| `runtime_persist` | 是否持久化 provider runtime |
+| `runtime_history_file` | runtime 历史文件 |
+| `runtime_history_max` | 历史上限 |
+| `oauth.*` | OAuth 配置 |
+| `responses.*` | responses API 参数 |
 
-### `providers.proxy.oauth` / `providers.proxies.<name>.oauth`
-
-| 字段 | 作用 |
-| --- | --- |
-| `provider` | OAuth provider 名称 |
-| `network_proxy` | OAuth 网络代理 |
-| `credential_file` | 主 credential 文件 |
-| `credential_files` | 已绑定 credential 文件列表 |
-| `callback_port` | 本地回调端口 |
-| `client_id` | OAuth client id |
-| `client_secret` | OAuth client secret |
-| `auth_url` | 自定义授权地址 |
-| `token_url` | 自定义 token 地址 |
-| `redirect_url` | 自定义回调地址 |
-| `scopes` | OAuth scopes |
-| `cooldown_sec` | 失败冷却时间 |
-| `refresh_scan_sec` | 刷新扫描周期 |
-| `refresh_lead_sec` | 过期前提前刷新窗口 |
-
-## gateway
+## `gateway`
 
 | 字段 | 作用 |
 | --- | --- |
@@ -165,7 +142,7 @@
 | `port` | 监听端口 |
 | `token` | 网关访问令牌 |
 
-### `gateway.nodes.p2p`
+## `gateway.nodes.p2p`
 
 | 字段 | 作用 |
 | --- | --- |
@@ -174,95 +151,50 @@
 | `stun_servers` | STUN URL 列表 |
 | `ice_servers` | 结构化 ICE server 列表 |
 
-### `gateway.nodes.p2p.ice_servers[]`
+## `gateway.nodes.dispatch`
 
 | 字段 | 作用 |
 | --- | --- |
-| `urls` | `stun:` / `turn:` / `turns:` URL 列表 |
-| `username` | TURN 用户名 |
-| `credential` | TURN 凭证 |
+| `prefer_local` | 优先本地执行 |
+| `prefer_p2p` | 优先 P2P |
+| `allow_relay_fallback` | P2P 失败时允许 relay 回退 |
+| `action_tags` | action 必须命中的 node tags |
+| `agent_tags` | actor 必须命中的 node tags |
+| `allow_actions` | action 允许的 node tags |
+| `deny_actions` | action 禁止的 node tags |
+| `allow_agents` | actor 允许的 node tags |
+| `deny_agents` | actor 禁止的 node tags |
 
-### `gateway.nodes.dispatch`
-
-| 字段 | 作用 |
-| --- | --- |
-| `prefer_local` | 优先使用本地节点或本地执行路径 |
-| `prefer_p2p` | 可用时优先走 P2P |
-| `allow_relay_fallback` | P2P 不可用时是否允许回退到 relay |
-| `action_tags` | 为某个 action 指定必须命中的 node tags |
-| `agent_tags` | 为某个远端 agent 指定必须命中的 node tags |
-| `allow_actions` | 为某个 action 指定允许的 node tags |
-| `deny_actions` | 为某个 action 指定拒绝的 node tags |
-| `allow_agents` | 为某个远端 agent 指定允许的 node tags |
-| `deny_agents` | 为某个远端 agent 指定拒绝的 node tags |
-
-### `gateway.nodes.artifacts`
+## `gateway.nodes.artifacts`
 
 | 字段 | 作用 |
 | --- | --- |
-| `enabled` | 是否启用节点产物保留与清理 |
-| `keep_latest` | 每次读取时保留的最近产物数量 |
-| `retain_days` | 最长保留天数，`0` 表示不按天数裁剪 |
-| `prune_on_read` | 读取产物列表时是否自动清理 |
+| `enabled` | 是否启用节点产物保留 |
+| `keep_latest` | 保留最近数量 |
+| `retain_days` | 最长保留天数 |
+| `prune_on_read` | 读取时自动清理 |
 
-## cron
+## `tools.mcp`
 
 | 字段 | 作用 |
 | --- | --- |
-| `min_sleep_sec` | worker 最小休眠 |
-| `max_sleep_sec` | worker 最大休眠 |
-| `retry_backoff_base_sec` | 重试退避基数 |
-| `retry_backoff_max_sec` | 重试退避上限 |
-| `max_consecutive_failure_retries` | 最大连续失败重试数 |
-| `max_workers` | worker 数量 |
+| `enabled` | MCP 总开关 |
+| `request_timeout_sec` | 请求超时 |
+| `servers` | MCP server 声明 |
 
-## tools
-
-### `tools.shell`
+## `tools.mcp.servers.<name>`
 
 | 字段 | 作用 |
 | --- | --- |
 | `enabled` | 是否启用 |
-| `working_dir` | 默认工作目录 |
-| `timeout` | 超时 |
-| `auto_install_missing` | 缺依赖是否自动安装 |
-| `sandbox.enabled` | 是否启用 sandbox |
-| `sandbox.image` | sandbox 镜像 |
-
-### `tools.web.search`
-
-| 字段 | 作用 |
-| --- | --- |
-| `api_key` | 搜索 API key |
-| `max_results` | 搜索结果数 |
-
-### `tools.mcp`
-
-| 字段 | 作用 |
-| --- | --- |
-| `enabled` | 是否启用 MCP 总开关 |
-| `request_timeout_sec` | MCP 请求超时 |
-| `servers` | MCP server 声明表 |
-
-### `tools.mcp.servers.<name>`
-
-| 字段 | 作用 |
-| --- | --- |
-| `enabled` | 是否启用该 server |
 | `transport` | `stdio` / `http` / `streamable_http` / `sse` |
-| `command` | `stdio` 模式下的启动命令 |
-| `args` | `stdio` 模式下的启动参数 |
-| `url` | `http` / `streamable_http` / `sse` 使用的 endpoint |
+| `command` | `stdio` 启动命令 |
+| `args` | `stdio` 启动参数 |
+| `url` | 远端 transport URL |
 | `env` | 环境变量覆盖 |
-| `working_dir` | 工作目录；`workspace` 权限下可用相对路径，`full` 权限下可用绝对路径 |
+| `working_dir` | 工作目录 |
 | `permission` | `workspace` / `full` |
 | `description` | 描述 |
-| `package` | 包名，供 WebUI 安装辅助使用 |
-
-## logging / sentinel / memory
-
-这三块建议直接结合 [配置说明](/guide/configuration) 查看：
-
-- `logging`: 日志开关、目录、轮转
-- `sentinel`: 巡检、自愈、通知
-- `memory`: layered memory 开关与 recent days
+| `package` | 安装包名 |
+| `installer` | `npx` / `uvx` / `bunx` 等安装器 |
+| `mcp_server_checks` | 命令检查或安装前置条件 |

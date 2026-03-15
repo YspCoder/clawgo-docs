@@ -22,7 +22,7 @@ Access requires either:
 
 `POST /api/config?mode=normalized` accepts the normalized schema and applies it back to the real config file.
 
-`POST /api/config` supports risky-change confirmation. Recent changes expanded that logic to include named providers under `providers.proxies.<name>`, not only the default provider. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
+`POST /api/config` supports risky-change confirmation. Recent changes expanded that logic to include sensitive fields under `models.providers.<name>`. When a sensitive field changes without confirmation, the response returns `requires_confirm: true`.
 
 The WebUI header version-check action compares this version payload with the latest GitHub release.
 

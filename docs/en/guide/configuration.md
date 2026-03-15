@@ -8,41 +8,26 @@ Default config file:
 ~/.clawgo/config.json
 ```
 
-In debug mode, it switches to:
+In debug mode:
 
 ```text
 .clawgo/config.json
 ```
 
-Load strategy:
+The load flow is:
 
-- start from `DefaultConfig()`
+- start from the default config
 - read JSON
-- use strict decoding, so unknown fields fail
-- apply environment variable overrides for fields with `env` tags
-
-Recent WebUI and runtime-facing APIs also prefer a unified normalized view:
-
-- `core.default_provider`
-- `core.default_model`
-- `core.main_agent_id`
-- `core.subagents`
-- `runtime.router`
-- `runtime.providers`
-
-That normalized schema mainly exists to:
-
-- make WebUI config editing more stable
-- let remote node views read main-agent and subagent topology without depending on old field layout
-- separate core configuration from runtime-oriented settings
+- fail on unknown fields through strict decoding
+- apply environment variable overrides last
 
 ## Top-Level Structure
 
-The top-level `Config` includes:
+The current top-level keys are:
 
 - `agents`
 - `channels`
-- `providers`
+- `models`
 - `gateway`
 - `cron`
 - `tools`
@@ -50,17 +35,34 @@ The top-level `Config` includes:
 - `sentinel`
 - `memory`
 
-## agents
+One important change: providers now live under `models.providers`, not under the older top-level `providers` wording.
+
+## Normalized Schema
+
+Recent WebUI and runtime-facing endpoints prefer a normalized view:
+
+- `core.default_provider`
+- `core.default_model`
+- `core.main_agent_id`
+- `core.agents`
+- `core.tools`
+- `core.gateway`
+- `runtime.providers`
+
+This exists to:
+
+- give the WebUI a more stable edit surface
+- let remote nodes and control-plane code avoid depending on raw internal layout
+- separate actor topology from provider runtime config
+
+## `agents`
 
 ### `agents.defaults`
 
-Global defaults that shape runtime behavior.
-
-Important fields:
+This section defines global defaults. Important fields include:
 
 - `workspace`
-- `proxy`
-- `proxy_fallbacks`
+- `model.primary`
 - `max_tokens`
 - `temperature`
 - `max_tool_iterations`
@@ -69,14 +71,29 @@ Important fields:
 - `execution`
 - `summary_policy`
 
-Provider fallback behavior now has one more practical rule:
+One important current detail:
 
-- `proxy` still selects the primary provider
-- `proxy_fallbacks` is the explicit way to enforce a strict order
-- if `proxy_fallbacks` is omitted, the runtime can now infer candidates from declared providers
-- that inferred chain is useful when you want several providers available without hand-maintaining every fallback entry
+- the default provider should no longer be documented with the old `proxy` wording
+- the active default model now comes from `agents.defaults.model.primary`
+- the value shape is `provider/model`
 
-### `context_compaction`
+Example:
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai/gpt-5.4"
+      }
+    }
+  }
+}
+```
+
+### `agents.defaults.context_compaction`
+
+Fields:
 
 - `enabled`
 - `mode`
@@ -91,73 +108,70 @@ Supported `mode` values:
 - `responses_compact`
 - `hybrid`
 
-If you use `responses_compact`, the active provider must declare `supports_responses_compact: true`.
+### `agents.defaults.execution`
 
-### `execution`
+Fields:
 
 - `run_state_ttl_seconds`
 - `run_state_max`
 - `tool_parallel_safe_names`
 - `tool_max_parallel_calls`
 
-This controls tool concurrency and runtime state retention.
+This area controls runtime-state retention and safe tool concurrency.
 
-## `agents.router`
+## `agents.agents`
 
-The router supports keyword-based dispatch from the main agent.
+This is now the most important config area. Each entry is an actor and can be:
 
-Important fields:
-
-- `enabled`
-- `main_agent_id`
-- `strategy`
-- `policy.intent_max_input_chars`
-- `policy.max_rounds_without_user`
-- `rules`
-- `allow_direct_agent_chat`
-- `max_hops`
-- `default_timeout_sec`
-- `default_wait_reply`
-- `sticky_thread_owner`
-
-Supported `strategy` values:
-
-- `rules_first`
-- `round_robin`
-- `manual`
-
-## `agents.subagents`
-
-Each subagent is an independently declared item.
+- a regular `agent`
+- a world `npc`
+- a remote `node` branch
 
 Common fields:
 
 - `enabled`
+- `kind`
 - `type`
 - `transport`
 - `node_id`
 - `parent_agent_id`
-- `notify_main_policy`
 - `display_name`
 - `role`
-- `system_prompt_file`
+- `description`
+- `persona`
+- `traits`
+- `faction`
+- `home_location`
+- `default_goals`
+- `perception_scope`
+- `schedule_hint`
+- `world_tags`
+- `prompt_file`
 - `memory_namespace`
-- `accept_from`
-- `can_talk_to`
 - `tools.allowlist`
 - `tools.denylist`
-- `runtime.*`
+- `tools.max_parallel_calls`
+- `runtime.provider`
+- `runtime.model`
+- `runtime.temperature`
+- `runtime.timeout_sec`
+- `runtime.max_retries`
+- `runtime.retry_backoff_ms`
+- `runtime.max_task_chars`
+- `runtime.max_result_chars`
+- `runtime.max_parallel_runs`
 
-Notes:
+Usage guidance:
 
-- enabled subagents should now use `system_prompt_file`
-- when required, `system_prompt_file` must be relative and stay inside the workspace
-- node-backed branches require `transport: "node"`, `node_id`, and `parent_agent_id`
-- the old inline `system_prompt` field should be treated as legacy compatibility only, not as the normal configuration path
+- `main` is usually a `type: "agent"` actor with a `prompt_file`
+- an NPC enters the world runtime through `kind: "npc"`
+- remote branches use `transport: "node"` together with `node_id` and `parent_agent_id`
+- enabled executable agents should provide `prompt_file`
+- `prompt_file` must stay workspace-relative
 
-## channels
+## `channels`
 
-Supported channel configs:
+Major supported channels include:
 
 - `telegram`
 - `discord`
@@ -167,54 +181,27 @@ Supported channel configs:
 - `qq`
 - `maixcam`
 
-Shared dedupe settings:
+Shared fields:
 
 - `inbound_message_id_dedupe_ttl_seconds`
 - `inbound_content_dedupe_window_seconds`
 - `outbound_dedupe_window_seconds`
 
-Examples of channel-specific behavior:
+## `models.providers`
 
-- Telegram supports `streaming`
-- Telegram and Feishu support mention constraints in groups
-- WhatsApp can use the embedded bridge flow or an explicit `bridge_url`
-- MaixCam uses a local host/port service
+Provider configuration now lives here:
 
-## `tools.mcp`
-
-Fields:
-
-- `enabled`
-- `request_timeout_sec`
-- `servers`
-
-Per-server fields:
-
-- `enabled`
-- `transport`
-- `command`
-- `args`
-- `env`
-- `working_dir`
-- `description`
-- `package`
-
-The current implementation only supports:
-
-```text
-transport = "stdio"
+```json
+{
+  "models": {
+    "providers": {
+      "openai": {}
+    }
+  }
+}
 ```
 
-See [MCP Integration](/en/guide/mcp) for details.
-
-## providers
-
-Structured as:
-
-- `providers.proxy`
-- `providers.proxies.<name>`
-
-Fields:
+Common fields:
 
 - `api_key`
 - `api_base`
@@ -235,125 +222,16 @@ Supported `auth` values:
 - `hybrid`
 - `none`
 
-OAuth-related fields include:
-
-- `provider`
-- `network_proxy`
-- `credential_file`
-- `credential_files`
-- `callback_port`
-- `client_id`
-- `client_secret`
-- `auth_url`
-- `token_url`
-- `redirect_url`
-- `scopes`
-- `cooldown_sec`
-- `refresh_scan_sec`
-- `refresh_lead_sec`
-
-Notes:
-
-- `auth=oauth` requires `oauth.provider`
-- `auth=hybrid` means API key and OAuth accounts can both participate in provider candidate selection
-- `runtime_persist` and `runtime_history_*` retain provider runtime events and candidate-order history
-- in multi-provider setups, declared providers can also join the automatic fallback chain even when `proxy_fallbacks` is omitted
-
-## gateway
-
-- `host`
-- `port`
-- `token`
-
-Default port is `18790`.
-
-### `gateway.nodes.p2p`
-
-The node P2P entry point lives under `gateway.nodes.p2p`.
-
-Fields:
-
-- `enabled`
-- `transport`
-- `stun_servers`
-- `ice_servers`
-
-Supported `transport` values:
-
-- `websocket_tunnel`
-- `webrtc`
-
-Rules:
-
-- it is disabled by default and must be enabled explicitly
-- `stun_servers` is the legacy-compatible flat list
-- `ice_servers` is the preferred structured form with `urls`, `username`, and `credential`
-- if any `ice_servers[].urls` entry uses `turn:` or `turns:`, both `username` and `credential` are required
-
-### `gateway.nodes.dispatch`
-
-Node dispatch policy lives under `gateway.nodes.dispatch`.
-
-Fields:
-
-- `prefer_local`
-- `prefer_p2p`
-- `allow_relay_fallback`
-- `action_tags`
-- `agent_tags`
-- `allow_actions`
-- `deny_actions`
-- `allow_agents`
-- `deny_agents`
-
-These fields control:
-
-- whether local execution should be preferred over remote nodes
-- whether relay fallback is allowed when P2P is unavailable
-- which node tags are required for a given action or remote agent
-- which tag sets are explicitly allowed or denied for an action or agent
-
-Use `action_tags` and `agent_tags` for tag requirements, and `allow_*` / `deny_*` for stricter admission rules.
-
-### `gateway.nodes.artifacts`
-
-Node artifact retention lives under `gateway.nodes.artifacts`.
-
-Fields:
-
-- `enabled`
-- `keep_latest`
-- `retain_days`
-- `prune_on_read`
-
-Defaults:
-
-- `enabled = false`
-- `keep_latest = 500`
-- `retain_days = 7`
-- `prune_on_read = true`
-
-Validation:
-
-- when `enabled = true`, `keep_latest` must be greater than `0`
-- `keep_latest` cannot be negative
-- `retain_days` cannot be negative
-
-When enabled, Gateway prunes node artifacts on read using both the latest-count and retain-days limits.
-
 ## `tools.mcp`
 
-The MCP entry point is `tools.mcp`.
-
-Top-level fields:
+Fields:
 
 - `enabled`
 - `request_timeout_sec`
 - `servers`
 
-Common per-server fields:
+Per-server fields currently include:
 
-- `enabled`
 - `transport`
 - `command`
 - `args`
@@ -363,37 +241,58 @@ Common per-server fields:
 - `permission`
 - `description`
 - `package`
+- `installer`
+- `mcp_server_checks`
 
-Supported `transport` values:
+## `gateway`
 
-- `stdio`
-- `http`
-- `streamable_http`
-- `sse`
+Common fields:
 
-Rules:
+- `host`
+- `port`
+- `token`
 
-- `stdio` requires `command`
-- `http`, `streamable_http`, and `sse` require `url`
-- `permission` must be `workspace` or `full`
-- with `permission: "workspace"`, `working_dir` may be relative but must resolve inside the workspace
-- with `permission: "full"`, `working_dir` may be absolute
+For the separately deployed WebUI, the usual auth patterns are:
 
-See [MCP Integration](/en/guide/mcp) for the full guide.
+- `?token=<gateway.token>`
+- or `Authorization: Bearer <gateway.token>`
 
-## Validation
+## A Minimal Config Closer To The Current Code
 
-Run:
-
-```bash
-clawgo config check
+```json
+{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.clawgo/workspace",
+      "model": {
+        "primary": "openai/gpt-5.4"
+      }
+    },
+    "agents": {
+      "main": {
+        "enabled": true,
+        "type": "agent",
+        "role": "orchestrator",
+        "prompt_file": "agents/main/AGENT.md"
+      },
+      "guard": {
+        "enabled": true,
+        "kind": "npc",
+        "persona": "A cautious town guard",
+        "home_location": "gate",
+        "default_goals": ["patrol the square"]
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "openai": {
+        "api_key": "YOUR_KEY",
+        "api_base": "https://api.openai.com/v1",
+        "models": ["gpt-5.4"],
+        "auth": "bearer"
+      }
+    }
+  }
+}
 ```
-
-The validator checks:
-
-- numeric bounds
-- provider existence
-- fallback validity
-- router rules referencing existing agents
-- required credentials for enabled channels
-- compatibility of `responses_compact`

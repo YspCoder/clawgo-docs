@@ -1,68 +1,134 @@
 # Runtime, Storage, and Recovery
 
-## Persistence Is A Core Capability
+## Persistence Is Now Centered On The World Runtime
 
-ClawGo is clearly built for long-running behavior, so persistence is central rather than optional.
+In the current codebase, persistence is no longer primarily about the older `subagent_runs.jsonl` and `subagent_events.jsonl` wording. It is centered on:
 
-The codebase and README emphasize files such as:
+```text
+workspace/agents/runtime/
+```
 
-- `subagent_runs.jsonl`
-- `subagent_events.jsonl`
-- `threads.jsonl`
+That directory now stores world state, NPC state, and actor runtime records together.
+
+## World Store
+
+The core world-store files are:
+
+- `world_state.json`
+- `npc_state.json`
+- `world_events.jsonl`
+
+They represent:
+
+- `world_state.json`: structured world state such as locations, entities, quests, and clock
+- `npc_state.json`: current NPC state, location, goals, beliefs, and related data
+- `world_events.jsonl`: append-only world event audit
+
+Together they determine whether the world can resume after restart.
+
+## Agent Runtime Store
+
+The same directory also stores actor runtime records:
+
+- `agent_runs.jsonl`
+- `agent_events.jsonl`
 - `agent_messages.jsonl`
 
-Together with sessions, memory, and logs, these form the runtime record.
+These are used for:
 
-## Sessions
+- per-run input, output, and status
+- runtime events, errors, and retries
+- inter-actor message collaboration
 
-`pkg/session/manager.go` manages session history. CLI `agent` mode and WebUI Chat both depend on it.
+The runtime snapshot model is now unified around:
 
-The default CLI session key is:
+- `tasks`
+- `runs`
+- `events`
+- `world`
 
-```text
-cli:default
-```
+So execution records and world state now show up in the same observability view.
 
-## Memory
+## Sessions And Workspace Are A Separate Layer
 
-Current memory-related tools include:
+Outside `workspace/agents/runtime/`, the system still keeps:
 
-- `memory_search`
-- `memory_get`
-- `memory_write`
+- `~/.clawgo/sessions/`
+- `~/.clawgo/logs/`
+- `~/.clawgo/cron/`
+- `workspace/memory/`
 
-The config also supports layered memory:
+Those are used for:
 
-- `profile`
-- `project`
-- `procedures`
+- CLI and session history
+- gateway logs
+- cron jobs
+- heartbeat, skill audit, node audit, and trigger audit
 
-## Heartbeat
+## Why This Refactor Matters
 
-Heartbeat logs are written to:
+Recovery is no longer just about restoring a chat transcript. It is about restoring:
 
-```text
-workspace/memory/heartbeat.log
-```
+- world state
+- NPC state
+- active tasks and runtime events
+- inter-actor message traces
 
-`clawgo status` reads and summarizes them.
+That is what makes ClawGo much closer to a long-running simulation runtime.
 
-## Trigger and Skill Audit
+## Runtime Snapshot
 
-Examples:
+Recent APIs and the WebUI consume a unified snapshot through:
 
-- `workspace/memory/trigger-audit.jsonl`
-- `workspace/memory/trigger-stats.json`
-- `workspace/memory/skill-audit.jsonl`
+- `GET /api/runtime`
+- `GET /api/runtime/live`
 
-Those are used by status reporting and observability.
+The `world` payload includes data such as:
 
-## Context Compaction
+- `npc_count`
+- `active_npcs`
+- location occupancy
+- recent world events
 
-For long sessions, the runtime supports context compaction:
+That is the basis for the world overview in the standalone WebUI.
 
-- compress once message count passes a threshold
-- keep recent messages
-- summarize or compact older context
+## Provider Runtime Persists Too
 
-That is one of the reasons the system is more suitable for long-running sessions.
+In addition to the world/runtime core, provider runtime can persist:
+
+- OAuth account state
+- candidate order
+- most recent successful provider
+- runtime history
+
+That part is mainly controlled by `models.providers.<name>.runtime_*`.
+
+## `workspace/memory` Still Matters
+
+Common files under `workspace/memory/` include:
+
+- `heartbeat.log`
+- `trigger-audit.jsonl`
+- `trigger-stats.json`
+- `skill-audit.jsonl`
+- `nodes-audit.jsonl`
+- `nodes-state.json`
+- `nodes-dispatch-audit.jsonl`
+
+So the world/runtime directory is the execution core, while `memory/` is more about audit and operational observability.
+
+## Where To Check First During Recovery Issues
+
+Start with:
+
+1. `workspace/agents/runtime/world_state.json`
+2. `workspace/agents/runtime/npc_state.json`
+3. `workspace/agents/runtime/world_events.jsonl`
+4. `workspace/agents/runtime/agent_runs.jsonl`
+5. `workspace/agents/runtime/agent_events.jsonl`
+
+If those files are not advancing, common causes are:
+
+- the runtime never entered the world loop
+- actors were not scheduled successfully
+- provider setup or config validation failed early

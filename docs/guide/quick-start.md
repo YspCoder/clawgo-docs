@@ -1,18 +1,17 @@
 # 快速开始
 
-## 项目定位
+## 先建立正确预期
 
-ClawGo 是一个 Go 编写的 Agent Runtime。代码入口在 `cmd/clawgo`，核心能力分布在：
+ClawGo 当前更适合被理解为一个 **World Runtime**，而不是单纯的命令行聊天工具。
 
-- `pkg/agent`: 主循环、任务拆分、上下文构造、路由与恢复
-- `pkg/tools`: 内置工具系统
-- `pkg/api`: Gateway HTTP API 与 WebUI API
-- `pkg/channels`: Telegram、Discord、Feishu、DingTalk、WhatsApp、QQ、MaixCam 等通道
-- `pkg/cron`: 定时任务
-- `pkg/nodes`: 远端节点与 relay/router
-- `webui`: React + Vite 运维控制台
+它的基础能力包括：
 
-## 安装方式
+- 维护长期 world state 与 NPC state
+- 通过 `main` 统一处理 world event
+- 让 `agent` / `npc` 在同一个运行时里协作
+- 把执行记录、provider 运行态和 world snapshot 一起落盘
+
+## 安装
 
 ### 方式一：安装脚本
 
@@ -20,20 +19,23 @@ ClawGo 是一个 Go 编写的 Agent Runtime。代码入口在 `cmd/clawgo`，核
 curl -fsSL https://clawgo.dev/install.sh | bash
 ```
 
-如果你只想装某一个 channel 变体，最近也可以显式指定：
+安装指定变体：
 
 ```bash
 curl -fsSL https://clawgo.dev/install.sh | bash -s -- --variant telegram
 ```
 
-`install.sh` 会：
+当前支持的主要变体包括：
 
-- 根据系统与架构下载最新 release 二进制
-- 支持 `full` / `none` / `telegram` / `discord` / `feishu` / `maixcam` / `qq` / `dingtalk` / `whatsapp` 这些安装变体
-- 文档站会同步托管一份脚本，所以可以直接通过 `https://clawgo.dev/install.sh` 安装
-- 可选安装独立 WebUI 发布包
-- 可选执行 OpenClaw 到 ClawGo 的迁移
-- 如果还没有配置文件，会提示是否继续执行 `clawgo onboard`
+- `full`
+- `none`
+- `telegram`
+- `discord`
+- `feishu`
+- `maixcam`
+- `qq`
+- `dingtalk`
+- `whatsapp`
 
 ### 方式二：源码构建
 
@@ -43,8 +45,6 @@ cd clawgo
 make build
 ```
 
-默认产物在 `build/clawgo-<platform>-<arch>`。
-
 ## 初始化
 
 首次执行：
@@ -53,83 +53,90 @@ make build
 clawgo onboard
 ```
 
-这个命令会：
+它会：
 
-- 在 `~/.clawgo/config.json` 生成默认配置
-- 自动生成 `gateway.token`
-- 将内置工作区模板拷贝到 `~/.clawgo/workspace`
+- 生成 `~/.clawgo/config.json`
+- 创建 `~/.clawgo/workspace`
+- 生成 `gateway.token`
+- 拷贝内置 workspace 模板
 
-默认工作区中会包含：
+## 最小可用配置
 
-- `AGENTS.md`
-- `BOOT.md`
-- `BOOTSTRAP.md`
-- `IDENTITY.md`
-- `MEMORY.md`
-- `SOUL.md`
-- `TOOLS.md`
-- `USER.md`
-- `HEARTBEAT.md`
-- `memory/`
-- `skills/`
+最近真实配置中心已经切到 `agents.agents` 和 `models.providers`。
 
-## 配置模型提供方
-
-最关键的是配置 `providers` 与 `agents.defaults.proxy`。
-
-交互式配置：
-
-```bash
-clawgo provider
-```
-
-最小可用配置通常至少包含：
+一个最小示例：
 
 ```json
 {
   "agents": {
     "defaults": {
-      "proxy": "proxy"
+      "workspace": "~/.clawgo/workspace",
+      "model": {
+        "primary": "openai/gpt-5.4"
+      }
+    },
+    "agents": {
+      "main": {
+        "enabled": true,
+        "type": "agent",
+        "role": "orchestrator",
+        "prompt_file": "agents/main/AGENT.md"
+      },
+      "guard": {
+        "enabled": true,
+        "kind": "npc",
+        "persona": "A cautious town guard",
+        "home_location": "gate",
+        "default_goals": ["patrol the square"]
+      }
     }
   },
-  "providers": {
-    "proxy": {
-      "api_key": "YOUR_KEY",
-      "api_base": "http://localhost:8080/v1",
-      "models": ["glm-4.7"],
-      "auth": "bearer",
-      "timeout_sec": 90
+  "models": {
+    "providers": {
+      "openai": {
+        "api_key": "YOUR_KEY",
+        "api_base": "https://api.openai.com/v1",
+        "models": ["gpt-5.4"],
+        "auth": "bearer",
+        "timeout_sec": 90
+      }
     }
   }
 }
 ```
 
-代码中默认假设你前面还有一个兼容 OpenAI 风格接口的代理层，例如 README 中提到的 CLIProxyAPI。
+这个配置表达的是：
 
-最近还有一个对多 provider 场景比较实用的变化：
+- 默认模型来自 `agents.defaults.model.primary`
+- actor 与 NPC 都在 `agents.agents`
+- provider 定义在 `models.providers`
 
-- 即使你没有显式写 `agents.defaults.proxy_fallbacks`
-- 运行时也会根据当前已声明的 provider 自动推断 fallback 链
-- 显式 `proxy_fallbacks` 仍然适合在你想强约束优先级时使用
+## 配置 Provider
 
-## 启动方式
+交互式方式：
 
-### 交互式 Agent
+```bash
+clawgo provider
+```
+
+最近多 provider 的行为也更实用：
+
+- 主 provider 由 `agents.defaults.model.primary` 决定
+- 即使没显式写 fallback 链，运行时也会根据已声明的 provider 推断候选顺序
+- 如果你要强约束优先级，再显式维护 fallback 顺序
+
+## 启动
+
+### 交互式模式
 
 ```bash
 clawgo agent
 ```
 
-直接发送单条消息：
+一次性发消息：
 
 ```bash
-clawgo agent -m "Hello"
-```
-
-指定 session：
-
-```bash
-clawgo agent -s cli:demo -m "实现一个配置热更新方案"
+clawgo agent -m "我走到 gate，看看守卫现在在做什么"
 ```
 
 ### Gateway 模式
@@ -140,47 +147,50 @@ clawgo gateway run
 
 这是更完整的运行方式，会同时启动：
 
-- Gateway HTTP 服务
-- WebUI API
-- Channel Manager
-- Cron Service
-- Heartbeat Service
+- Gateway API
+- runtime snapshot / runtime live
+- Channels
+- Cron
 - Sentinel
 
-### 开发模式
-
-```bash
-make dev
-```
-
-适合本地开发联调。
-
-## WebUI 入口
+## WebUI
 
 WebUI 当前建议独立部署，前端仓库：
 
 - [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
 
-接入时通常只需要把 `gateway.token` 带给前端，并让它请求 Gateway 的 `/api/*`。
-
-示例地址：
+前端拿到 `gateway.token` 后直接请求 Gateway `/api/*` 即可，例如：
 
 ```text
 https://<your-webui-host>?token=<gateway.token>
 ```
 
-## 第一次排查建议
+## 第一次验证
 
-启动后先执行：
+先检查基础状态：
 
 ```bash
 clawgo status
 clawgo config check
 ```
 
-这两个命令能最快确认：
+如果你想确认 world runtime 已经开始工作，可以再看：
 
-- 配置文件是否存在
-- workspace 是否存在
-- provider 是否配置完整
-- 日志、心跳、Cron、节点统计是否正常
+- `~/.clawgo/workspace/agents/runtime/world_state.json`
+- `~/.clawgo/workspace/agents/runtime/npc_state.json`
+- `~/.clawgo/workspace/agents/runtime/world_events.jsonl`
+
+## 一个更贴近当前模型的首条消息
+
+你可以直接这样测试：
+
+```bash
+clawgo agent -m "我走进 square，观察 guard 和 merchant 的状态，并给出当前世界快照摘要"
+```
+
+这类输入更能直接验证：
+
+- world event ingestion
+- `main` 的世界级判断
+- NPC intent 与渲染结果
+- world store 是否已经开始落盘

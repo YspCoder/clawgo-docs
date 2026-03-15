@@ -2,17 +2,17 @@
 
 这一部分回答的是“ClawGo 到底是什么，以及它为什么这样设计”。
 
-如果你把 ClawGo 只理解成一个聊天机器人，很容易误判它的边界。按当前代码来看，它更接近一个长期运行的 Agent Runtime，核心目标是：
+如果你把 ClawGo 只理解成一个聊天机器人，很容易误判它的边界。按当前代码来看，它更接近一个长期运行的 World Runtime，核心目标是：
 
-- 让 Agent 不止能对话，还能持续执行
-- 让多 Agent 协作可视、可追踪、可恢复
+- 让 world state、NPC state 和 actor runtime 长期运行
+- 让 `main`、`agent`、`npc` 协作可视、可追踪、可恢复
 - 让 prompt、工具、角色、通道、定时任务都能工程化管理
 
 ## 建议阅读顺序
 
 1. [架构总览](/guide/architecture)
 2. [运行时、存储与恢复](/guide/runtime-storage)
-3. [Subagent 与 Skills](/guide/subagents-and-skills)
+3. [Agents、NPC 与 Skills](/guide/subagents-and-skills)
 
 ## 这一部分重点理解什么
 
@@ -28,16 +28,16 @@ ClawGo 有自己的：
 
 这决定了它不是简单“用户说一句，模型回一句”。
 
-### 2. 多 Agent 协作是第一等公民
+### 2. World Actor 协作是第一等公民
 
 配置、WebUI 和运行时都把以下对象作为核心实体：
 
-- main agent
-- subagent
+- `main`
+- `agent`
+- `npc`
 - node-backed branch
-- thread
-- message
-- task
+- world event
+- task / run / event
 
 ### 3. 可恢复与可观测是默认能力
 
@@ -46,5 +46,5 @@ ClawGo 有自己的：
 ## 适合谁读
 
 - 想先建立整体心智模型的开发者
-- 准备改 runtime、router、subagent 的贡献者
+- 准备改 runtime、router、actor / NPC 的贡献者
 - 想把它接进自己现有 Agent 系统的人

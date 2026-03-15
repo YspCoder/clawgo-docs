@@ -1,37 +1,61 @@
-# Subagents and Skills
+# Agents, NPCs, and Skills
 
-## Why Subagents Exist
+## The Real Config Center Is Now `agents.agents`
 
-ClawGo is built for multiple execution roles rather than a single always-do-everything agent.
+This page keeps the older path for continuity, but the real config surface in code has moved from `agents.subagents` to `agents.agents`.
 
-Typical roles include:
+Each entry can now represent:
 
-- `main`: orchestration and merge
-- `coder`: implementation
-- `tester`: testing and verification
+- an `agent`
+- an `npc`
+- a remote `node` branch
 
-Each subagent can have its own:
+That matches the current product model much better than the old “main + coder + tester subagent tree” framing.
 
-- `role`
-- `display_name`
-- `system_prompt_file`
-- `memory_namespace`
+## The Difference Between `main`, `agent`, and `npc`
+
+### `main`
+
+`main` is still the primary entrypoint, but it is more accurately the world mind:
+
+- accepts user input
+- aggregates actor intents
+- arbitrates outcomes
+- decides what becomes committed world state
+
+### `agent`
+
+Regular `agent` actors are better for explicit execution roles such as:
+
+- `coder`
+- `tester`
+- provider-bound tool roles
+- branch agents running on remote nodes
+
+Common fields include:
+
+- `type`
+- `prompt_file`
+- `runtime.provider`
 - `tools.allowlist`
-- `runtime` settings
+- `memory_namespace`
 
-Recent changes make `system_prompt_file` the normal and expected path. Inline prompt editing is no longer the primary workflow.
+### `npc`
 
-## Execution Modes
+An `npc` is an autonomous world actor. Common fields include:
 
-There are two major forms:
+- `kind: "npc"`
+- `persona`
+- `home_location`
+- `default_goals`
+- `perception_scope`
+- `world_tags`
 
-### Local subagents
+The key idea is that NPCs produce intents from their visible slice of the world instead of directly executing arbitrary tools.
 
-Executed locally with the local provider and local tools.
+## Remote Node Branches Still Fit The Same Model
 
-### Node-backed branches
-
-Mounted through:
+If an actor runs through a remote node, you can still configure:
 
 ```json
 {
@@ -41,88 +65,78 @@ Mounted through:
 }
 ```
 
+This still lives under `agents.agents.<id>`. It is simply a different runtime class, not a separate subsystem.
+
+## Prompt Files Should Use `prompt_file`
+
+Recent code paths now clearly prefer:
+
+- `prompt_file` for agent identity
+- a workspace-relative path
+- a non-empty value when the actor is enabled
+
+The recommended convention remains:
+
+```text
+agents/<agent_id>/AGENT.md
+```
+
 ## Tool Permissions
 
-Each subagent can define:
+Each actor can still define tool permissions with:
 
 - `tools.allowlist`
 - `tools.denylist`
 - `tools.max_parallel_calls`
 
-This enables safer role separation, such as:
+A common engineering split is:
 
-- `main` focusing on routing and context
-- `coder` holding filesystem and shell access
-- `tester` holding process management and verification tools
+- `main` keeps lower-risk routing and lookup tools
+- `coder` gets filesystem, shell, and repo tools
+- `tester` gets verification and process-control tools
 
-There is now one important exception:
+## Skills Remain An Important Extension Surface
 
-- `skill_exec` is automatically inherited by subagents
+Skills are still centered on `SKILL.md` and exposed through `skill_exec`.
 
-So even if it is not listed explicitly in the allowlist, subagents can still execute skills. The `SubagentProfiles` WebUI page now shows this as part of the inherited tool set.
-
-## Skills
-
-Skills are reusable capability packages, typically centered around `SKILL.md`.
-
-The code loads skills from multiple locations:
+The runtime still loads them from:
 
 - workspace skills
 - global skills
 - builtin skills
 
-The `skill_exec` tool is what exposes those skills to runtime execution. Recent audit changes also add:
+Audit records now also keep:
 
 - `caller_agent`
 - `caller_scope`
 
-That makes it easier to tell whether a skill execution came from the main agent or from a subagent.
-
-The repository currently ships workspace skills such as:
-
-- `tmux`
-- `healthcheck`
-- `clawhub`
-- `context7`
-- `github`
-- `skill-creator`
-- `spec-coding`
+So you can tell which actor triggered each skill execution.
 
 ## `spec-coding`
 
-The main coding workflow skill in the workspace is now `spec-coding`.
+The most important engineering skill remains `spec-coding`.
 
-It is intended for non-trivial coding work and keeps three files in the current coding project root:
+It targets non-trivial coding work and maintains these files in the active coding project root:
 
 - `spec.md`
 - `tasks.md`
 - `checklist.md`
 
-Those files are not meant to live permanently in the ClawGo repository root. They belong to the actual project being changed. The templates come from:
+Templates come from:
 
 ```text
 workspace/skills/spec-coding/templates
 ```
 
-Runtime behavior also now ties into this workflow:
+Recent runtime behavior also integrates with that workflow:
 
-- when the request looks like spec-driven coding, missing `spec.md`, `tasks.md`, and `checklist.md` can be scaffolded automatically
-- when coding work completes or gets reopened, `tasks.md` and `checklist.md` can be updated automatically to reflect completion or rework
+- scaffold missing spec files when needed
+- update `tasks.md` and `checklist.md` when work is completed or reopened
 
-## Skills CLI
+## Recommended Practice
 
-Supported commands include:
-
-- `skills list`
-- `skills install`
-- `skills remove`
-- `skills search`
-- `skills show`
-
-## Recommendations
-
-- keep `main` as the orchestrator with a smaller safe tool set
-- push high-risk execution into `coder` or `tester`
-- define subagent identity with `system_prompt_file` instead of inline prompt text
-- keep prompt files under paths such as `agents/<agent_id>/AGENT.md`
-- use `spec-coding` for multi-file or multi-stage coding work so `spec.md`, `tasks.md`, and `checklist.md` evolve with the implementation
+- let `main` handle world-level judgment instead of all risky execution
+- model execution roles as `agent`
+- model autonomous world roles as `npc`
+- keep prompts in `prompt_file`
+- use `spec-coding` for multi-stage engineering tasks

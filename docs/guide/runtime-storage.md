@@ -1,119 +1,134 @@
 # 运行时、存储与恢复
 
-## 运行时持久化是核心特性
+## 当前落盘重点已经变成 world runtime
 
-ClawGo 明显是按“长期运行”目标设计的，因此持久化不是附加项。
+最近版本里，ClawGo 的持久化重点不再是旧文档里的 `subagent_runs.jsonl` / `subagent_events.jsonl`，而是统一收敛到：
 
-README 和代码都强调了以下文件：
+```text
+workspace/agents/runtime/
+```
 
-- `subagent_runs.jsonl`
-- `subagent_events.jsonl`
-- `threads.jsonl`
+这里同时保存 world state、NPC state 和 actor runtime 记录。
+
+## world store
+
+当前 world store 的核心文件是：
+
+- `world_state.json`
+- `npc_state.json`
+- `world_events.jsonl`
+
+含义分别是：
+
+- `world_state.json`: 世界结构化状态，例如 locations、entities、quests、clock
+- `npc_state.json`: 每个 NPC 当前状态、位置、目标、beliefs 等
+- `world_events.jsonl`: 世界事件审计流，按时间追加
+
+这三者共同决定“重启后世界还能不能继续跑”。
+
+## agent runtime store
+
+同一目录下还有 actor 运行态记录：
+
+- `agent_runs.jsonl`
+- `agent_events.jsonl`
 - `agent_messages.jsonl`
 
-这些文件配合 sessions、memory 和 logs，构成完整运行现场。
+它们分别承担：
 
-## Session
+- 记录一次 run 的输入、输出、状态
+- 记录运行事件、错误和重试
+- 记录 actor 间消息协作
 
-`pkg/session/manager.go` 负责会话历史。CLI `agent` 模式和 WebUI Chat 都依赖 session history。
+最近 runtime snapshot 结构已经统一成：
 
-CLI 默认使用：
+- `tasks`
+- `runs`
+- `events`
+- `world`
 
-```text
-cli:default
-```
+也就是运行记录和世界快照在同一个观测模型里出现。
 
-你也可以显式指定自定义 session key。
+## Session 与工作区是另一层
 
-## Threads 与 Agent Messages
+除了 `workspace/agents/runtime/`，系统仍然还有：
 
-当启用 `agents.communication.persist_threads/persist_messages` 时，agent 间协作会被持久化，这使得：
+- `~/.clawgo/sessions/`
+- `~/.clawgo/logs/`
+- `~/.clawgo/cron/`
+- `workspace/memory/`
 
-- WebUI 能展示内部消息流
-- 系统可恢复 reply 关系
-- 任务审计可以还原上下文
+这些目录分别服务于：
 
-## Memory
+- CLI / 会话历史
+- 网关日志
+- Cron 作业
+- 心跳、技能审计、节点审计、trigger 审计
 
-Memory 模块当前包含：
+## 为什么这次重构重要
 
-- `memory_search`
-- `memory_get`
-- `memory_write`
+因为恢复的粒度已经不是“恢复一段聊天上下文”，而是：
 
-同时配置层还有 layered memory 开关：
+- 恢复 world state
+- 恢复 NPC state
+- 恢复正在进行的任务与运行事件
+- 恢复 actor 间消息轨迹
 
-- `profile`
-- `project`
-- `procedures`
+这使得 ClawGo 更接近一个可长期运行的 simulation runtime。
 
-这说明 ClawGo 的 memory 不只是一个平面文件夹，而是朝分层记忆演进的。
+## runtime snapshot
 
-## Heartbeat
+最近 API 与 WebUI 消费的是统一 snapshot：
 
-Heartbeat service 会定期运行，并把记录落到：
+- `GET /api/runtime`
+- `GET /api/runtime/live`
 
-```text
-workspace/memory/heartbeat.log
-```
+其中 `world` payload 会包含：
 
-`status` 命令会直接统计心跳次数和最后一次记录。
+- `npc_count`
+- `active_npcs`
+- location occupancy
+- recent world events
 
-## Trigger Audit
+这也是独立 WebUI 能展示世界概览的基础。
 
-与触发器相关的审计会落到：
+## provider runtime 也会一起持久化
 
-```text
-workspace/memory/trigger-audit.jsonl
-workspace/memory/trigger-stats.json
-```
+除了 world/runtime 本体，provider 侧还有自己的 runtime 持久化能力，例如：
 
-`status` 会聚合最近错误和按 trigger 分类的错误计数。
+- OAuth 账户状态
+- candidate order
+- 最近成功 provider
+- runtime history
 
-## Skill Audit
+这部分主要由 `models.providers.<name>.runtime_*` 控制。
 
-Skill 执行审计文件：
+## workspace/memory 仍然重要
 
-```text
-workspace/memory/skill-audit.jsonl
-```
+`workspace/memory/` 当前常见文件包括：
 
-`status` 会读取：
-
-- total
-- ok
-- fail
-- reason coverage
-- top skill
-
-## 节点状态
-
-节点相关数据包括：
-
+- `heartbeat.log`
+- `trigger-audit.jsonl`
+- `trigger-stats.json`
+- `skill-audit.jsonl`
 - `nodes-audit.jsonl`
 - `nodes-state.json`
 - `nodes-dispatch-audit.jsonl`
 
-它们分别对应节点注册/状态、当前状态快照和派发记录。
+也就是说，world/runtime 是核心执行面，`memory/` 更偏审计与运维观测面。
 
-## Watchdog 与进展续时
+## 排查恢复问题时先看哪里
 
-从 README 和测试文件名可以看出，ClawGo 对 timeout 采取了“按进展续时”的 watchdog 思路，而不是固定墙钟超时。
+优先检查：
 
-这点很关键，因为长任务并不一定应该被杀掉，真正需要判定的是任务是否还在推进。
+1. `workspace/agents/runtime/world_state.json`
+2. `workspace/agents/runtime/npc_state.json`
+3. `workspace/agents/runtime/world_events.jsonl`
+4. `workspace/agents/runtime/agent_runs.jsonl`
+5. `workspace/agents/runtime/agent_events.jsonl`
 
-## Context Compaction
+如果这些文件没有更新，通常说明：
 
-为了长期对话可持续，运行时支持 context compaction：
-
-- 到达消息阈值后压缩上下文
-- 保留最近消息
-- 通过 summary 或 compact 响应格式减小上下文成本
-
-这让系统更适合长 session。
-
-## EKG
-
-EKG 是运行态监控面的一部分，后端通过 `/api/ekg_stats` 暴露数据，前端有专门页面展示。
-
-它的意义是把 agent runtime 的健康状况变成可以观察的趋势数据。
+- runtime 没真正进入世界循环
+- actor 没被成功调度
+- provider 或配置校验提前失败

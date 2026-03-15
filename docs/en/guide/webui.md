@@ -99,12 +99,12 @@ Configuration workspace with:
 - diff view
 - risky change confirmation
 
-Risk confirmation now also covers sensitive fields on named providers, not only the default provider:
+Risk confirmation now covers sensitive fields under `models.providers.<name>`, for example:
 
-- `providers.proxy.api_base`
-- `providers.proxy.api_key`
-- `providers.proxies.<name>.api_base`
-- `providers.proxies.<name>.api_key`
+- `models.providers.openai.api_base`
+- `models.providers.openai.api_key`
+- `models.providers.<name>.api_base`
+- `models.providers.<name>.api_key`
 
 When the `gateway` section is active in form mode, the page can now edit Node P2P fields directly:
 

@@ -2,17 +2,17 @@
 
 This section answers a simple question: what exactly ClawGo is, and why it is designed this way.
 
-If you think of ClawGo as only a chatbot, you will misread its boundaries. From the current codebase, it is much closer to a long-running agent runtime with three main goals:
+If you think of ClawGo as only a chatbot, you will misread its boundaries. From the current codebase, it is much closer to a long-running World Runtime with three main goals:
 
-- Make agents execute continuously instead of only replying
-- Make multi-agent collaboration visible, traceable, and recoverable
-- Make prompts, tools, roles, channels, and scheduled tasks manageable as engineering assets
+- keep world state, NPC state, and actor runtime running over time
+- make `main`, `agent`, and `npc` collaboration visible, traceable, and recoverable
+- make prompts, tools, roles, channels, and scheduled tasks manageable as engineering assets
 
 ## Suggested Reading Order
 
 1. [Architecture](/en/guide/architecture)
 2. [Runtime, Storage, and Recovery](/en/guide/runtime-storage)
-3. [Subagents and Skills](/en/guide/subagents-and-skills)
+3. [Agents, NPCs, and Skills](/en/guide/subagents-and-skills)
 
 ## What To Understand Here
 
@@ -28,16 +28,16 @@ ClawGo has its own:
 
 That is why it is not just “user says one thing, model says one thing back.”
 
-### 2. Multi-Agent Collaboration Is First-Class
+### 2. World Actors Are First-Class
 
 The configuration, WebUI, and runtime all treat these as core entities:
 
-- main agent
-- subagent
+- `main`
+- `agent`
+- `npc`
 - node-backed branch
-- thread
-- message
-- task
+- world event
+- task / run / event
 
 ### 3. Recovery and Observability Are Default Capabilities
 

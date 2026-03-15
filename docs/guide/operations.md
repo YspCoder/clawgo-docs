@@ -54,10 +54,12 @@ WebUI 与 API 受 `gateway.token` 保护。
 - `/api/config`
 - `/api/version`
 
-其中配置写入的高风险确认现在不只覆盖默认 provider，也会覆盖：
+其中配置写入的高风险确认现在会覆盖 `models.providers.<name>` 下的敏感字段，例如：
 
-- `providers.proxies.<name>.api_base`
-- `providers.proxies.<name>.api_key`
+- `models.providers.openai.api_base`
+- `models.providers.openai.api_key`
+- `models.providers.<name>.api_base`
+- `models.providers.<name>.api_key`
 
 ### 对话与上传
 
@@ -167,7 +169,7 @@ Provider 侧这轮也新增了独立运维接口：
 - `Provider API Base`
 - `Provider API Key`
 
-这比只看 `providers.proxy` 更接近真实运行态。
+这比只看某个默认 provider 配置槽位更接近真实运行态。
 
 在节点侧，`status` 也新增了：
 

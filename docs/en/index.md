@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "ClawGo"
-  text: "A Production-Oriented, Go-Native Agent Runtime"
-  tagline: Long-running, recoverable, observable, and orchestrated multi-agent runtime
+  text: "A Go Runtime For Long-Running Simulated Worlds"
+  tagline: A World Runtime centered on world state, NPC state, and recoverable execution
   image:
     src: /clawgo-logo.svg
     alt: ClawGo Logo
@@ -17,34 +17,37 @@ hero:
       link: /en/guide/architecture
 
 features:
-  - title: "🦀 Multi-Agent Orchestration"
-    details: Built-in main agent, subagents, and remote node branches with observable topology and task dispatch.
-  - title: "♻️ Runtime Recovery"
-    details: Sessions, threads, messages, sub-tasks, and audit events are persisted so execution can resume after restart.
-  - title: "🛠️ Operational Engineering"
-    details: Manage the full lifecycle with config.json, AGENT.md, hot reload, WebUI, logs, audit, cron, and channels.
+  - title: "🌍 World Runtime"
+    details: "`main` acts as the world mind, `npc` acts as an autonomous character, and the system advances through ingest, decide, arbitrate, apply, and render."
+  - title: "♻️ Recoverable Execution"
+    details: "`world_state.json`, `npc_state.json`, `world_events.jsonl`, and runtime records persist across restart."
+  - title: "🧭 Operational Surface"
+    details: "CLI, Gateway API, a standalone WebUI, logs, EKG, nodes, and channels form the full control plane."
 ---
 
 ## 🦞 What ClawGo Is
 
-ClawGo is not just a chat shell and not merely a prompt wrapper around tool calling. It is a Go runtime built around the full execution lifecycle of agents:
+ClawGo is no longer documented as a generic multi-agent chat shell. Its current core model is a **World Runtime**:
 
-- Accepts tasks from CLI, WebUI, cron, and external channels
-- Dispatches tasks to the main agent, subagents, or remote nodes
-- Persists execution traces, message threads, task states, and memory
-- Provides observability through logs, topology, task audit, and EKG
+- user input becomes a world event first
+- `main` performs world-level judgment and arbitration
+- `agent` and `npc` actors produce intents instead of directly mutating final world truth
+- the runtime persists state, events, execution records, and observability data
+
+The typical flow is:
+
+```text
+user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render -> user
+```
 
 ## 📚 What This Documentation Covers
 
-This documentation is organized from the current codebase in `/Users/lpf/Desktop/project/clawgo` and covers:
-
-- Installation, onboarding, model configuration, and startup
-- The structure and important fields of `config.json`
-- The major `clawgo` CLI commands
-- WebUI pages and their backend API mappings
-- How subagents, skills, channels, cron, and nodes work together
-- Runtime persistence, recovery, logging, and observability
-- Local development, build, release, and embedded asset sync
+- installation, onboarding, provider setup, and startup
+- actor and NPC configuration centered on `agents.agents`
+- world runtime, runtime snapshots, and recovery
+- CLI, Gateway API, and the separately deployed WebUI
+- MCP, channels, cron, nodes, EKG, and runnable examples
+- local development, build, release, and workspace templates
 
 ## 🗂️ Documentation Sections
 
@@ -53,7 +56,7 @@ This documentation is organized from the current codebase in `/Users/lpf/Desktop
 - [Concept Overview](/en/concepts/)
 - [Architecture](/en/guide/architecture)
 - [Runtime, Storage, and Recovery](/en/guide/runtime-storage)
-- [Subagents and Skills](/en/guide/subagents-and-skills)
+- [Agents, NPCs, and Skills](/en/guide/subagents-and-skills)
 
 ### 🚀 Guides
 
@@ -62,7 +65,7 @@ This documentation is organized from the current codebase in `/Users/lpf/Desktop
 - [Configuration](/en/guide/configuration)
 - [CLI](/en/guide/cli)
 - [WebUI Console](/en/guide/webui)
-- [Channels, Cron, and Nodes](/en/guide/integrations)
+- [Nodes Guide](/en/guide/nodes)
 
 ### 📖 Reference
 
@@ -82,8 +85,8 @@ This documentation is organized from the current codebase in `/Users/lpf/Desktop
 1. [Quick Start](/en/guide/quick-start)
 2. [Architecture](/en/guide/architecture)
 3. [Configuration](/en/guide/configuration)
-4. [CLI](/en/guide/cli)
-5. [WebUI Console](/en/guide/webui)
+4. [Runtime, Storage, and Recovery](/en/guide/runtime-storage)
+5. [Agents, NPCs, and Skills](/en/guide/subagents-and-skills)
 
 ## 📮 Contact
 

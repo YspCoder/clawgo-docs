@@ -50,10 +50,12 @@ That makes it easier to:
 - `/api/config`
 - `/api/version`
 
-Risk confirmation on config writes now covers not only the default provider, but also:
+Risk confirmation on config writes now covers sensitive fields under `models.providers.<name>`, for example:
 
-- `providers.proxies.<name>.api_base`
-- `providers.proxies.<name>.api_key`
+- `models.providers.openai.api_base`
+- `models.providers.openai.api_key`
+- `models.providers.<name>.api_base`
+- `models.providers.<name>.api_key`
 
 ### Chat and Upload
 
@@ -172,7 +174,7 @@ The WebUI can also read recent logs and stream them.
 - `Provider API Base`
 - `Provider API Key`
 
-That makes the command more accurate when `agents.defaults.proxy` points to a named provider under `providers.proxies`.
+That makes the command more accurate than looking at only one configured default provider slot.
 
 For node troubleshooting, `status` also now includes:
 
