@@ -9,6 +9,32 @@
 - URL 上带 `?token=<gateway.token>`，或
 - 请求头带 `Authorization: Bearer <gateway.token>`
 
+### `POST /api/auth/session`
+
+独立部署的 WebUI 会先调用这个接口。
+
+作用：
+
+- 校验 Bearer token
+- 由 Gateway 写入 `clawgo_webui_token` 会话 cookie
+- 供后续 `fetch('/api/*')` 与 websocket 复用
+
+最小请求：
+
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://127.0.0.1:18790/api/auth/session
+```
+
+返回：
+
+```json
+{
+  "ok": true
+}
+```
+
 ## 配置类
 
 ### `GET /api/config`
@@ -25,6 +51,44 @@
 
 - `config`
 - `raw_config`
+
+一个精简示例：
+
+```json
+{
+  "ok": true,
+  "config": {
+    "core": {
+      "default_provider": "openai",
+      "default_model": "gpt-5.4",
+      "main_agent_id": "main",
+      "agents": {
+        "main": {
+          "enabled": true,
+          "role": "orchestrator",
+          "prompt": "agents/main/AGENT.md",
+          "provider": "openai",
+          "tool_allowlist": ["memory_search"],
+          "runtime_class": "provider_bound"
+        }
+      }
+    },
+    "runtime": {
+      "providers": {
+        "openai": {
+          "auth": "bearer",
+          "api_base": "https://api.openai.com/v1",
+          "timeout_sec": 90
+        }
+      }
+    }
+  },
+  "raw_config": {
+    "agents": {},
+    "models": {}
+  }
+}
+```
 
 ### `POST /api/config`
 
@@ -119,6 +183,68 @@ WebUI Header 里的“检查最新版本”按钮会用当前返回值和 GitHub
 - `compiled_channels`
 
 WebUI 会用它来裁剪 channel settings 路由和菜单。
+
+首帧常见形态：
+
+```json
+{
+  "ok": true,
+  "type": "runtime_snapshot",
+  "snapshot": {
+    "version": {
+      "gateway_version": "dev",
+      "webui_version": "0.0.1",
+      "compiled_channels": ["telegram"]
+    },
+    "config": {
+      "core": {
+        "main_agent_id": "main"
+      }
+    },
+    "runtime": {
+      "snapshot": {
+        "tasks": [],
+        "runs": [],
+        "events": []
+      }
+    },
+    "world": {
+      "world_id": "main-world",
+      "tick": 3,
+      "npc_count": 2,
+      "active_npcs": ["keeper", "merchant"]
+    },
+    "nodes": {},
+    "sessions": {},
+    "ekg": {},
+    "providers": {
+      "items": []
+    }
+  }
+}
+```
+
+### `GET /api/world`
+
+返回独立的 world snapshot，适合总览页或世界视图单独消费。
+
+常见 query：
+
+- `limit`
+
+示例：
+
+```json
+{
+  "found": true,
+  "world": {
+    "world_id": "main-world",
+    "tick": 7,
+    "npc_count": 1,
+    "active_npcs": ["watcher"]
+  }
+}
+```
 
 ### `GET /api/nodes`
 

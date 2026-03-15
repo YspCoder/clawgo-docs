@@ -15,18 +15,19 @@
 
 - [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
 
+如果你要从零部署这个前端，直接看：
+
+- [WebUI 部署](/guide/webui-deployment)
+
 ## 访问方式
 
 当前文档以“WebUI 独立部署”为准，不再假设它由 Gateway 挂在 `/webui` 下。
 
-```text
-https://<your-webui-host>?token=<gateway.token>
-```
-
 常见接入方式：
 
-- 在 WebUI 地址上带 `?token=<gateway.token>`
-- 或由前端在请求 `/api/*` 时附带 `Authorization: Bearer <gateway.token>`
+- 在登录页里填写 Gateway 地址和 token
+- 前端调用 `POST /api/auth/session` 建立会话 cookie
+- 后续请求 `/api/*` 时附带 `Authorization` 或复用 cookie
 
 后端 API 仍然是 Gateway 暴露的 `/api/*`，只是前端不再要求和 Gateway 静态资源一起部署。
 

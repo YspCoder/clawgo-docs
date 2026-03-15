@@ -32,6 +32,14 @@ Common auth patterns for the API:
 - `?token=<gateway.token>`
 - `Authorization: Bearer <gateway.token>`
 
+The standalone WebUI also usually calls:
+
+```text
+POST /api/auth/session
+```
+
+so Gateway can set the `clawgo_webui_token` cookie for later websocket and page requests.
+
 The Gateway HTTP wrapper now also enables permissive CORS by default:
 
 - `Access-Control-Allow-Origin: *`

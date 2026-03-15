@@ -15,18 +15,19 @@ The standalone frontend repository is:
 
 - [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
 
+If you want the actual standalone deployment flow, see:
+
+- [WebUI Deployment](/en/guide/webui-deployment)
+
 ## Access
 
 The docs now assume the WebUI is deployed separately instead of being mounted under Gateway `/webui`.
 
-```text
-https://<your-webui-host>?token=<gateway.token>
-```
-
 Common access patterns:
 
-- pass `?token=<gateway.token>` in the WebUI URL
-- or let the frontend send `Authorization: Bearer <gateway.token>` to `/api/*`
+- enter the Gateway address and token on the login page
+- let the frontend call `POST /api/auth/session` to establish the session cookie
+- then reuse `Authorization` headers or the cookie for `/api/*`
 
 The header now also includes two utility actions:
 

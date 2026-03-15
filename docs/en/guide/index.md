@@ -12,8 +12,10 @@ This section is for people who want to run ClawGo as a world runtime, not just t
 6. [MCP Integration](/en/guide/mcp)
 7. [CLI](/en/guide/cli)
 8. [WebUI Console](/en/guide/webui)
-9. [Nodes Guide](/en/guide/nodes)
-10. [Node P2P E2E Validation](/en/examples/node-p2p-e2e)
+9. [WebUI Deployment](/en/guide/webui-deployment)
+10. [Nodes Guide](/en/guide/nodes)
+11. [Minimal World Example](/en/examples/minimal-world)
+12. [Node P2P E2E Validation](/en/examples/node-p2p-e2e)
 
 ## Read By Goal
 
@@ -39,11 +41,22 @@ This section is for people who want to run ClawGo as a world runtime, not just t
 - [Configuration](/en/guide/configuration)
 - [WebUI Console](/en/guide/webui)
 
+### I want to deploy the frontend separately
+
+- [WebUI Deployment](/en/guide/webui-deployment)
+- [WebUI Console](/en/guide/webui)
+- [Operations and API](/en/guide/operations)
+
 ### I want channels, cron, or remote nodes
 
 - [Channels Guide](/en/guide/channels)
 - [Cron Guide](/en/guide/cron)
 - [Nodes Guide](/en/guide/nodes)
+
+### I want a small runnable world example
+
+- [Minimal World Example](/en/examples/minimal-world)
+- [Node P2P E2E Validation](/en/examples/node-p2p-e2e)
 
 ## What This Section Is Not For
 

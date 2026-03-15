@@ -50,6 +50,7 @@ export default defineConfig({
               { text: 'MCP 集成', link: '/guide/mcp' },
               { text: 'CLI 命令', link: '/guide/cli' },
               { text: 'WebUI 控制台', link: '/guide/webui' },
+              { text: 'WebUI 部署', link: '/guide/webui-deployment' },
               { text: '通道使用篇', link: '/guide/channels' },
               { text: 'Cron 使用篇', link: '/guide/cron' },
               { text: '节点使用篇', link: '/guide/nodes' }
@@ -59,6 +60,7 @@ export default defineConfig({
           {
             text: '示例',
             items: [
+              { text: '最小 World 示例', link: '/examples/minimal-world' },
               { text: 'Node P2P E2E 验证', link: '/examples/node-p2p-e2e' }
             ]
           },
@@ -138,6 +140,7 @@ export default defineConfig({
               { text: 'MCP Integration', link: '/en/guide/mcp' },
               { text: 'CLI', link: '/en/guide/cli' },
               { text: 'WebUI Console', link: '/en/guide/webui' },
+              { text: 'WebUI Deployment', link: '/en/guide/webui-deployment' },
               { text: 'Channels Guide', link: '/en/guide/channels' },
               { text: 'Cron Guide', link: '/en/guide/cron' },
               { text: 'Nodes Guide', link: '/en/guide/nodes' },
@@ -147,6 +150,7 @@ export default defineConfig({
           {
             text: 'Examples',
             items: [
+              { text: 'Minimal World Example', link: '/en/examples/minimal-world' },
               { text: 'Node P2P E2E Validation', link: '/en/examples/node-p2p-e2e' }
             ]
           },

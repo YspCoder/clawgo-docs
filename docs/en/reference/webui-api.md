@@ -9,6 +9,32 @@ Access requires either:
 - `?token=<gateway.token>` in the URL, or
 - `Authorization: Bearer <gateway.token>` in the request headers
 
+### `POST /api/auth/session`
+
+The standalone WebUI uses this endpoint first.
+
+It:
+
+- validates the Bearer token
+- lets Gateway set the `clawgo_webui_token` session cookie
+- allows later `fetch('/api/*')` and websocket calls to reuse that cookie
+
+Minimal request:
+
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://127.0.0.1:18790/api/auth/session
+```
+
+Response:
+
+```json
+{
+  "ok": true
+}
+```
+
 ## Config
 
 - `GET /api/config`
@@ -19,6 +45,44 @@ Access requires either:
 
 - `config`
 - `raw_config`
+
+A compact example:
+
+```json
+{
+  "ok": true,
+  "config": {
+    "core": {
+      "default_provider": "openai",
+      "default_model": "gpt-5.4",
+      "main_agent_id": "main",
+      "agents": {
+        "main": {
+          "enabled": true,
+          "role": "orchestrator",
+          "prompt": "agents/main/AGENT.md",
+          "provider": "openai",
+          "tool_allowlist": ["memory_search"],
+          "runtime_class": "provider_bound"
+        }
+      }
+    },
+    "runtime": {
+      "providers": {
+        "openai": {
+          "auth": "bearer",
+          "api_base": "https://api.openai.com/v1",
+          "timeout_sec": 90
+        }
+      }
+    }
+  },
+  "raw_config": {
+    "agents": {},
+    "models": {}
+  }
+}
+```
 
 `POST /api/config?mode=normalized` accepts the normalized schema and applies it back to the real config file.
 
@@ -68,6 +132,68 @@ The `version` part of that snapshot now also includes:
 - `compiled_channels`
 
 This lets the WebUI prune channel settings routes and menus at runtime.
+
+A common first frame looks like:
+
+```json
+{
+  "ok": true,
+  "type": "runtime_snapshot",
+  "snapshot": {
+    "version": {
+      "gateway_version": "dev",
+      "webui_version": "0.0.1",
+      "compiled_channels": ["telegram"]
+    },
+    "config": {
+      "core": {
+        "main_agent_id": "main"
+      }
+    },
+    "runtime": {
+      "snapshot": {
+        "tasks": [],
+        "runs": [],
+        "events": []
+      }
+    },
+    "world": {
+      "world_id": "main-world",
+      "tick": 3,
+      "npc_count": 2,
+      "active_npcs": ["keeper", "merchant"]
+    },
+    "nodes": {},
+    "sessions": {},
+    "ekg": {},
+    "providers": {
+      "items": []
+    }
+  }
+}
+```
+
+- `GET /api/world`
+
+This endpoint returns a standalone world snapshot for dashboards or dedicated world views.
+
+Common query:
+
+- `limit`
+
+Example:
+
+```json
+{
+  "found": true,
+  "world": {
+    "world_id": "main-world",
+    "tick": 7,
+    "npc_count": 1,
+    "active_npcs": ["watcher"]
+  }
+}
+```
 
 `GET /api/nodes` now also returns a `p2p` runtime summary. That payload is used for Node P2P visibility in the Dashboard and node views, including transport, active sessions, configured STUN/ICE counts, and WebRTC session health rows.
 

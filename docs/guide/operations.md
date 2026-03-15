@@ -36,6 +36,14 @@ WebUI 与 API 受 `gateway.token` 保护。
 - URL query 中附带 `?token=...`
 - 或请求头里带 `Authorization: Bearer <gateway.token>`
 
+独立部署的 WebUI 通常还会先调用：
+
+```text
+POST /api/auth/session
+```
+
+由 Gateway 写入 `clawgo_webui_token` cookie，供后续 websocket 和跨页请求复用。
+
 最近 Gateway 的 HTTP 包装层也统一放开了通用 CORS：
 
 - `Access-Control-Allow-Origin: *`
