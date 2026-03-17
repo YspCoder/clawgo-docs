@@ -23,98 +23,57 @@ This page is the field index companion to [Configuration](/en/guide/configuratio
 | Field | Purpose |
 | --- | --- |
 | `workspace` | workspace path |
-| `model.primary` | default model reference in `provider/model` form |
+| `model.primary` | default model ref in `provider/model` form |
 | `max_tokens` | default token limit |
 | `temperature` | default temperature |
 | `max_tool_iterations` | max tool iterations |
 
-## `agents.defaults.heartbeat`
+## `agents.router`
 
 | Field | Purpose |
 | --- | --- |
-| `enabled` | enable heartbeat |
-| `every_sec` | heartbeat interval |
-| `ack_max_chars` | max ACK characters |
-| `prompt_template` | heartbeat prompt template |
+| `enabled` | enable router |
+| `main_agent_id` | main agent ID |
+| `strategy` | `rules_first`, `round_robin`, or `manual` |
+| `rules` | keyword dispatch rules |
+| `max_hops` | maximum hop count |
+| `default_timeout_sec` | default timeout |
+| `sticky_thread_owner` | sticky thread ownership |
 
-## `agents.defaults.context_compaction`
-
-| Field | Purpose |
-| --- | --- |
-| `enabled` | enable compaction |
-| `mode` | `summary`, `responses_compact`, or `hybrid` |
-| `trigger_messages` | compaction trigger threshold |
-| `keep_recent_messages` | recent messages kept |
-| `max_summary_chars` | max summary length |
-| `max_transcript_chars` | max transcript length |
-
-## `agents.defaults.execution`
+## `agents.communication`
 
 | Field | Purpose |
 | --- | --- |
-| `run_state_ttl_seconds` | runtime-state TTL |
-| `run_state_max` | max cached runtime entries |
-| `tool_parallel_safe_names` | tools safe for parallel execution |
-| `tool_max_parallel_calls` | max concurrent tool calls |
+| `mode` | collaboration mode |
+| `persist_threads` | persist threads |
+| `persist_messages` | persist messages |
+| `max_messages_per_thread` | max messages per thread |
+| `dead_letter_queue` | enable dead-letter queue |
+| `default_message_ttl_sec` | default message TTL |
 
-## `agents.agents.<id>`
+## `agents.subagents.<id>`
 
 | Field | Purpose |
 | --- | --- |
 | `enabled` | whether enabled |
-| `kind` | actor kind, such as `npc` |
-| `type` | actor type, such as `agent` |
+| `type` | `router`, `worker`, `reviewer`, or `observer` |
 | `transport` | `local` or `node` |
 | `node_id` | remote node ID |
-| `parent_agent_id` | parent actor |
+| `parent_agent_id` | parent agent |
+| `notify_main_policy` | main notification policy |
 | `display_name` | display name |
 | `role` | role |
 | `description` | description |
-| `persona` | NPC persona |
-| `traits` | trait labels |
-| `faction` | faction |
-| `home_location` | NPC home location |
-| `default_goals` | default goals |
-| `perception_scope` | perception scope |
-| `schedule_hint` | scheduling hint |
-| `world_tags` | world tags |
-| `prompt_file` | prompt file |
+| `system_prompt_file` | prompt file |
 | `memory_namespace` | memory namespace |
+| `accept_from` | allowed senders |
+| `can_talk_to` | allowed targets |
+| `requires_main_mediation` | require main mediation |
+| `default_reply_to` | default reply target |
 | `tools.allowlist` | tool allowlist |
 | `tools.denylist` | tool denylist |
-| `tools.max_parallel_calls` | actor-level tool concurrency limit |
-| `runtime.provider` | bound provider |
-| `runtime.model` | bound model |
-| `runtime.timeout_sec` | timeout seconds |
-| `runtime.max_retries` | max retries |
-| `runtime.retry_backoff_ms` | retry backoff |
-| `runtime.max_task_chars` | max task length |
-| `runtime.max_result_chars` | max result length |
-| `runtime.max_parallel_runs` | actor runtime concurrency limit |
-
-Notes:
-
-- world roles enter through `kind: "npc"`
-- executable agents typically use `prompt_file`
-- `prompt_file` must remain workspace-relative
-
-## `channels`
-
-Shared fields:
-
-- `inbound_message_id_dedupe_ttl_seconds`
-- `inbound_content_dedupe_window_seconds`
-- `outbound_dedupe_window_seconds`
-
-Channel groups:
-
-- `telegram`
-- `discord`
-- `feishu`
-- `dingtalk`
-- `whatsapp`
-- `qq`
-- `maixcam`
+| `tools.max_parallel_calls` | tool concurrency limit |
+| `runtime.*` | provider, retries, timeouts, length limits |
 
 ## `models.providers.<name>`
 
@@ -123,14 +82,14 @@ Channel groups:
 | `api_key` | API key |
 | `api_base` | API base URL |
 | `models` | model list |
-| `supports_responses_compact` | whether compact responses are supported |
+| `supports_responses_compact` | compact responses support |
 | `auth` | `bearer`, `oauth`, `hybrid`, or `none` |
 | `timeout_sec` | timeout seconds |
 | `runtime_persist` | persist provider runtime |
 | `runtime_history_file` | runtime history file |
-| `runtime_history_max` | runtime history limit |
-| `oauth.*` | OAuth settings |
-| `responses.*` | Responses API settings |
+| `runtime_history_max` | history limit |
+| `oauth.*` | OAuth config |
+| `responses.*` | Responses API config |
 
 ## `gateway`
 
@@ -149,37 +108,6 @@ Channel groups:
 | `stun_servers` | list of STUN URLs |
 | `ice_servers` | structured ICE server list |
 
-## `gateway.nodes.dispatch`
-
-| Field | Purpose |
-| --- | --- |
-| `prefer_local` | prefer local execution |
-| `prefer_p2p` | prefer P2P |
-| `allow_relay_fallback` | allow relay fallback when P2P fails |
-| `action_tags` | required node tags for an action |
-| `agent_tags` | required node tags for an actor |
-| `allow_actions` | allowed node tags for an action |
-| `deny_actions` | denied node tags for an action |
-| `allow_agents` | allowed node tags for an actor |
-| `deny_agents` | denied node tags for an actor |
-
-## `gateway.nodes.artifacts`
-
-| Field | Purpose |
-| --- | --- |
-| `enabled` | enable node artifact retention |
-| `keep_latest` | number of recent artifacts to keep |
-| `retain_days` | max retention days |
-| `prune_on_read` | prune while reading |
-
-## `tools.mcp`
-
-| Field | Purpose |
-| --- | --- |
-| `enabled` | global MCP switch |
-| `request_timeout_sec` | request timeout |
-| `servers` | MCP server declarations |
-
 ## `tools.mcp.servers.<name>`
 
 | Field | Purpose |
@@ -189,10 +117,6 @@ Channel groups:
 | `command` | launch command for `stdio` |
 | `args` | launch args for `stdio` |
 | `url` | remote transport URL |
-| `env` | env var overrides |
 | `working_dir` | working directory |
 | `permission` | `workspace` or `full` |
-| `description` | description |
-| `package` | package name |
-| `installer` | installer such as `npx`, `uvx`, or `bunx` |
-| `mcp_server_checks` | command checks or install prerequisites |
+| `package` | install package name |

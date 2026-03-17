@@ -1,134 +1,102 @@
 # Runtime, Storage, and Recovery
 
-## Persistence Is Now Centered On The World Runtime
+## The Current Persistence Core
 
-In the current codebase, persistence is no longer primarily about the older `subagent_runs.jsonl` and `subagent_events.jsonl` wording. It is centered on:
+The current recovery model is still centered on the subagent runtime, not on world state.
+
+The most important files are:
+
+- `subagent_runs.jsonl`
+- `subagent_events.jsonl`
+- `threads.jsonl`
+- `agent_messages.jsonl`
+
+Together they record:
+
+- subagent execution
+- runtime events and retries
+- agent thread relationships
+- internal message flows
+
+## File Location
+
+These files are currently written under:
 
 ```text
 workspace/agents/runtime/
 ```
 
-That directory now stores world state, NPC state, and actor runtime records together.
+## `subagent_runs.jsonl`
 
-## World Store
+Stores run-level records such as:
 
-The core world-store files are:
+- run id
+- agent id
+- task
+- status
+- output
+- created / updated timestamps
 
-- `world_state.json`
-- `npc_state.json`
-- `world_events.jsonl`
+This is the basis for recovering in-flight work and auditing outcomes.
 
-They represent:
+## `subagent_events.jsonl`
 
-- `world_state.json`: structured world state such as locations, entities, quests, and clock
-- `npc_state.json`: current NPC state, location, goals, beliefs, and related data
-- `world_events.jsonl`: append-only world event audit
+Stores runtime events such as:
 
-Together they determine whether the world can resume after restart.
+- `spawned`
+- `running`
+- `completed`
+- `failed`
+- retry counts
 
-## Agent Runtime Store
+It is the direct trail for understanding why a subagent succeeded or failed.
 
-The same directory also stores actor runtime records:
+## `threads.jsonl`
 
-- `agent_runs.jsonl`
-- `agent_events.jsonl`
-- `agent_messages.jsonl`
+Stores agent thread metadata such as:
 
-These are used for:
+- `thread_id`
+- `owner`
+- `participants`
+- `status`
+- `topic`
 
-- per-run input, output, and status
-- runtime events, errors, and retries
-- inter-actor message collaboration
+That is what makes internal collaboration a thread model instead of plain text forwarding.
 
-The runtime snapshot model is now unified around:
+## `agent_messages.jsonl`
 
-- `tasks`
-- `runs`
-- `events`
-- `world`
+Stores the actual message flow, such as:
 
-So execution records and world state now show up in the same observability view.
+- `from_agent`
+- `to_agent`
+- `reply_to`
+- `correlation_id`
+- `requires_reply`
+- `content`
 
-## Sessions And Workspace Are A Separate Layer
+This is also one of the reasons the WebUI can reconstruct internal collaboration streams.
 
-Outside `workspace/agents/runtime/`, the system still keeps:
+## Sessions And Memory
+
+Outside `workspace/agents/runtime/`, two other persistence areas matter:
 
 - `~/.clawgo/sessions/`
-- `~/.clawgo/logs/`
-- `~/.clawgo/cron/`
 - `workspace/memory/`
 
-Those are used for:
-
-- CLI and session history
-- gateway logs
-- cron jobs
-- heartbeat, skill audit, node audit, and trigger audit
-
-## Why This Refactor Matters
-
-Recovery is no longer just about restoring a chat transcript. It is about restoring:
-
-- world state
-- NPC state
-- active tasks and runtime events
-- inter-actor message traces
-
-That is what makes ClawGo much closer to a long-running simulation runtime.
-
-## Runtime Snapshot
-
-Recent APIs and the WebUI consume a unified snapshot through:
-
-- `GET /api/runtime`
-- `GET /api/runtime/live`
-
-The `world` payload includes data such as:
-
-- `npc_count`
-- `active_npcs`
-- location occupancy
-- recent world events
-
-That is the basis for the world overview in the standalone WebUI.
-
-## Provider Runtime Persists Too
-
-In addition to the world/runtime core, provider runtime can persist:
-
-- OAuth account state
-- candidate order
-- most recent successful provider
-- runtime history
-
-That part is mainly controlled by `models.providers.<name>.runtime_*`.
-
-## `workspace/memory` Still Matters
-
-Common files under `workspace/memory/` include:
+The first is more about primary session history. The second is more about:
 
 - `heartbeat.log`
-- `trigger-audit.jsonl`
-- `trigger-stats.json`
 - `skill-audit.jsonl`
-- `nodes-audit.jsonl`
-- `nodes-state.json`
 - `nodes-dispatch-audit.jsonl`
+- trigger / process / node audit data
 
-So the world/runtime directory is the execution core, while `memory/` is more about audit and operational observability.
+## Why This Design Matters
 
-## Where To Check First During Recovery Issues
+Recovery here does not mean “restore a chat transcript.” It means restoring:
 
-Start with:
+- which subagent was running
+- what stage it reached
+- where the internal thread was
+- what the last output or error looked like
 
-1. `workspace/agents/runtime/world_state.json`
-2. `workspace/agents/runtime/npc_state.json`
-3. `workspace/agents/runtime/world_events.jsonl`
-4. `workspace/agents/runtime/agent_runs.jsonl`
-5. `workspace/agents/runtime/agent_events.jsonl`
-
-If those files are not advancing, common causes are:
-
-- the runtime never entered the world loop
-- actors were not scheduled successfully
-- provider setup or config validation failed early
+That is one of the key differences between the current Agent Runtime and a regular chat shell.

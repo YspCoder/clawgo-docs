@@ -14,16 +14,9 @@ In debug mode:
 .clawgo/config.json
 ```
 
-The load flow is:
-
-- start from the default config
-- read JSON
-- fail on unknown fields through strict decoding
-- apply environment variable overrides last
-
 ## Top-Level Structure
 
-The current top-level keys are:
+The current top-level shape is:
 
 - `agents`
 - `channels`
@@ -35,31 +28,22 @@ The current top-level keys are:
 - `sentinel`
 - `memory`
 
-One important change: providers now live under `models.providers`, not under the older top-level `providers` wording.
+## Normalized View
 
-## Normalized Schema
-
-Recent WebUI and runtime-facing endpoints prefer a normalized view:
+The persisted file remains raw config, but some APIs also expose a normalized view:
 
 - `core.default_provider`
 - `core.default_model`
 - `core.main_agent_id`
-- `core.agents`
-- `core.tools`
-- `core.gateway`
+- `core.subagents`
+- `runtime.router`
 - `runtime.providers`
 
-This exists to:
+Important detail: the normalized core still uses `core.subagents`, not `core.agents`.
 
-- give the WebUI a more stable edit surface
-- let remote nodes and control-plane code avoid depending on raw internal layout
-- separate actor topology from provider runtime config
+## `agents.defaults`
 
-## `agents`
-
-### `agents.defaults`
-
-This section defines global defaults. Important fields include:
+Important fields:
 
 - `workspace`
 - `model.primary`
@@ -71,83 +55,73 @@ This section defines global defaults. Important fields include:
 - `execution`
 - `summary_policy`
 
-One important current detail:
+`model.primary` uses:
 
-- the default provider should no longer be documented with the old `proxy` wording
-- the active default model now comes from `agents.defaults.model.primary`
-- the value shape is `provider/model`
+```text
+provider/model
+```
 
-Example:
+For example:
 
 ```json
 {
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "openai/gpt-5.4"
-      }
-    }
+  "model": {
+    "primary": "codex/gpt-5.4"
   }
 }
 ```
 
-### `agents.defaults.context_compaction`
+## `agents.router`
 
-Fields:
+The router dispatches requests between `main` and the registered subagents.
+
+Important fields:
 
 - `enabled`
-- `mode`
-- `trigger_messages`
-- `keep_recent_messages`
-- `max_summary_chars`
-- `max_transcript_chars`
+- `main_agent_id`
+- `strategy`
+- `policy.intent_max_input_chars`
+- `policy.max_rounds_without_user`
+- `rules`
+- `allow_direct_agent_chat`
+- `max_hops`
+- `default_timeout_sec`
+- `sticky_thread_owner`
 
-Supported `mode` values:
+## `agents.communication`
 
-- `summary`
-- `responses_compact`
-- `hybrid`
-
-### `agents.defaults.execution`
+This section controls threaded agent-to-agent communication.
 
 Fields:
 
-- `run_state_ttl_seconds`
-- `run_state_max`
-- `tool_parallel_safe_names`
-- `tool_max_parallel_calls`
+- `mode`
+- `persist_threads`
+- `persist_messages`
+- `max_messages_per_thread`
+- `dead_letter_queue`
+- `default_message_ttl_sec`
 
-This area controls runtime-state retention and safe tool concurrency.
+## `agents.subagents`
 
-## `agents.agents`
-
-This is now the most important config area. Each entry is an actor and can be:
-
-- a regular `agent`
-- a world `npc`
-- a remote `node` branch
+This is the main role-registry section.
 
 Common fields:
 
 - `enabled`
-- `kind`
 - `type`
 - `transport`
 - `node_id`
 - `parent_agent_id`
+- `notify_main_policy`
 - `display_name`
 - `role`
 - `description`
-- `persona`
-- `traits`
-- `faction`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- `schedule_hint`
-- `world_tags`
-- `prompt_file`
+- `system_prompt_file`
 - `memory_namespace`
+- `accept_from`
+- `can_talk_to`
+- `requires_main_mediation`
+- `default_reply_to`
 - `tools.allowlist`
 - `tools.denylist`
 - `tools.max_parallel_calls`
@@ -161,42 +135,21 @@ Common fields:
 - `runtime.max_result_chars`
 - `runtime.max_parallel_runs`
 
-Usage guidance:
+Current rules:
 
-- `main` is usually a `type: "agent"` actor with a `prompt_file`
-- an NPC enters the world runtime through `kind: "npc"`
-- remote branches use `transport: "node"` together with `node_id` and `parent_agent_id`
-- enabled executable agents should provide `prompt_file`
-- `prompt_file` must stay workspace-relative
-
-## `channels`
-
-Major supported channels include:
-
-- `telegram`
-- `discord`
-- `feishu`
-- `dingtalk`
-- `whatsapp`
-- `qq`
-- `maixcam`
-
-Shared fields:
-
-- `inbound_message_id_dedupe_ttl_seconds`
-- `inbound_content_dedupe_window_seconds`
-- `outbound_dedupe_window_seconds`
+- enabled local subagents must define `system_prompt_file`
+- `system_prompt_file` must be workspace-relative
+- `transport: "node"` also requires `node_id`
+- `accept_from` and `can_talk_to` must reference declared subagents
 
 ## `models.providers`
 
-Provider configuration now lives here:
+Provider configuration lives under:
 
 ```json
 {
   "models": {
-    "providers": {
-      "openai": {}
-    }
+    "providers": {}
   }
 }
 ```
@@ -224,63 +177,47 @@ Supported `auth` values:
 
 ## `tools.mcp`
 
-Fields:
+Current MCP transports include:
+
+- `stdio`
+- `http`
+- `streamable_http`
+- `sse`
+
+Common per-server fields:
 
 - `enabled`
-- `request_timeout_sec`
-- `servers`
-
-Per-server fields currently include:
-
 - `transport`
 - `command`
 - `args`
 - `url`
-- `env`
 - `working_dir`
 - `permission`
-- `description`
 - `package`
-- `installer`
-- `mcp_server_checks`
 
-## `gateway`
-
-Common fields:
-
-- `host`
-- `port`
-- `token`
-
-For the separately deployed WebUI, the usual auth patterns are:
-
-- `?token=<gateway.token>`
-- or `Authorization: Bearer <gateway.token>`
-
-## A Minimal Config Closer To The Current Code
+## Minimal Raw Shape
 
 ```json
 {
   "agents": {
-    "defaults": {
-      "workspace": "~/.clawgo/workspace",
-      "model": {
-        "primary": "openai/gpt-5.4"
-      }
+    "router": {
+      "enabled": true,
+      "main_agent_id": "main",
+      "strategy": "rules_first",
+      "rules": []
     },
-    "agents": {
+    "subagents": {
       "main": {
         "enabled": true,
-        "type": "agent",
+        "type": "router",
         "role": "orchestrator",
-        "prompt_file": "agents/main/AGENT.md"
+        "system_prompt_file": "agents/main/AGENT.md"
       },
-      "guard": {
+      "coder": {
         "enabled": true,
-        "kind": "npc",
-        "persona": "A cautious town guard",
-        "home_location": "gate",
-        "default_goals": ["patrol the square"]
+        "type": "worker",
+        "role": "code",
+        "system_prompt_file": "agents/coder/AGENT.md"
       }
     }
   },

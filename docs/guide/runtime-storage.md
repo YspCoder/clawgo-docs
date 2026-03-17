@@ -1,134 +1,102 @@
 # 运行时、存储与恢复
 
-## 当前落盘重点已经变成 world runtime
+## 当前持久化核心
 
-最近版本里，ClawGo 的持久化重点不再是旧文档里的 `subagent_runs.jsonl` / `subagent_events.jsonl`，而是统一收敛到：
+当前版本的恢复主线仍然围绕 subagent runtime，而不是 world state。
+
+最关键的文件是：
+
+- `subagent_runs.jsonl`
+- `subagent_events.jsonl`
+- `threads.jsonl`
+- `agent_messages.jsonl`
+
+这些文件共同记录：
+
+- subagent 执行过程
+- 运行事件与重试
+- agent 间线程关系
+- 内部消息流
+
+## 文件位置
+
+这些文件当前都落在：
 
 ```text
 workspace/agents/runtime/
 ```
 
-这里同时保存 world state、NPC state 和 actor runtime 记录。
+## `subagent_runs.jsonl`
 
-## world store
+记录 run 级别信息，例如：
 
-当前 world store 的核心文件是：
+- run id
+- agent id
+- task
+- status
+- output
+- created / updated 时间
 
-- `world_state.json`
-- `npc_state.json`
-- `world_events.jsonl`
+这是恢复进行中任务和审计执行结果的基础。
 
-含义分别是：
+## `subagent_events.jsonl`
 
-- `world_state.json`: 世界结构化状态，例如 locations、entities、quests、clock
-- `npc_state.json`: 每个 NPC 当前状态、位置、目标、beliefs 等
-- `world_events.jsonl`: 世界事件审计流，按时间追加
+记录运行事件，例如：
 
-这三者共同决定“重启后世界还能不能继续跑”。
+- `spawned`
+- `running`
+- `completed`
+- `failed`
+- 重试次数
 
-## agent runtime store
+它是“subagent 为什么成功或失败”的直接线索。
 
-同一目录下还有 actor 运行态记录：
+## `threads.jsonl`
 
-- `agent_runs.jsonl`
-- `agent_events.jsonl`
-- `agent_messages.jsonl`
+保存 agent thread 元数据，例如：
 
-它们分别承担：
+- `thread_id`
+- `owner`
+- `participants`
+- `status`
+- `topic`
 
-- 记录一次 run 的输入、输出、状态
-- 记录运行事件、错误和重试
-- 记录 actor 间消息协作
+这层让内部协作不是简单字符串拼接，而是可追踪的 thread model。
 
-最近 runtime snapshot 结构已经统一成：
+## `agent_messages.jsonl`
 
-- `tasks`
-- `runs`
-- `events`
-- `world`
+保存具体消息流，例如：
 
-也就是运行记录和世界快照在同一个观测模型里出现。
+- `from_agent`
+- `to_agent`
+- `reply_to`
+- `correlation_id`
+- `requires_reply`
+- `content`
 
-## Session 与工作区是另一层
+这也是 WebUI 能重建内部协作流的原因之一。
 
-除了 `workspace/agents/runtime/`，系统仍然还有：
+## sessions 与 memory
+
+除了 `workspace/agents/runtime/`，还有两类持久化很重要：
 
 - `~/.clawgo/sessions/`
-- `~/.clawgo/logs/`
-- `~/.clawgo/cron/`
 - `workspace/memory/`
 
-这些目录分别服务于：
-
-- CLI / 会话历史
-- 网关日志
-- Cron 作业
-- 心跳、技能审计、节点审计、trigger 审计
-
-## 为什么这次重构重要
-
-因为恢复的粒度已经不是“恢复一段聊天上下文”，而是：
-
-- 恢复 world state
-- 恢复 NPC state
-- 恢复正在进行的任务与运行事件
-- 恢复 actor 间消息轨迹
-
-这使得 ClawGo 更接近一个可长期运行的 simulation runtime。
-
-## runtime snapshot
-
-最近 API 与 WebUI 消费的是统一 snapshot：
-
-- `GET /api/runtime`
-- `GET /api/runtime/live`
-
-其中 `world` payload 会包含：
-
-- `npc_count`
-- `active_npcs`
-- location occupancy
-- recent world events
-
-这也是独立 WebUI 能展示世界概览的基础。
-
-## provider runtime 也会一起持久化
-
-除了 world/runtime 本体，provider 侧还有自己的 runtime 持久化能力，例如：
-
-- OAuth 账户状态
-- candidate order
-- 最近成功 provider
-- runtime history
-
-这部分主要由 `models.providers.<name>.runtime_*` 控制。
-
-## workspace/memory 仍然重要
-
-`workspace/memory/` 当前常见文件包括：
+前者偏主会话历史，后者偏：
 
 - `heartbeat.log`
-- `trigger-audit.jsonl`
-- `trigger-stats.json`
 - `skill-audit.jsonl`
-- `nodes-audit.jsonl`
-- `nodes-state.json`
 - `nodes-dispatch-audit.jsonl`
+- trigger / process / node 相关审计
 
-也就是说，world/runtime 是核心执行面，`memory/` 更偏审计与运维观测面。
+## 为什么这套设计重要
 
-## 排查恢复问题时先看哪里
+恢复不是“恢复一段聊天”，而是恢复：
 
-优先检查：
+- 哪个 subagent 在跑
+- 跑到了什么阶段
+- 内部 thread 到了哪里
+- 上一次结果和错误是什么
 
-1. `workspace/agents/runtime/world_state.json`
-2. `workspace/agents/runtime/npc_state.json`
-3. `workspace/agents/runtime/world_events.jsonl`
-4. `workspace/agents/runtime/agent_runs.jsonl`
-5. `workspace/agents/runtime/agent_events.jsonl`
-
-如果这些文件没有更新，通常说明：
-
-- runtime 没真正进入世界循环
-- actor 没被成功调度
-- provider 或配置校验提前失败
+这也是当前 Agent Runtime 和普通 chat shell 的本质区别。

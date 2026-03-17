@@ -28,13 +28,9 @@ clawgo onboard
 
 It creates default config, workspace templates, and a gateway token.
 
-To refresh only the embedded WebUI assets, run:
+After onboarding, use the `provider` subcommands to choose the default provider and model.
 
-```bash
-clawgo onboard --sync-webui
-```
-
-That mode only overwrites the workspace `webui/` files and does not recreate `config.json`.
+The current CLI no longer exposes the older `--sync-webui` mode mentioned in previous docs.
 
 ## `agent`
 
@@ -101,12 +97,36 @@ Note:
 
 ## `provider`
 
-Interactive provider configuration:
+Provider-related commands:
 
 ```bash
-clawgo provider
-clawgo provider backup
+clawgo provider list
+clawgo provider use openai/gpt-5.4
+clawgo provider configure
+clawgo provider login codex
+clawgo provider login codex --manual
 ```
+
+Meaning:
+
+- `list`: show declared providers and models
+- `use <provider/model>`: update `agents.defaults.model.primary`
+- `configure`: open the interactive provider editor
+- `login <provider>`: create an OAuth session
+- `login <provider> --manual`: use a manual callback flow on servers or browserless environments
+
+Typical `configure` prompts include:
+
+- `api_base`
+- `api_key`
+- `models`
+- `auth`
+- `timeout_sec`
+- `supports_responses_compact`
+- `oauth.provider`
+- `oauth.credential_file`
+- `oauth.callback_port`
+- `oauth.cooldown_sec`
 
 ## `config`
 

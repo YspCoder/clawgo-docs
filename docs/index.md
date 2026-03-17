@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "ClawGo"
-  text: "面向长期世界模拟的 Go Runtime"
-  tagline: 以 world state、NPC state 和 runtime recovery 为核心的 World Runtime
+  text: "面向生产的 Go 原生 Agent Runtime"
+  tagline: 可长期运行、可观测、可恢复、可编排的多 Agent 运行时
   image:
     src: /clawgo-logo.svg
     alt: ClawGo Logo
@@ -17,37 +17,38 @@ hero:
       link: /guide/architecture
 
 features:
-  - title: "🌍 World Runtime"
-    details: "`main` 作为 world mind，`npc` 作为自治角色，系统围绕 ingest、decide、arbitrate、apply、render 推进世界。"
-  - title: "♻️ 可恢复运行"
-    details: "`world_state.json`、`npc_state.json`、`world_events.jsonl` 以及 runtime 记录都会落盘，进程重启后可继续推进。"
-  - title: "🧭 工程化控制面"
-    details: "通过 CLI、Gateway API、独立部署的 WebUI、日志、EKG、节点与通道构成完整运维面。"
+  - title: "🕸️ 多 Agent 拓扑"
+    details: "统一组织 `main / subagents / remote branches`，内部协作流可观测，但不会污染用户主通道。"
+  - title: "♻️ 可恢复执行"
+    details: "`subagent_runs.jsonl`、`subagent_events.jsonl`、`threads.jsonl`、`agent_messages.jsonl` 持久化后可在重启后继续恢复。"
+  - title: "🛠️ 工程化运维"
+    details: "通过 `config.json`、`AGENT.md`、日志、记忆、节点、OAuth 和 WebUI 形成完整运行闭环。"
 ---
 
 ## 🦞 ClawGo 是什么
 
-ClawGo 现在的核心定位不是“通用多 Agent 聊天壳”，而是一个 **World Runtime**：
+ClawGo 当前的真实定位是 **Agent Runtime**，不是 world simulator，也不是单纯的聊天壳子。
 
-- 用户输入先进入 world event
-- `main` 负责世界级判断与仲裁
-- `agent` / `npc` 产生 intent，而不是直接改写最终世界状态
-- runtime 负责把状态、事件、执行记录和观测面长期保存下来
+当前主线模型是：
 
-典型执行链路是：
+- `main agent` 负责入口、路由、派发与汇总
+- `subagent runtime` 负责本地或远端分支执行
+- `runtime store` 负责保存 run、event、thread、message 与 memory
+- WebUI 负责检查、状态展示和账号管理
+
+默认协作流：
 
 ```text
-user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render -> user
+user -> main -> worker -> main -> user
 ```
 
-## 📚 这套文档覆盖什么
+## 📚 文档覆盖内容
 
-- 安装、初始化、provider 配置与启动方式
-- `agents.agents` 驱动的 actor / NPC 配置
-- world runtime、runtime snapshot 与恢复机制
-- CLI、Gateway API、独立部署 WebUI 的使用方式
-- MCP、Channels、Cron、Nodes、EKG 与示例验证
-- 本地开发、构建、发布与工作区模板
+- 安装、初始化、provider 选择与登录
+- `agents.subagents` 驱动的 subagent 注册与权限模型
+- subagent run、thread、message 的持久化与恢复
+- CLI、Gateway、WebUI、节点、MCP、Cron、Channels
+- 本地开发、构建、部署和工作区模板
 
 ## 🗂️ 文档分类
 
@@ -56,7 +57,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 - [概念总览](/concepts/)
 - [架构总览](/guide/architecture)
 - [运行时、存储与恢复](/guide/runtime-storage)
-- [Agents、NPC 与 Skills](/guide/subagents-and-skills)
+- [Subagent 与 Skills](/guide/subagents-and-skills)
 
 ### 🚀 使用篇
 
@@ -65,7 +66,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 - [配置说明](/guide/configuration)
 - [CLI 命令](/guide/cli)
 - [WebUI 控制台](/guide/webui)
-- [节点使用篇](/guide/nodes)
+- [通道使用篇](/guide/channels)
 
 ### 📖 参考篇
 
@@ -86,7 +87,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 2. [架构总览](/guide/architecture)
 3. [配置说明](/guide/configuration)
 4. [运行时、存储与恢复](/guide/runtime-storage)
-5. [Agents、NPC 与 Skills](/guide/subagents-and-skills)
+5. [Subagent 与 Skills](/guide/subagents-and-skills)
 
 ## 📮 联系方式
 

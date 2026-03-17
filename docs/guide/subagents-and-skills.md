@@ -1,61 +1,52 @@
-# Agents、NPC 与 Skills
+# Subagent 与 Skills
 
-## 当前配置核心已经是 `agents.agents`
+## 当前核心还是 `agents.subagents`
 
-这一页虽然沿用旧路径，但当前代码里的真实配置已经从 `agents.subagents` 切到 `agents.agents`。
+当前代码和 `config.example.json` 的真实结构仍然是：
 
-每个条目都可以是：
+```text
+agents.subagents
+```
 
-- `agent`
-- `npc`
-- 远端 `node` 分支
+不是上一版文档里写的 `agents.agents`。
 
-这比旧的“main + coder + tester 的 subagent 树”更接近现在的产品模型。
+## 为什么有 subagent
 
-## `main`、`agent`、`npc` 的区别
+ClawGo 不是一个所有任务都塞给主 agent 的系统。
 
-### `main`
+它把执行单元拆成：
 
-`main` 仍然是主入口，但现在更准确的角色是 world mind：
-
-- 接收用户输入
-- 汇总 actor intent
-- 进行仲裁
-- 决定哪些变化写入世界
-
-### `agent`
-
-普通 `agent` 更适合承担明确执行工作，例如：
-
+- `main`
 - `coder`
 - `tester`
-- provider-bound 工具型角色
-- 远端节点上的 branch agent
+- 远端 node branch
 
-常见字段：
+这样主会话可以保持整洁，而内部执行仍然可追踪。
 
-- `type`
-- `prompt_file`
-- `runtime.provider`
-- `tools.allowlist`
+## subagent 常见字段
+
+每个 subagent 都可以独立拥有：
+
+- `role`
+- `display_name`
+- `system_prompt_file`
 - `memory_namespace`
+- `tools.allowlist`
+- `runtime.provider`
 
-### `npc`
+对当前版本来说，`system_prompt_file` 仍然是正式配置方式。
 
-`npc` 是 world runtime 里的自治角色，常见字段：
+## 运行模式
 
-- `kind: "npc"`
-- `persona`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- `world_tags`
+当前 subagent 主要有两种：
 
-NPC 的核心意义不是直接跑工具，而是根据可见世界切片产出 intent。
+### 本地 subagent
 
-## 远端 node branch 仍然成立
+由本地 provider 和工具直接执行。
 
-如果一个 agent 走远端节点执行，可以配置：
+### node-backed branch
+
+配置例如：
 
 ```json
 {
@@ -65,37 +56,35 @@ NPC 的核心意义不是直接跑工具，而是根据可见世界切片产出 
 }
 ```
 
-这类配置仍然属于 `agents.agents.<id>`，只是 runtime class 不再局限于本地 actor。
-
-## prompt 文件现在应当用 `prompt_file`
-
-最近代码里的约束已经切到：
-
-- 用 `prompt_file` 定义 agent 角色
-- 路径必须是 workspace 内相对路径
-- 启用状态下不能为空
-
-更推荐的目录约定仍然是：
-
-```text
-agents/<agent_id>/AGENT.md
-```
+这会把远端节点挂到主拓扑里。
 
 ## 工具权限
 
-每个 actor 仍然可以通过以下字段控制工具权限：
+subagent 仍然通过这些字段控制工具可见性：
 
 - `tools.allowlist`
 - `tools.denylist`
 - `tools.max_parallel_calls`
 
-工程上常见做法：
+常见拆分：
 
-- `main` 只持有低风险调度和查询工具
-- `coder` 持有 filesystem / shell / repo 类工具
-- `tester` 持有验证与进程控制工具
+- `main` 拿调度和查询工具
+- `coder` 拿 filesystem / shell
+- `tester` 拿验证和 process manager
 
-## Skills 仍然是重要扩展点
+## `spawn` 与 `subagent_profile`
+
+README 当前明确保留了两个关键能力：
+
+- `spawn`
+- `subagent_profile`
+
+它们分别用于：
+
+- 触发 subagent 执行
+- 创建和管理 subagent 定义
+
+## Skills
 
 Skills 仍然以 `SKILL.md` 为中心，由 `skill_exec` 暴露给运行时。
 
@@ -105,38 +94,19 @@ Skills 仍然以 `SKILL.md` 为中心，由 `skill_exec` 暴露给运行时。
 - global skills
 - builtin skills
 
-审计里也会记录：
-
-- `caller_agent`
-- `caller_scope`
-
-这样你能知道 skill 是被哪个 actor 触发的。
-
 ## `spec-coding`
 
 当前最重要的工程技能仍然是 `spec-coding`。
 
-它面向非 trivial 编码任务，会在当前编码项目根目录维护：
+它适用于非 trivial 编码任务，会在当前编码项目根目录维护：
 
 - `spec.md`
 - `tasks.md`
 - `checklist.md`
 
-模板来自：
-
-```text
-workspace/skills/spec-coding/templates
-```
-
-运行时最近的联动行为包括：
-
-- 缺失时自动补齐 spec 文件
-- 编码完成或返工时回写 `tasks.md` / `checklist.md`
-
 ## 推荐实践
 
-- 用 `main` 负责 world-level 判断，不要让它承担所有高风险执行
-- 把执行型角色建成 `agent`
-- 把自治世界角色建成 `npc`
-- 所有 prompt 尽量走 `prompt_file`
-- 对多阶段工程任务优先使用 `spec-coding`
+- `main` 只负责派发和汇总
+- 高风险执行交给 `coder` / `tester`
+- 角色 prompt 放在 `AGENT.md`
+- 远端执行通过 node-backed branch 接入

@@ -1,61 +1,52 @@
-# Agents, NPCs, and Skills
+# Subagents and Skills
 
-## The Real Config Center Is Now `agents.agents`
+## The Current Core Is Still `agents.subagents`
 
-This page keeps the older path for continuity, but the real config surface in code has moved from `agents.subagents` to `agents.agents`.
+The real structure in the current codebase and `config.example.json` is still:
 
-Each entry can now represent:
+```text
+agents.subagents
+```
 
-- an `agent`
-- an `npc`
-- a remote `node` branch
+not the `agents.agents` wording from the earlier docs revision.
 
-That matches the current product model much better than the old “main + coder + tester subagent tree” framing.
+## Why Subagents Exist
 
-## The Difference Between `main`, `agent`, and `npc`
+ClawGo does not push every task through one all-purpose agent.
 
-### `main`
+It splits execution into roles such as:
 
-`main` is still the primary entrypoint, but it is more accurately the world mind:
-
-- accepts user input
-- aggregates actor intents
-- arbitrates outcomes
-- decides what becomes committed world state
-
-### `agent`
-
-Regular `agent` actors are better for explicit execution roles such as:
-
+- `main`
 - `coder`
 - `tester`
-- provider-bound tool roles
-- branch agents running on remote nodes
+- remote node branches
 
-Common fields include:
+That keeps the main conversation clean while making internal execution traceable.
 
-- `type`
-- `prompt_file`
-- `runtime.provider`
-- `tools.allowlist`
+## Common Subagent Fields
+
+Each subagent can define:
+
+- `role`
+- `display_name`
+- `system_prompt_file`
 - `memory_namespace`
+- `tools.allowlist`
+- `runtime.provider`
 
-### `npc`
+For the current version, `system_prompt_file` remains the canonical configuration path.
 
-An `npc` is an autonomous world actor. Common fields include:
+## Execution Modes
 
-- `kind: "npc"`
-- `persona`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- `world_tags`
+There are two main forms:
 
-The key idea is that NPCs produce intents from their visible slice of the world instead of directly executing arbitrary tools.
+### Local subagents
 
-## Remote Node Branches Still Fit The Same Model
+Executed directly with local providers and tools.
 
-If an actor runs through a remote node, you can still configure:
+### Node-backed branches
+
+Configured like:
 
 ```json
 {
@@ -65,78 +56,59 @@ If an actor runs through a remote node, you can still configure:
 }
 ```
 
-This still lives under `agents.agents.<id>`. It is simply a different runtime class, not a separate subsystem.
-
-## Prompt Files Should Use `prompt_file`
-
-Recent code paths now clearly prefer:
-
-- `prompt_file` for agent identity
-- a workspace-relative path
-- a non-empty value when the actor is enabled
-
-The recommended convention remains:
-
-```text
-agents/<agent_id>/AGENT.md
-```
+This mounts a remote node into the main topology.
 
 ## Tool Permissions
 
-Each actor can still define tool permissions with:
+Subagents still control tool visibility through:
 
 - `tools.allowlist`
 - `tools.denylist`
 - `tools.max_parallel_calls`
 
-A common engineering split is:
+A common split is:
 
-- `main` keeps lower-risk routing and lookup tools
-- `coder` gets filesystem, shell, and repo tools
-- `tester` gets verification and process-control tools
+- `main` gets routing and lookup tools
+- `coder` gets filesystem and shell
+- `tester` gets verification and process-manager tools
 
-## Skills Remain An Important Extension Surface
+## `spawn` And `subagent_profile`
+
+The current README explicitly keeps two key capabilities:
+
+- `spawn`
+- `subagent_profile`
+
+They are used to:
+
+- trigger subagent execution
+- create and manage subagent definitions
+
+## Skills
 
 Skills are still centered on `SKILL.md` and exposed through `skill_exec`.
 
-The runtime still loads them from:
+They are still loaded from:
 
 - workspace skills
 - global skills
 - builtin skills
 
-Audit records now also keep:
-
-- `caller_agent`
-- `caller_scope`
-
-So you can tell which actor triggered each skill execution.
-
 ## `spec-coding`
 
-The most important engineering skill remains `spec-coding`.
+The main engineering skill is still `spec-coding`.
 
-It targets non-trivial coding work and maintains these files in the active coding project root:
+It targets non-trivial coding work and maintains:
 
 - `spec.md`
 - `tasks.md`
 - `checklist.md`
 
-Templates come from:
-
-```text
-workspace/skills/spec-coding/templates
-```
-
-Recent runtime behavior also integrates with that workflow:
-
-- scaffold missing spec files when needed
-- update `tasks.md` and `checklist.md` when work is completed or reopened
+in the active coding project root.
 
 ## Recommended Practice
 
-- let `main` handle world-level judgment instead of all risky execution
-- model execution roles as `agent`
-- model autonomous world roles as `npc`
-- keep prompts in `prompt_file`
-- use `spec-coding` for multi-stage engineering tasks
+- let `main` focus on dispatch and merge
+- push risky execution into `coder` and `tester`
+- keep role prompts in `AGENT.md`
+- attach remote execution through node-backed branches

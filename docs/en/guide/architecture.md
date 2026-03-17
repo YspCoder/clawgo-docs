@@ -2,163 +2,127 @@
 
 ## The Current Core Model
 
-After the recent refactor, ClawGo is better described as a **World Runtime** than as a multi-agent chat orchestrator.
+ClawGo is currently best described as an **Agent Runtime**, not as a world runtime.
 
-The main flow is:
+The default collaboration flow is:
 
 ```text
-user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render -> user
+user -> main -> worker -> main -> user
 ```
 
-Two differences matter:
+The key objects are:
 
-- `main` is not just a router, it is the world-level decision entrypoint
-- `npc` and `agent` actors produce intents, while the runtime decides what becomes final world state
+- `main agent`
+- `subagents`
+- `node-backed branches`
+- `runtime store`
 
-## Runtime Layers
+## Four Runtime Layers
 
-ClawGo can now be understood in four layers:
+The current system can be understood in four layers:
 
 1. Entry layer
-   CLI, Gateway API, separately deployed WebUI, cron, and external channels
-2. World Runtime layer
-   world event ingestion, actor scheduling, arbitration, state application, and rendering
-3. Capability layer
-   tools, skills, MCP, nodes, filesystem, shell, and memory
+   CLI, Gateway, WebUI, cron, and channels
+2. Orchestration layer
+   `main agent`, router, session planner, and message bus
+3. Execution layer
+   local subagents, remote node branches, tools, skills, and MCP
 4. Persistence and observability layer
-   world store, agent runtime store, provider runtime, EKG, logs, and audit
+   subagent runs, events, threads, messages, sessions, logs, memory, and task audit
 
-## Core Runtime Objects
+## `main agent`
 
-### `main`
+`main` is responsible for:
 
-`main` is the world will:
+- user entry
+- routing and dispatch
+- subtask merge
+- final response assembly
 
-- accepts user input
-- dispatches other actors by rule or context
-- aggregates intents
-- decides which changes become committed world truth
+It is the coordination center of the runtime, not just a static system prompt.
 
-### `agent`
+## `subagents`
 
-Regular `agent` actors are good for explicit execution roles such as:
+Local subagents are declared in `config.json -> agents.subagents`.
 
-- coding
-- testing
-- external integrations
-- remote node branches
+Each subagent can independently define:
 
-They are execution roles with tools and provider/runtime settings.
+- `role`
+- `display_name`
+- `system_prompt_file`
+- `memory_namespace`
+- `tools.allowlist`
+- `runtime.provider`
 
-### `npc`
+Typical roles are still:
 
-An `npc` enters the runtime through `kind: "npc"`. NPCs usually carry:
+- `main`
+- `coder`
+- `tester`
 
-- `persona`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- their own world-decision context
+## `node-backed branches`
 
-## Core Loop
+Remote nodes can be mounted as controlled branches, typically through:
 
-The README and code now organize around this loop:
+- `transport: "node"`
+- `node_id`
+- `parent_agent_id`
 
-1. `ingest`
-2. `perceive`
-3. `decide`
-4. `arbitrate`
-5. `apply`
-6. `render`
+That lets the topology contain:
 
-In practice:
+- local workers
+- remote branches
+- node capability entrypoints
 
-- external input becomes a world event first
-- actors see only their visible world slice
-- actors return decisions or intents
-- the runtime arbitrates which intents apply
-- world state and NPC state are updated
-- the final result is rendered back to users or the frontend
+## Router And Planner
 
-## Config View
+Routing is still handled by `agents.router`, with fields such as:
 
-The real config surface is now `agents.agents`, not the older `agents.subagents` wording.
+- `main_agent_id`
+- `strategy`
+- `rules`
+- `max_hops`
+- `default_timeout_sec`
 
-A typical shape looks like:
+The planner can split suitable user requests into multiple execution units and hand them to the subagent runtime.
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "codex/gpt-5.4"
-      }
-    },
-    "agents": {
-      "main": {
-        "enabled": true,
-        "type": "agent",
-        "role": "orchestrator",
-        "prompt_file": "agents/main/AGENT.md"
-      },
-      "guard": {
-        "enabled": true,
-        "kind": "npc",
-        "persona": "A cautious town guard",
-        "home_location": "gate",
-        "default_goals": ["patrol the square"]
-      },
-      "coder": {
-        "enabled": true,
-        "type": "agent",
-        "prompt_file": "agents/coder/AGENT.md"
-      }
-    }
-  }
-}
-```
+## Runtime Store
 
-## Persistence
+The core persisted artifacts are:
 
-The World Runtime persists core state under `workspace/agents/runtime/`:
-
-- `world_state.json`
-- `npc_state.json`
-- `world_events.jsonl`
-- `agent_runs.jsonl`
-- `agent_events.jsonl`
+- `subagent_runs.jsonl`
+- `subagent_events.jsonl`
+- `threads.jsonl`
 - `agent_messages.jsonl`
 
-That means recovery is about more than chat history. It recovers:
+These files exist to preserve execution state, internal messaging, and recovery points, not just chat text.
 
-- world state
-- NPC state
-- active runtime records
-- inter-actor message traces
+## The Current Role Of The WebUI
 
-## API and WebUI
+The WebUI is now focused on inspection and management of:
 
-Gateway exposes the `/api/*` control surface. Important runtime-facing endpoints now include:
+- Dashboard
+- agent topology
+- config viewing
+- OAuth accounts and provider runtime
+- logs, memory, and node status
 
-- `GET /api/runtime`
-- `GET /api/runtime/live`
-- `GET /api/config?mode=normalized`
-- `POST /api/config?mode=normalized`
-- `GET /api/logs/live`
+The README currently stresses two things:
 
-The runtime snapshot also carries a world payload for the standalone WebUI, including:
+- WebUI is for inspection, status, and account management
+- the canonical path for runtime configuration is still file-driven
 
-- NPC count
-- active NPC list
-- location occupancy
-- recent world events
+## What Was Removed Recently
 
-## Why This Is Not A Simple Agent Chat Shell
+Recent cleanup removed a number of legacy surfaces. The main documentation-level effects are:
 
-Because the runtime now has these properties:
+- `runtime_control` has been removed
+- the public task runtime control surface has been reduced
+- several legacy helpers and compatibility interfaces were deleted
 
-- world state and actor state are modeled separately
-- intents are separated from final world mutation
-- long-running persistence and restart recovery are built in
-- runtime snapshot, runtime live, and provider runtime share one observability model
-- local actors, NPCs, and remote node branches can participate in the same world topology
+The resulting mental model is simpler:
+
+- configuration through `config.json`
+- role prompts through `AGENT.md`
+- execution through `main + subagents + nodes`
+- observability through WebUI, logs, memory, and audit

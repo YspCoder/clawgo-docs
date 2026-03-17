@@ -24,7 +24,7 @@
 2. `websocket_tunnel` 模式下，远端 node 任务可成功完成
 3. `webrtc` 模式下，远端 node 任务可成功完成
 4. `webrtc` 模式下，`/api/nodes` 的 `p2p.active_sessions` 大于 `0`
-5. Dashboard / Subagents 能看到 node P2P 会话状态和最近调度路径
+5. Dashboard / Nodes 能看到 node P2P 会话状态和最近调度路径
 
 ## 拓扑准备
 
@@ -219,30 +219,48 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 ## 建议的任务验证方法
 
 不要把“普通聊天 prompt 能否最终完成任务”作为主判据。  
-更稳定的方式，是直接通过 `subagents_runtime` 把任务派给远端 node branch：
+当前默认公开 API 已不再暴露旧版 `/api/subagents_runtime`，更稳妥的方式是：
+
+1. 先确认 `/api/nodes` 里节点在线
+2. 从主聊天入口触发一个明确会落到远端 node branch 的任务
+3. 再通过 `/api/node_dispatches`、`/api/node_artifacts`、`/api/logs/recent` 确认真实派发路径
+
+一个最小触发请求可以这样发：
 
 ```bash
 curl -s \
   -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
   -H 'Content-Type: application/json' \
-  http://<gateway-host>:18790/api/subagents_runtime \
+  http://<gateway-host>:18790/api/chat \
   -d '{
-    "action": "dispatch_and_wait",
-    "agent_id": "node.<node-id>.main",
-    "task": "Return exactly the string NODE_P2P_OK",
-    "wait_timeout_sec": 30
+    "session": "node-p2p-e2e",
+    "content": "Use node.<node-id>.main and return exactly NODE_P2P_OK"
   }'
+```
+
+随后再查：
+
+```bash
+curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://<gateway-host>:18790/api/node_dispatches
+```
+
+以及：
+
+```bash
+curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://<gateway-host>:18790/api/logs/recent?limit=200
 ```
 
 预期：
 
-- `ok = true`
-- `result.reply.status = completed`
-- `result.reply.result` 含远端 endpoint 返回内容
+- 节点派发记录里出现目标 `node_id`
+- 日志里能看到对应的节点派发和 transport 选择
+- 如果任务产生了文件或结构化结果，可在 `/api/node_artifacts` 中看到留存
 
 ## `websocket_tunnel` 判定
 
-在 `websocket_tunnel` 模式下，执行上面的 `dispatch_and_wait`，应能成功完成。
+在 `websocket_tunnel` 模式下，执行上面的聊天触发与派发检查，应能成功完成。
 
 如果目标 node 的 `endpoint` 明明配置成了 `127.0.0.1:<port>`，任务仍然成功，就说明：
 
@@ -251,7 +269,7 @@ curl -s \
 
 ## `webrtc` 判定
 
-切到 `webrtc` 配置后，重复同样的 `dispatch_and_wait`。
+切到 `webrtc` 配置后，重复同样的聊天触发与派发检查。
 
 随后查看：
 
@@ -282,7 +300,7 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 - active sessions
 - retry count
 
-### Subagents
+### Nodes
 
 远端 node branch 的卡片或 tooltip 应能显示：
 
@@ -314,9 +332,9 @@ curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
 
 处理：
 
-- 直接使用 `/api/subagents_runtime`
-- 用 `dispatch_and_wait`
-- 明确指定 `node.<id>.main`
+- 明确在请求里点名 `node.<id>.main`
+- 同时检查 `/api/node_dispatches`
+- 联合 `nodes-dispatch-audit.jsonl` 和 `/api/logs/recent` 看是否真实命中目标节点
 
 ### 3. WebRTC 开了但 `active_sessions` 还是 0
 

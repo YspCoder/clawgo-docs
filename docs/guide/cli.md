@@ -31,14 +31,8 @@ clawgo onboard
 - 生成默认配置
 - 创建 workspace 模板
 - 自动生成 `gateway.token`
-
-如果只是刷新嵌入式 WebUI 资源，可以执行：
-
-```bash
-clawgo onboard --sync-webui
-```
-
-这个模式只会覆盖 workspace 下的 `webui/` 资源，不会重建 `config.json`。
+- 初始化后再通过 `provider` 子命令选择默认 provider/model
+- 当前 CLI 不再提供旧文档里提到的 `--sync-webui`
 
 ## agent
 
@@ -115,14 +109,25 @@ clawgo status
 
 ## provider
 
-交互式配置 provider：
+Provider 相关命令：
 
 ```bash
-clawgo provider
-clawgo provider backup
+clawgo provider list
+clawgo provider use openai/gpt-5.4
+clawgo provider configure
+clawgo provider login codex
+clawgo provider login codex --manual
 ```
 
-它会提示输入：
+说明：
+
+- `list`: 列出当前声明的 provider 与模型
+- `use <provider/model>`: 更新 `agents.defaults.model.primary`
+- `configure`: 进入交互式 provider 编辑
+- `login <provider>`: 为 OAuth 型 provider 建立登录会话
+- `login <provider> --manual`: 在服务器或无浏览器环境下使用手动回调流程
+
+`configure` 常见会提示这些字段：
 
 - `api_base`
 - `api_key`
@@ -130,6 +135,10 @@ clawgo provider backup
 - `auth`
 - `timeout_sec`
 - `supports_responses_compact`
+- `oauth.provider`
+- `oauth.credential_file`
+- `oauth.callback_port`
+- `oauth.cooldown_sec`
 
 并可选择是否更新默认 `agents.defaults.model.primary` 所指向的 provider/model。
 

@@ -69,19 +69,14 @@ Risk confirmation on config writes now covers sensitive fields under `models.pro
 
 - `/api/chat`
 - `/api/chat/history`
-- `/api/chat/stream`
 - `/api/chat/live`
 - `/api/upload`
 
 ### Runtime Resources
 
 - `/api/nodes`
-- `/api/runtime`
 - `/api/sessions`
 - `/api/memory`
-- `/api/subagents_runtime`
-- `/api/subagents_runtime/live`
-- `/api/subagent_profiles`
 - `/api/tool_allowlist_groups`
 
 `/api/nodes` now returns more than the node list and trees. It also includes a `p2p` summary with:
@@ -115,28 +110,20 @@ Recent versions also add dedicated provider operations endpoints:
 - `/api/provider/oauth/complete`
 - `/api/provider/oauth/import`
 - `/api/provider/oauth/accounts`
+- `/api/provider/models`
 - `/api/provider/runtime`
-- `/api/provider/runtime/summary`
 
 These are used for:
 
 - browser-driven OAuth login
 - importing existing auth JSON
+- querying the provider's available models
 - inspecting provider runtime health, cooldown state, and candidate ordering
-- triggering refresh, rerank, or cooldown cleanup manually
 
 ### Audit and Logs
 
-- `/api/task_audit`
-- `/api/task_queue`
-- `/api/ekg_stats`
-- `/api/exec_approvals`
 - `/api/logs/recent`
-- `/api/logs/stream`
-
-For a dedicated explanation of EKG metrics, windows, and rankings, see:
-
-- [EKG Guide](/en/guide/ekg)
+- `/api/logs/live`
 
 Node audit now also includes:
 
@@ -148,12 +135,12 @@ Node audit now also includes:
 
 The replay endpoint can resend a historical node dispatch through the current node dispatch handler.
 
-`/api/runtime` and `/api/subagents_runtime/live` now provide websocket-based live snapshots for the frontend runtime overview and subagent detail views.
-
 ### Automation
 
 - `/api/cron`
 - `/api/skills`
+- `/api/tools`
+- `/api/mcp/install`
 
 ## Sentinel
 
@@ -174,6 +161,13 @@ Default log path:
 ```
 
 The WebUI can also read recent logs and stream them.
+
+The current default log endpoints are:
+
+- `/api/logs/recent`
+- `/api/logs/live`
+
+not the older `/api/logs/stream` name from previous docs.
 
 ## `status` As An Operational Check
 

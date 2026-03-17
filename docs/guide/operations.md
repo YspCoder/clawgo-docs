@@ -73,19 +73,14 @@ POST /api/auth/session
 
 - `/api/chat`
 - `/api/chat/history`
-- `/api/chat/stream`
 - `/api/chat/live`
 - `/api/upload`
 
 ### 运行资源
 
 - `/api/nodes`
-- `/api/runtime`
 - `/api/sessions`
 - `/api/memory`
-- `/api/subagents_runtime`
-- `/api/subagents_runtime/live`
-- `/api/subagent_profiles`
 - `/api/tool_allowlist_groups`
 
 其中 `/api/nodes` 现在除了节点列表和拓扑，还会返回 `p2p` 摘要，包含：
@@ -119,28 +114,20 @@ Provider 侧这轮也新增了独立运维接口：
 - `/api/provider/oauth/complete`
 - `/api/provider/oauth/import`
 - `/api/provider/oauth/accounts`
+- `/api/provider/models`
 - `/api/provider/runtime`
-- `/api/provider/runtime/summary`
 
 这组接口主要用于：
 
 - 浏览器内完成 OAuth 登录
 - 导入已有 auth JSON
+- 查询当前 provider 的可选模型
 - 查看 provider runtime 健康度、cooldown 和候选顺序
-- 手动触发 refresh / rerank / cooldown 清理
 
 ### 运维与审计
 
-- `/api/task_audit`
-- `/api/task_queue`
-- `/api/ekg_stats`
-- `/api/exec_approvals`
 - `/api/logs/recent`
-- `/api/logs/stream`
-
-如果你要专门看 EKG 指标、窗口和 provider / errsig 排名，直接看：
-
-- [EKG 使用篇](/guide/ekg)
+- `/api/logs/live`
 
 节点审计最近还增加了：
 
@@ -152,12 +139,12 @@ Provider 侧这轮也新增了独立运维接口：
 
 其中 replay 接口可以把一次历史节点派发重新送回当前 node dispatch handler。
 
-`/api/runtime` 和 `/api/subagents_runtime/live` 现在都支持 websocket 形式的实时快照，用于前端 runtime 汇总和 subagent 细节联动。
-
 ### 自动化
 
 - `/api/cron`
 - `/api/skills`
+- `/api/tools`
+- `/api/mcp/install`
 
 ## status 命令的运维价值
 
@@ -217,6 +204,13 @@ Sentinel 在 Gateway 启动时初始化，接受这些配置：
 
 WebUI 还能直接查看最近日志和日志流。
 
+当前默认日志接口是：
+
+- `/api/logs/recent`
+- `/api/logs/live`
+
+而不是旧版文档里出现过的 `/api/logs/stream`。
+
 ## 热更新与回滚
 
 `clawgo config set` 的实现比较工程化：
@@ -237,6 +231,18 @@ WebUI 还能直接查看最近日志和日志流。
 - `stop`
 - `restart`
 - `status`
+
+如果直接运行：
+
+```bash
+clawgo gateway
+```
+
+程序会尝试为当前平台注册 gateway 服务；前台调试时建议显式使用：
+
+```bash
+clawgo gateway run
+```
 
 最近这套服务化逻辑已经补成跨平台：
 

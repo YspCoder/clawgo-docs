@@ -2,163 +2,127 @@
 
 ## 当前主模型
 
-ClawGo 最近一轮重构后，主模型已经从“多 agent 聊天编排器”转成 **World Runtime**。
+ClawGo 当前不是 world runtime，而是更典型的 **Agent Runtime**。
 
-核心关系可以概括为：
+默认协作流：
 
 ```text
-user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render -> user
+user -> main -> worker -> main -> user
 ```
 
-这里有两个关键区别：
+这里的关键对象是：
 
-- `main` 不只是一个 router，而是世界级决策入口
-- `npc` / `agent` 产生的是 intent，最终世界状态由 runtime 仲裁并落盘
+- `main agent`
+- `subagents`
+- `node-backed branches`
+- `runtime store`
 
-## 运行层次
+## 四层结构
 
-可以把 ClawGo 看成 4 层：
+可以把当前系统理解成四层：
 
 1. 入口层
-   CLI、Gateway API、独立部署 WebUI、Cron、外部 Channels
-2. World Runtime 层
-   world event ingestion、actor 调度、仲裁、状态应用、结果渲染
-3. 能力层
-   tools、skills、MCP、nodes、filesystem、shell、memory
+   CLI、Gateway、WebUI、Cron、Channels
+2. 编排层
+   `main agent`、router、session planner、message bus
+3. 执行层
+   本地 subagents、远端 node branches、tools、skills、MCP
 4. 持久化与观测层
-   world store、agent runtime store、provider runtime、EKG、日志、审计
+   subagent runs、events、threads、messages、sessions、logs、memory、task audit
 
-## World Runtime 核心对象
+## `main agent`
 
-### `main`
+`main` 负责：
 
-`main` 是世界意志：
+- 用户入口
+- 路由和派发
+- 子任务汇总
+- 最终回复整理
 
-- 接收用户输入
-- 根据规则或上下文调度其他 actor
-- 汇总 intent
-- 决定哪些变化真正写入世界状态
+它不是简单的系统 prompt，而是整个运行时的协调中心。
 
-### `agent`
+## `subagents`
 
-普通 `agent` 适合承担显式执行任务，例如：
+本地 subagent 通过 `config.json -> agents.subagents` 声明。
 
-- 编码
-- 测试
-- 外部集成
-- 远端 node branch
+每个 subagent 可独立拥有：
 
-它们更像带工具权限和 provider 绑定的执行角色。
+- `role`
+- `display_name`
+- `system_prompt_file`
+- `memory_namespace`
+- `tools.allowlist`
+- `runtime.provider`
 
-### `npc`
+典型角色仍然是：
 
-`npc` 是世界中的自治角色，配置上通过 `kind: "npc"` 进入 runtime。它们通常具备：
+- `main`
+- `coder`
+- `tester`
 
-- `persona`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- 独立的 world decision 上下文
+## `node-backed branches`
 
-## 核心循环
+远端节点可以被挂成受控 branch，配置上通常依赖：
 
-当前 README 与实现都围绕这条主循环组织：
+- `transport: "node"`
+- `node_id`
+- `parent_agent_id`
 
-1. `ingest`
-2. `perceive`
-3. `decide`
-4. `arbitrate`
-5. `apply`
-6. `render`
+这样主拓扑里可以同时存在：
 
-含义是：
+- 本地 worker
+- 远端 branch
+- 节点能力入口
 
-- 外部输入先变成 world event
-- actor 看见自己可见的世界切片
-- actor 产出 decision / intent
-- runtime 仲裁哪些 intent 生效
-- 世界状态与 NPC 状态被更新
-- 最终把可读结果渲染给用户或前端
+## router 与 planner
 
-## 配置视角
+当前路由仍由 `agents.router` 负责，核心字段包括：
 
-当前真实配置核心已经是 `agents.agents`，不是旧文档里的 `agents.subagents`。
+- `main_agent_id`
+- `strategy`
+- `rules`
+- `max_hops`
+- `default_timeout_sec`
 
-一个典型结构是：
+planner 会把适合拆分的请求转成多个执行单元，再交给 subagent runtime 分发。
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "codex/gpt-5.4"
-      }
-    },
-    "agents": {
-      "main": {
-        "enabled": true,
-        "type": "agent",
-        "role": "orchestrator",
-        "prompt_file": "agents/main/AGENT.md"
-      },
-      "guard": {
-        "enabled": true,
-        "kind": "npc",
-        "persona": "A cautious town guard",
-        "home_location": "gate",
-        "default_goals": ["patrol the square"]
-      },
-      "coder": {
-        "enabled": true,
-        "type": "agent",
-        "prompt_file": "agents/coder/AGENT.md"
-      }
-    }
-  }
-}
-```
+## runtime store
 
-## 持久化面
+当前真正重要的持久化产物包括：
 
-World Runtime 现在会把核心状态落到 `workspace/agents/runtime/`：
-
-- `world_state.json`
-- `npc_state.json`
-- `world_events.jsonl`
-- `agent_runs.jsonl`
-- `agent_events.jsonl`
+- `subagent_runs.jsonl`
+- `subagent_events.jsonl`
+- `threads.jsonl`
 - `agent_messages.jsonl`
 
-这意味着恢复时不只是恢复“聊天历史”，而是恢复：
+这套设计的目的不是记录聊天文本，而是记录执行过程、内部消息和恢复点。
 
-- 世界状态
-- NPC 状态
-- 运行中任务与事件
-- actor 间消息协作痕迹
+## WebUI 当前角色
 
-## API 与 WebUI
+WebUI 现在偏向检查和管理：
 
-Gateway 暴露的是 `/api/*` 控制面。最近重要的运行态接口包括：
+- Dashboard
+- Agent 拓扑
+- Config 查看
+- OAuth 账号与 provider runtime
+- 日志、记忆、节点状态
 
-- `GET /api/runtime`
-- `GET /api/runtime/live`
-- `GET /api/config?mode=normalized`
-- `POST /api/config?mode=normalized`
-- `GET /api/logs/live`
+README 当前明确强调两点：
 
-其中 runtime snapshot 会额外带 world payload，供独立 WebUI 展示：
+- WebUI 负责 inspection、status、account management
+- runtime config 的正式修改路径仍以文件驱动为主
 
-- NPC 数量
-- active NPC 列表
-- location occupancy
-- recent world events
+## 最近删掉了什么
 
-## 为什么说它不是普通 Agent Chat
+最近一轮精简移除了不少 legacy surface，文档上最值得记住的是：
 
-因为当前系统已经具备这些运行时特征：
+- `runtime_control` 已移除
+- 公开 task runtime 控制面已收缩
+- 旧的兼容 helper 和部分 legacy interface 被清掉
 
-- 世界状态与 actor 状态分开建模
-- intent 与最终 world mutation 分离
-- 长期落盘与可恢复执行
-- runtime snapshot / runtime live / provider runtime 统一观测
-- 本地 actor、NPC、远端 node branch 可以进入同一世界拓扑
+这意味着当前对外心智模型更简单：
+
+- 配置靠 `config.json`
+- 角色靠 `AGENT.md`
+- 执行靠 `main + subagents + nodes`
+- 观测靠 WebUI、logs、memory、audit

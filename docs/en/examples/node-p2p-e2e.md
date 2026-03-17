@@ -24,7 +24,7 @@ The validation should satisfy all of the following:
 2. remote node tasks succeed in `websocket_tunnel` mode
 3. remote node tasks succeed in `webrtc` mode
 4. in `webrtc` mode, `/api/nodes` reports `p2p.active_sessions > 0`
-5. Dashboard and Subagents show node P2P session state and recent dispatch path
+5. Dashboard and Nodes show node P2P session state and recent dispatch path
 
 ## Topology
 
@@ -219,30 +219,48 @@ Expected:
 ## Recommended Task Validation Method
 
 Do not use “a normal chat prompt eventually worked” as the main success criterion.  
-The more stable path is to dispatch directly to the remote node branch through `subagents_runtime`:
+The default public API no longer exposes the older `/api/subagents_runtime` surface, so the more stable current path is:
+
+1. verify the node is online through `/api/nodes`
+2. trigger a task from the main chat entry point that should land on the remote node branch
+3. confirm the actual dispatch path through `/api/node_dispatches`, `/api/node_artifacts`, and `/api/logs/recent`
+
+A minimal trigger request can go through chat:
 
 ```bash
 curl -s \
   -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
   -H 'Content-Type: application/json' \
-  http://<gateway-host>:18790/api/subagents_runtime \
+  http://<gateway-host>:18790/api/chat \
   -d '{
-    "action": "dispatch_and_wait",
-    "agent_id": "node.<node-id>.main",
-    "task": "Return exactly the string NODE_P2P_OK",
-    "wait_timeout_sec": 30
+    "session": "node-p2p-e2e",
+    "content": "Use node.<node-id>.main and return exactly NODE_P2P_OK"
   }'
+```
+
+Then inspect:
+
+```bash
+curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://<gateway-host>:18790/api/node_dispatches
+```
+
+and:
+
+```bash
+curl -s -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
+  http://<gateway-host>:18790/api/logs/recent?limit=200
 ```
 
 Expected:
 
-- `ok = true`
-- `result.reply.status = completed`
-- `result.reply.result` includes the remote endpoint response
+- the node dispatch list includes the target `node_id`
+- logs show the matching node dispatch and chosen transport
+- if the task produced files or structured outputs, `/api/node_artifacts` shows retained artifact rows
 
 ## How To Judge `websocket_tunnel`
 
-In `websocket_tunnel` mode, the `dispatch_and_wait` call above should succeed.
+In `websocket_tunnel` mode, the chat trigger plus dispatch inspection flow above should succeed.
 
 If the target node `endpoint` is deliberately set to `127.0.0.1:<port>` and the task still succeeds, then:
 
@@ -251,7 +269,7 @@ If the target node `endpoint` is deliberately set to `127.0.0.1:<port>` and the 
 
 ## How To Judge `webrtc`
 
-Switch to `webrtc` config and run the same `dispatch_and_wait` call again.
+Switch to `webrtc` config and run the same chat trigger plus dispatch inspection flow again.
 
 Then inspect:
 
@@ -282,7 +300,7 @@ You should see:
 - active sessions
 - retry count
 
-### Subagents
+### Nodes
 
 The remote node branch card or tooltip should show:
 
@@ -314,9 +332,9 @@ Symptom:
 
 Action:
 
-- use `/api/subagents_runtime`
-- use `dispatch_and_wait`
-- target `node.<id>.main` explicitly
+- mention `node.<id>.main` explicitly in the task
+- inspect `/api/node_dispatches` together with the result
+- cross-check `nodes-dispatch-audit.jsonl` and `/api/logs/recent`
 
 ### 3. WebRTC Is Enabled But `active_sessions` Stays 0
 

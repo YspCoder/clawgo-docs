@@ -1,53 +1,21 @@
 # Quick Start
 
-## Set The Right Expectation First
+## The Current Recommended Path
 
-ClawGo is now better understood as a **World Runtime** than as a plain CLI chat tool.
+According to the current README, the shortest path is:
 
-Its core capabilities include:
+1. install `clawgo`
+2. run `clawgo onboard`
+3. choose a provider and model
+4. start `agent` mode or `gateway run`
 
-- maintaining long-running world state and NPC state
-- processing world events through `main`
-- letting `agent` and `npc` actors cooperate in one runtime
-- persisting execution records, provider runtime, and world snapshots together
-
-## Installation
-
-### Option 1: Install Script
+## Install
 
 ```bash
-curl -fsSL https://clawgo.dev/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/YspCoder/clawgo/main/install.sh | bash
 ```
 
-Install a specific variant:
-
-```bash
-curl -fsSL https://clawgo.dev/install.sh | bash -s -- --variant telegram
-```
-
-Current major variants include:
-
-- `full`
-- `none`
-- `telegram`
-- `discord`
-- `feishu`
-- `maixcam`
-- `qq`
-- `dingtalk`
-- `whatsapp`
-
-### Option 2: Build From Source
-
-```bash
-git clone https://github.com/YspCoder/clawgo.git
-cd clawgo
-make build
-```
-
-## Onboarding
-
-Run this once:
+## Initialize
 
 ```bash
 clawgo onboard
@@ -55,114 +23,99 @@ clawgo onboard
 
 It will:
 
-- create `~/.clawgo/config.json`
-- create `~/.clawgo/workspace`
+- create the default config
+- initialize the workspace
 - generate `gateway.token`
-- copy the built-in workspace template
 
-## Minimal Working Config
+## Choose A Provider And Model
 
-The real config center now lives in `agents.agents` and `models.providers`.
-
-A minimal example:
-
-```json
-{
-  "agents": {
-    "defaults": {
-      "workspace": "~/.clawgo/workspace",
-      "model": {
-        "primary": "openai/gpt-5.4"
-      }
-    },
-    "agents": {
-      "main": {
-        "enabled": true,
-        "type": "agent",
-        "role": "orchestrator",
-        "prompt_file": "agents/main/AGENT.md"
-      },
-      "guard": {
-        "enabled": true,
-        "kind": "npc",
-        "persona": "A cautious town guard",
-        "home_location": "gate",
-        "default_goals": ["patrol the square"]
-      }
-    }
-  },
-  "models": {
-    "providers": {
-      "openai": {
-        "api_key": "YOUR_KEY",
-        "api_base": "https://api.openai.com/v1",
-        "models": ["gpt-5.4"],
-        "auth": "bearer",
-        "timeout_sec": 90
-      }
-    }
-  }
-}
-```
-
-This means:
-
-- the default model comes from `agents.defaults.model.primary`
-- actors and NPCs live under `agents.agents`
-- providers are declared under `models.providers`
-
-## Configure A Provider
-
-Interactive setup:
+The current README path is:
 
 ```bash
-clawgo provider
+clawgo provider list
+clawgo provider use openai/gpt-5.4
+clawgo provider configure
 ```
 
-Recent multi-provider behavior is also more practical now:
+For OAuth-backed providers such as `codex`, `anthropic`, `antigravity`, `gemini`, `kimi`, and `qwen`:
 
-- the primary provider is derived from `agents.defaults.model.primary`
-- even without an explicit fallback list, the runtime can infer candidates from declared providers
-- maintain an explicit fallback order only when you need strict control
+```bash
+clawgo provider login codex
+clawgo provider login codex --manual
+```
 
-## Start The Runtime
+If the same provider has both an API key and OAuth accounts, `auth: "hybrid"` is the recommended setup.
 
-### Interactive Mode
+## Start
+
+Interactive mode:
 
 ```bash
 clawgo agent
+clawgo agent -m "Hello"
 ```
 
-One-shot message:
-
-```bash
-clawgo agent -m "I walk to the gate and inspect what the guard is doing"
-```
-
-### Gateway Mode
+Gateway mode:
 
 ```bash
 clawgo gateway run
 ```
 
-This starts the fuller runtime surface:
+Development mode:
 
-- Gateway API
-- runtime snapshot and runtime live
-- channels
-- cron
-- sentinel
+```bash
+make dev
+```
 
-## WebUI
+## WebUI Access
 
-The WebUI is now intended to be deployed separately. Frontend repository:
-
-- [YspCoder/clawgo-web](https://github.com/YspCoder/clawgo-web)
-
-The frontend should call Gateway `/api/*` with `gateway.token`, for example:
+According to the current README, the WebUI is accessed through Gateway directly:
 
 ```text
-https://<your-webui-host>?token=<gateway.token>
+http://<host>:<port>/?token=<gateway.token>
+```
+
+That is also the default assumption used in this docs set.
+
+## Minimal Config Mental Model
+
+The real config center is now:
+
+- `agents.defaults`
+- `agents.router`
+- `agents.communication`
+- `agents.subagents`
+- `models.providers`
+
+not the earlier `agents.agents` wording.
+
+## A Minimal Subagent Topology
+
+```json
+{
+  "agents": {
+    "router": {
+      "enabled": true,
+      "main_agent_id": "main",
+      "strategy": "rules_first",
+      "rules": []
+    },
+    "subagents": {
+      "main": {
+        "enabled": true,
+        "type": "router",
+        "role": "orchestrator",
+        "system_prompt_file": "agents/main/AGENT.md"
+      },
+      "coder": {
+        "enabled": true,
+        "type": "worker",
+        "role": "code",
+        "system_prompt_file": "agents/coder/AGENT.md"
+      }
+    }
+  }
+}
 ```
 
 ## First Validation
@@ -174,23 +127,22 @@ clawgo status
 clawgo config check
 ```
 
-If you want to verify that the world runtime is actually active, also check:
+Then verify that these runtime files begin to appear:
 
-- `~/.clawgo/workspace/agents/runtime/world_state.json`
-- `~/.clawgo/workspace/agents/runtime/npc_state.json`
-- `~/.clawgo/workspace/agents/runtime/world_events.jsonl`
+- `subagent_runs.jsonl`
+- `subagent_events.jsonl`
+- `threads.jsonl`
+- `agent_messages.jsonl`
 
-## A Better First Prompt For The Current Model
-
-Try this:
+## A Better First Prompt For The Current Runtime
 
 ```bash
-clawgo agent -m "I enter the square, inspect the guard and merchant, and summarize the current world snapshot"
+clawgo agent -m "Implement a new endpoint and let coder and tester split the work"
 ```
 
-That validates:
+That is closer to the current runtime model:
 
-- world event ingestion
-- world-level decision making by `main`
-- NPC intent plus rendered output
-- world store persistence
+- `main` dispatches
+- a `subagent` executes
+- internal messages stay separate
+- the result comes back to the main session

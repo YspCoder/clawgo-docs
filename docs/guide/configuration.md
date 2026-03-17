@@ -8,22 +8,15 @@
 ~/.clawgo/config.json
 ```
 
-调试模式下会使用：
+调试模式下：
 
 ```text
 .clawgo/config.json
 ```
 
-加载策略是：
-
-- 先构造默认配置
-- 再读取 JSON
-- 使用严格解码，未知字段会报错
-- 最后应用环境变量覆盖
-
 ## 顶层结构
 
-当前顶层结构是：
+当前真实顶层结构是：
 
 - `agents`
 - `channels`
@@ -35,31 +28,22 @@
 - `sentinel`
 - `memory`
 
-这里要注意，provider 已经挂在 `models.providers`，不是旧文档里的顶层 `providers`。
+## normalized view
 
-## normalized schema
-
-最近 WebUI 和部分运行时接口优先读写 normalized view：
+虽然落盘文件还是 raw config，但部分接口会提供 normalized view：
 
 - `core.default_provider`
 - `core.default_model`
 - `core.main_agent_id`
-- `core.agents`
-- `core.tools`
-- `core.gateway`
+- `core.subagents`
+- `runtime.router`
 - `runtime.providers`
 
-它的意义是：
+这里要注意：当前 normalized 核心字段仍然是 `core.subagents`，不是 `core.agents`。
 
-- 给 WebUI 更稳定的配置编辑面
-- 让远端节点和控制面不依赖底层字段细节
-- 把核心 actor 拓扑和 provider runtime 配置拆开
+## `agents.defaults`
 
-## `agents`
-
-### `agents.defaults`
-
-这部分定义全局默认行为，最关键的字段包括：
+关键字段：
 
 - `workspace`
 - `model.primary`
@@ -71,83 +55,73 @@
 - `execution`
 - `summary_policy`
 
-最近要特别注意的是：
+`model.primary` 的格式是：
 
-- 默认 provider 不再建议写成旧的 `proxy`
-- 当前主模型引用来自 `agents.defaults.model.primary`
-- 值的形态是 `provider/model`
+```text
+provider/model
+```
 
 例如：
 
 ```json
 {
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "openai/gpt-5.4"
-      }
-    }
+  "model": {
+    "primary": "codex/gpt-5.4"
   }
 }
 ```
 
-### `agents.defaults.context_compaction`
+## `agents.router`
 
-字段：
+当前 router 负责把用户请求派给 `main` 和各个 subagent。
+
+关键字段：
 
 - `enabled`
-- `mode`
-- `trigger_messages`
-- `keep_recent_messages`
-- `max_summary_chars`
-- `max_transcript_chars`
+- `main_agent_id`
+- `strategy`
+- `policy.intent_max_input_chars`
+- `policy.max_rounds_without_user`
+- `rules`
+- `allow_direct_agent_chat`
+- `max_hops`
+- `default_timeout_sec`
+- `sticky_thread_owner`
 
-`mode` 允许：
+## `agents.communication`
 
-- `summary`
-- `responses_compact`
-- `hybrid`
-
-### `agents.defaults.execution`
+负责 agent 间线程化消息协作。
 
 字段：
 
-- `run_state_ttl_seconds`
-- `run_state_max`
-- `tool_parallel_safe_names`
-- `tool_max_parallel_calls`
+- `mode`
+- `persist_threads`
+- `persist_messages`
+- `max_messages_per_thread`
+- `dead_letter_queue`
+- `default_message_ttl_sec`
 
-这部分控制运行态缓存与工具并发。
+## `agents.subagents`
 
-## `agents.agents`
-
-这是当前最重要的配置区域。每个条目都代表一个 actor，可以是：
-
-- 普通 `agent`
-- 世界里的 `npc`
-- 远端 `node` branch
+这是当前最重要的角色配置区域。
 
 常见字段：
 
 - `enabled`
-- `kind`
 - `type`
 - `transport`
 - `node_id`
 - `parent_agent_id`
+- `notify_main_policy`
 - `display_name`
 - `role`
 - `description`
-- `persona`
-- `traits`
-- `faction`
-- `home_location`
-- `default_goals`
-- `perception_scope`
-- `schedule_hint`
-- `world_tags`
-- `prompt_file`
+- `system_prompt_file`
 - `memory_namespace`
+- `accept_from`
+- `can_talk_to`
+- `requires_main_mediation`
+- `default_reply_to`
 - `tools.allowlist`
 - `tools.denylist`
 - `tools.max_parallel_calls`
@@ -161,42 +135,21 @@
 - `runtime.max_result_chars`
 - `runtime.max_parallel_runs`
 
-使用建议：
+当前约束：
 
-- `main` 通常写成 `type: "agent"` 并绑定 `prompt_file`
-- `npc` 通过 `kind: "npc"` 进入 world runtime
-- 远端分支用 `transport: "node"`，同时配置 `node_id` 与 `parent_agent_id`
-- 启用的执行型 agent 应提供 `prompt_file`
-- `prompt_file` 必须是 workspace 内相对路径
-
-## `channels`
-
-当前支持的主要通道：
-
-- `telegram`
-- `discord`
-- `feishu`
-- `dingtalk`
-- `whatsapp`
-- `qq`
-- `maixcam`
-
-公共字段：
-
-- `inbound_message_id_dedupe_ttl_seconds`
-- `inbound_content_dedupe_window_seconds`
-- `outbound_dedupe_window_seconds`
+- 启用中的本地 subagent 必须配置 `system_prompt_file`
+- `system_prompt_file` 必须是 workspace 内相对路径
+- `transport: "node"` 时必须同时配置 `node_id`
+- `accept_from` / `can_talk_to` 需要引用已存在的 subagent
 
 ## `models.providers`
 
-provider 配置现在在这里：
+provider 配置在：
 
 ```json
 {
   "models": {
-    "providers": {
-      "openai": {}
-    }
+    "providers": {}
   }
 }
 ```
@@ -224,63 +177,47 @@ provider 配置现在在这里：
 
 ## `tools.mcp`
 
-字段：
+当前支持：
+
+- `stdio`
+- `http`
+- `streamable_http`
+- `sse`
+
+server 级字段常见有：
 
 - `enabled`
-- `request_timeout_sec`
-- `servers`
-
-每个 server 当前支持：
-
 - `transport`
 - `command`
 - `args`
 - `url`
-- `env`
 - `working_dir`
 - `permission`
-- `description`
 - `package`
-- `installer`
-- `mcp_server_checks`
 
-## `gateway`
-
-常用字段：
-
-- `host`
-- `port`
-- `token`
-
-最近独立部署 WebUI 的常见接入方式是：
-
-- URL 带 `?token=<gateway.token>`
-- 或用 `Authorization: Bearer <gateway.token>`
-
-## 一个更贴近当前代码的最小片段
+## 一个最小原始结构
 
 ```json
 {
   "agents": {
-    "defaults": {
-      "workspace": "~/.clawgo/workspace",
-      "model": {
-        "primary": "openai/gpt-5.4"
-      }
+    "router": {
+      "enabled": true,
+      "main_agent_id": "main",
+      "strategy": "rules_first",
+      "rules": []
     },
-    "agents": {
+    "subagents": {
       "main": {
         "enabled": true,
-        "type": "agent",
+        "type": "router",
         "role": "orchestrator",
-        "prompt_file": "agents/main/AGENT.md"
+        "system_prompt_file": "agents/main/AGENT.md"
       },
-      "guard": {
+      "coder": {
         "enabled": true,
-        "kind": "npc",
-        "persona": "A cautious town guard",
-        "home_location": "gate",
-        "default_goals": ["patrol the square"]
+        "type": "worker",
+        "role": "code",
+        "system_prompt_file": "agents/coder/AGENT.md"
       }
     }
   },

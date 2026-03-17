@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "ClawGo"
-  text: "A Go Runtime For Long-Running Simulated Worlds"
-  tagline: A World Runtime centered on world state, NPC state, and recoverable execution
+  text: "A Production-Oriented, Go-Native Agent Runtime"
+  tagline: Long-running, observable, recoverable, orchestrated runtime for real agent systems
   image:
     src: /clawgo-logo.svg
     alt: ClawGo Logo
@@ -17,37 +17,38 @@ hero:
       link: /en/guide/architecture
 
 features:
-  - title: "🌍 World Runtime"
-    details: "`main` acts as the world mind, `npc` acts as an autonomous character, and the system advances through ingest, decide, arbitrate, apply, and render."
+  - title: "🕸️ Multi-Agent Topology"
+    details: "A unified `main / subagents / remote branches` model where internal collaboration stays observable without polluting user-facing chat."
   - title: "♻️ Recoverable Execution"
-    details: "`world_state.json`, `npc_state.json`, `world_events.jsonl`, and runtime records persist across restart."
-  - title: "🧭 Operational Surface"
-    details: "CLI, Gateway API, a standalone WebUI, logs, EKG, nodes, and channels form the full control plane."
+    details: "`subagent_runs.jsonl`, `subagent_events.jsonl`, `threads.jsonl`, and `agent_messages.jsonl` allow recovery after restart."
+  - title: "🛠️ Operational Engineering"
+    details: "Use `config.json`, `AGENT.md`, logs, memory, nodes, OAuth, and WebUI as a full runtime control surface."
 ---
 
 ## 🦞 What ClawGo Is
 
-ClawGo is no longer documented as a generic multi-agent chat shell. Its current core model is a **World Runtime**:
+ClawGo is currently an **Agent Runtime**, not a world simulator and not just a chat wrapper.
 
-- user input becomes a world event first
-- `main` performs world-level judgment and arbitration
-- `agent` and `npc` actors produce intents instead of directly mutating final world truth
-- the runtime persists state, events, execution records, and observability data
+The main model is:
 
-The typical flow is:
+- `main agent` handles entry, routing, dispatch, and merge
+- `subagent runtime` executes local and remote branches
+- `runtime store` persists runs, events, threads, messages, and memory
+- WebUI focuses on inspection, status views, and account management
+
+Default collaboration flow:
 
 ```text
-user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render -> user
+user -> main -> worker -> main -> user
 ```
 
 ## 📚 What This Documentation Covers
 
-- installation, onboarding, provider setup, and startup
-- actor and NPC configuration centered on `agents.agents`
-- world runtime, runtime snapshots, and recovery
-- CLI, Gateway API, and the separately deployed WebUI
-- MCP, channels, cron, nodes, EKG, and runnable examples
-- local development, build, release, and workspace templates
+- installation, onboarding, provider selection, and provider login
+- the `agents.subagents` registry and tool-permission model
+- subagent run, thread, and message persistence
+- CLI, Gateway, WebUI, nodes, MCP, cron, and channels
+- local development, build, deployment, and workspace templates
 
 ## 🗂️ Documentation Sections
 
@@ -56,7 +57,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 - [Concept Overview](/en/concepts/)
 - [Architecture](/en/guide/architecture)
 - [Runtime, Storage, and Recovery](/en/guide/runtime-storage)
-- [Agents, NPCs, and Skills](/en/guide/subagents-and-skills)
+- [Subagents and Skills](/en/guide/subagents-and-skills)
 
 ### 🚀 Guides
 
@@ -65,7 +66,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 - [Configuration](/en/guide/configuration)
 - [CLI](/en/guide/cli)
 - [WebUI Console](/en/guide/webui)
-- [Nodes Guide](/en/guide/nodes)
+- [Channels Guide](/en/guide/channels)
 
 ### 📖 Reference
 
@@ -86,7 +87,7 @@ user -> main(world mind) -> npc/agent intents -> arbitrate -> apply -> render ->
 2. [Architecture](/en/guide/architecture)
 3. [Configuration](/en/guide/configuration)
 4. [Runtime, Storage, and Recovery](/en/guide/runtime-storage)
-5. [Agents, NPCs, and Skills](/en/guide/subagents-and-skills)
+5. [Subagents and Skills](/en/guide/subagents-and-skills)
 
 ## 📮 Contact
 
