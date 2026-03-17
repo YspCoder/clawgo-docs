@@ -110,7 +110,6 @@ provider/model
 - `enabled`
 - `type`
 - `transport`
-- `node_id`
 - `parent_agent_id`
 - `notify_main_policy`
 - `display_name`
@@ -139,7 +138,6 @@ provider/model
 
 - 启用中的本地 subagent 必须配置 `system_prompt_file`
 - `system_prompt_file` 必须是 workspace 内相对路径
-- `transport: "node"` 时必须同时配置 `node_id`
 - `accept_from` / `can_talk_to` 需要引用已存在的 subagent
 
 ## `models.providers`

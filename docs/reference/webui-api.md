@@ -1,23 +1,14 @@
 # WebUI API 参考
 
-这页按 `pkg/api/server.go` 当前显式注册的 `/api/*` 路由整理。
+这页按当前 `pkg/api/server.go` 显式注册的 `/api/*` 路由整理。
 
 ## 鉴权
 
-常见访问方式：
+当前常见访问方式：
 
 - `?token=<gateway.token>`
 - `Authorization: Bearer <gateway.token>`
-
-### `POST /api/auth/session`
-
-如果你自己拆前端，可以先调用这个接口建立会话 cookie。
-
-```bash
-curl -X POST \
-  -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://127.0.0.1:18790/api/auth/session
-```
+- `clawgo_webui_token` cookie
 
 ## 配置与版本
 
@@ -46,8 +37,6 @@ curl -X POST \
 - `GET /api/chat/live`
 - `POST /api/upload`
 
-这里要注意：当前显式注册的是 `chat`、`chat/history`、`chat/live`，不是之前文档里那批更大的公开 runtime 控制面。
-
 ## Provider 与 OAuth
 
 - `POST /api/provider/oauth/start`
@@ -56,19 +45,6 @@ curl -X POST \
 - `GET/POST /api/provider/oauth/accounts`
 - `POST /api/provider/models`
 - `GET/POST /api/provider/runtime`
-
-这是当前 WebUI 最稳定的运维 API 之一。
-
-## 节点与产物
-
-- `GET /api/nodes`
-- `GET /api/node_dispatches`
-- `POST /api/node_dispatches/replay`
-- `GET /api/node_artifacts`
-- `GET /api/node_artifacts/export`
-- `GET /api/node_artifacts/download`
-- `POST /api/node_artifacts/delete`
-- `POST /api/node_artifacts/prune`
 
 ## Cron / Skills / Sessions / Memory
 
@@ -100,6 +76,10 @@ curl -X POST \
 - `/api/world`
 - `/api/subagents_runtime`
 - `/api/subagent_profiles`
+- `/api/auth/session`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_artifacts`
 - `/api/task_queue`
 - `/api/ekg_stats`
 

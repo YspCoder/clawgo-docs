@@ -2,7 +2,7 @@
 
 ## Overview
 
-Top-level `clawgo` commands:
+Current top-level `clawgo` commands:
 
 - `onboard`
 - `agent`
@@ -11,12 +11,13 @@ Top-level `clawgo` commands:
 - `provider`
 - `config`
 - `cron`
-- `node`
 - `tui`
 - `channel`
 - `skills`
 - `version`
 - `uninstall`
+
+The latest upstream revision has removed the older `node` command, so this docs set no longer treats it as part of the current CLI surface.
 
 ## `onboard`
 
@@ -26,15 +27,16 @@ Initialize config and workspace:
 clawgo onboard
 ```
 
-It creates default config, workspace templates, and a gateway token.
+It:
 
-After onboarding, use the `provider` subcommands to choose the default provider and model.
-
-The current CLI no longer exposes the older `--sync-webui` mode mentioned in previous docs.
+- creates default config
+- creates workspace templates
+- generates `gateway.token`
+- leaves provider/model selection to the `provider` subcommands
 
 ## `agent`
 
-Direct interaction with `AgentLoop`.
+Direct interaction with the AgentLoop:
 
 ```bash
 clawgo agent
@@ -42,7 +44,7 @@ clawgo agent -m "Hello"
 clawgo agent -s cli:demo -m "Fix a bug"
 ```
 
-Parameters:
+Common parameters:
 
 - `-m`, `--message`
 - `-s`, `--session`
@@ -50,13 +52,13 @@ Parameters:
 
 ## `gateway`
 
-### Run
+Foreground run:
 
 ```bash
 clawgo gateway run
 ```
 
-### Service-like control
+Service control:
 
 ```bash
 clawgo gateway start
@@ -65,35 +67,30 @@ clawgo gateway restart
 clawgo gateway status
 ```
 
-If you run `clawgo gateway` without a subcommand, the program attempts to register the gateway service.
+Running `clawgo gateway` without a subcommand attempts to register the gateway service.
 
 ## `status`
 
-Inspect runtime state:
+Inspect current runtime state:
 
 ```bash
 clawgo status
 ```
 
-It reports:
+The most useful lines now include:
 
-- config and workspace status
+- config path
+- workspace path
 - active model and effective provider
-- the active provider `api_base`
+- active provider `api_base`
 - whether the active provider API key is set
 - logging configuration
 - heartbeat and cron runtime settings
 - heartbeat and trigger stats
 - skill execution stats
-- session kind counts
-- node state and capability summary
-- node P2P enablement, transport, and ICE config counts
-- node dispatch transport usage and fallback counts
+- session counts
 
-Note:
-
-- `status` reports the currently active provider details
-- that is more accurate than inspecting only one configured default slot
+`status` now reflects the active provider state rather than only echoing a static default slot.
 
 ## `provider`
 
@@ -115,7 +112,7 @@ Meaning:
 - `login <provider>`: create an OAuth session
 - `login <provider> --manual`: use a manual callback flow on servers or browserless environments
 
-Typical `configure` prompts include:
+Typical `configure` fields:
 
 - `api_base`
 - `api_key`
@@ -130,25 +127,25 @@ Typical `configure` prompts include:
 
 ## `config`
 
-### Read
+Read:
 
 ```bash
 clawgo config get models.providers.openai.api_base
 ```
 
-### Write
+Write:
 
 ```bash
 clawgo config set channels.telegram.enabled true
 ```
 
-### Validate
+Validate:
 
 ```bash
 clawgo config check
 ```
 
-### Reload
+Reload:
 
 ```bash
 clawgo config reload
@@ -156,19 +153,30 @@ clawgo config reload
 
 ## `cron`
 
-### List
+List:
 
 ```bash
 clawgo cron list
 ```
 
-### Add
+Add:
 
 ```bash
 clawgo cron add -n daily-report -m "Summarize today's logs" -c "0 9 * * *"
+clawgo cron add -n heartbeat -m "Check system state" -e 300
 ```
 
-### Enable, disable, remove
+Common parameters:
+
+- `-n`, `--name`
+- `-m`, `--message`
+- `-e`, `--every`
+- `-c`, `--cron`
+- `-d`, `--deliver`
+- `--channel`
+- `--to`
+
+Enable, disable, remove:
 
 ```bash
 clawgo cron enable <job_id>
@@ -176,55 +184,9 @@ clawgo cron disable <job_id>
 clawgo cron remove <job_id>
 ```
 
-## `node`
-
-Used to register a remote execution node with Gateway or send a standalone heartbeat.
-
-### Register A Node
-
-```bash
-clawgo node register --gateway http://127.0.0.1:18790 --id edge-dev --endpoint http://10.0.0.8:8080
-```
-
-Common parameters:
-
-- `--gateway`: Gateway base URL
-- `--token`: Gateway token
-- `--node-token`: Bearer token for the node endpoint itself
-- `--id`: node ID
-- `--name`: display name
-- `--endpoint`: public node endpoint
-- `--actions`: supported action list
-- `--models`: supported model list
-- `--tags`: node tags used by dispatch policy, such as `gpu,vision,build`
-- `--capabilities`: capability flags such as `run,invoke,model,camera,screen,location,canvas`
-- `--watch`: keep the websocket open and continue sending heartbeats
-- `--heartbeat-sec`: heartbeat interval while `--watch` is enabled
-
-Without `--watch`, `register` sends a single registration request and exits. With `--watch`, it will:
-
-- establish a websocket connection
-- send heartbeats automatically
-- handle node requests pushed from Gateway
-- provide the signaling and data-plane base for `websocket_tunnel` and `webrtc`
-
-### Send A Single Heartbeat
-
-```bash
-clawgo node heartbeat --gateway http://127.0.0.1:18790 --id edge-dev
-```
-
-Common parameters:
-
-- `--gateway`
-- `--token`
-- `--id`
-
-This is useful when you want an external scheduler or your own node supervisor to keep the node alive.
-
 ## `tui`
 
-Terminal-native chat interface.
+Terminal-native chat UI:
 
 ```bash
 clawgo tui
@@ -234,46 +196,12 @@ clawgo tui --token <gateway-token>
 
 Common parameters:
 
-- `--token`: explicitly pass the Gateway token
-- `--session`, `-s`: initial session to open, default `main`
-- `--no-history`: skip loading history on startup
-
-Usage notes:
-
-- it connects directly to Gateway WebUI/API endpoints
-- it is useful on servers, SSH sessions, or terminal-only environments
-- it supports multi-pane chat and can keep up to 4 session panes open
-- after startup, use `/help` to inspect the built-in commands
+- `--token`
+- `--session`, `-s`
+- `--no-history`
 
 Notes:
 
-- `clawgo tui` depends on the `with_tui` build tag
-- current release variants include TUI in both the `full` build and the `-nochannels` / `none` build
-- if the current binary was built without TUI, the command tells you to install a build variant that includes TUI
-
-## `channel`
-
-Current exposed subcommand:
-
-```bash
-clawgo channel test --channel telegram --to 123456 -m "hello"
-```
-
-## `skills`
-
-Typical usage:
-
-```bash
-clawgo skills list
-clawgo skills install YspCoder/clawgo-skills/weather
-clawgo skills remove weather
-clawgo skills show weather
-```
-
-## `uninstall`
-
-```bash
-clawgo uninstall
-clawgo uninstall --purge
-clawgo uninstall --remove-bin
-```
+- it connects directly to Gateway APIs
+- it is useful on servers, SSH sessions, and terminal-only environments
+- if the current binary was built without `with_tui`, the command tells you to install a build variant that includes TUI

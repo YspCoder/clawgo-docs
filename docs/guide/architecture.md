@@ -2,7 +2,7 @@
 
 ## 当前主模型
 
-ClawGo 当前不是 world runtime，而是更典型的 **Agent Runtime**。
+ClawGo 当前是更典型的 **Agent Runtime**，不是 world runtime。
 
 默认协作流：
 
@@ -10,11 +10,10 @@ ClawGo 当前不是 world runtime，而是更典型的 **Agent Runtime**。
 user -> main -> worker -> main -> user
 ```
 
-这里的关键对象是：
+当前应重点理解的对象是：
 
 - `main agent`
 - `subagents`
-- `node-backed branches`
 - `runtime store`
 
 ## 四层结构
@@ -26,7 +25,7 @@ user -> main -> worker -> main -> user
 2. 编排层
    `main agent`、router、session planner、message bus
 3. 执行层
-   本地 subagents、远端 node branches、tools、skills、MCP
+   本地 subagents、tools、skills、MCP
 4. 持久化与观测层
    subagent runs、events、threads、messages、sessions、logs、memory、task audit
 
@@ -60,23 +59,9 @@ user -> main -> worker -> main -> user
 - `coder`
 - `tester`
 
-## `node-backed branches`
-
-远端节点可以被挂成受控 branch，配置上通常依赖：
-
-- `transport: "node"`
-- `node_id`
-- `parent_agent_id`
-
-这样主拓扑里可以同时存在：
-
-- 本地 worker
-- 远端 branch
-- 节点能力入口
-
 ## router 与 planner
 
-当前路由仍由 `agents.router` 负责，核心字段包括：
+当前路由由 `agents.router` 负责，核心字段包括：
 
 - `main_agent_id`
 - `strategy`
@@ -95,7 +80,7 @@ planner 会把适合拆分的请求转成多个执行单元，再交给 subagent
 - `threads.jsonl`
 - `agent_messages.jsonl`
 
-这套设计的目的不是记录聊天文本，而是记录执行过程、内部消息和恢复点。
+这套设计记录的是执行过程、内部消息和恢复点，而不是单纯聊天文本。
 
 ## WebUI 当前角色
 
@@ -105,7 +90,7 @@ WebUI 现在偏向检查和管理：
 - Agent 拓扑
 - Config 查看
 - OAuth 账号与 provider runtime
-- 日志、记忆、节点状态
+- 日志与记忆
 
 README 当前明确强调两点：
 
@@ -114,15 +99,15 @@ README 当前明确强调两点：
 
 ## 最近删掉了什么
 
-最近一轮精简移除了不少 legacy surface，文档上最值得记住的是：
+最近一轮精简移除了不少 legacy surface，文档层面最重要的是：
 
 - `runtime_control` 已移除
 - 公开 task runtime 控制面已收缩
-- 旧的兼容 helper 和部分 legacy interface 被清掉
+- 旧版节点运行面已从默认 upstream 能力中移除
 
-这意味着当前对外心智模型更简单：
+所以当前心智模型更简单：
 
 - 配置靠 `config.json`
 - 角色靠 `AGENT.md`
-- 执行靠 `main + subagents + nodes`
+- 执行靠 `main + subagents`
 - 观测靠 WebUI、logs、memory、audit

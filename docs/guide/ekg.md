@@ -21,12 +21,10 @@
 - `/api/logs/recent`
 - `/api/logs/live`
 - `/api/provider/runtime`
-- `/api/nodes`
 
 这些接口已经覆盖当前版本最核心的观测面：
 
 - provider 健康和 cooldown 状态
-- 节点拓扑、P2P 与派发路径
 - 近期日志与实时日志流
 - session、memory、skills、cron 的运行痕迹
 
@@ -38,4 +36,4 @@
 
 1. 先确认你当前运行的 `clawgo` 二进制版本
 2. 对照 [WebUI API 参考](/reference/webui-api) 中列出的默认注册路由
-3. 把巡检脚本迁移到 `status`、`logs`、`nodes`、`provider runtime` 这些当前仍保留的能力
+3. 把巡检脚本迁移到 `status`、`logs`、`provider runtime` 这些当前仍保留的能力

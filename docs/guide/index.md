@@ -12,8 +12,8 @@
 6. [MCP 集成](/guide/mcp)
 7. [CLI 命令](/guide/cli)
 8. [WebUI 控制台](/guide/webui)
-9. [节点使用篇](/guide/nodes)
-10. [Node P2P E2E 验证](/examples/node-p2p-e2e)
+9. [最小 Subagent 示例](/examples/minimal-world)
+10. [节点能力迁移说明](/guide/nodes)
 
 ## 按目标阅读
 
@@ -38,8 +38,12 @@
 - [MCP 集成](/guide/mcp)
 - [配置说明](/guide/configuration)
 
-### 我想接入 Channels、Cron、远端 Nodes
+### 我想接入 Channels 或 Cron
 
 - [通道使用篇](/guide/channels)
 - [Cron 使用篇](/guide/cron)
-- [节点使用篇](/guide/nodes)
+
+### 我在迁移旧版 nodes / P2P
+
+- [节点能力迁移说明](/guide/nodes)
+- [Node P2P 历史示例说明](/examples/node-p2p-e2e)

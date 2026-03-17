@@ -57,8 +57,7 @@ This page is the field index companion to [Configuration](/en/guide/configuratio
 | --- | --- |
 | `enabled` | whether enabled |
 | `type` | `router`, `worker`, `reviewer`, or `observer` |
-| `transport` | `local` or `node` |
-| `node_id` | remote node ID |
+| `transport` | currently documented as `local` in the default upstream surface |
 | `parent_agent_id` | parent agent |
 | `notify_main_policy` | main notification policy |
 | `display_name` | display name |
@@ -99,14 +98,7 @@ This page is the field index companion to [Configuration](/en/guide/configuratio
 | `port` | listen port |
 | `token` | gateway access token |
 
-## `gateway.nodes.p2p`
-
-| Field | Purpose |
-| --- | --- |
-| `enabled` | whether node P2P is enabled |
-| `transport` | `websocket_tunnel` or `webrtc` |
-| `stun_servers` | list of STUN URLs |
-| `ice_servers` | structured ICE server list |
+The current upstream docs no longer expand the older `gateway.nodes.*` surface.
 
 ## `tools.mcp.servers.<name>`
 

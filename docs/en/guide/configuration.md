@@ -110,7 +110,6 @@ Common fields:
 - `enabled`
 - `type`
 - `transport`
-- `node_id`
 - `parent_agent_id`
 - `notify_main_policy`
 - `display_name`
@@ -139,7 +138,6 @@ Current rules:
 
 - enabled local subagents must define `system_prompt_file`
 - `system_prompt_file` must be workspace-relative
-- `transport: "node"` also requires `node_id`
 - `accept_from` and `can_talk_to` must reference declared subagents
 
 ## `models.providers`

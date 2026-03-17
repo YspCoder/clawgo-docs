@@ -4,17 +4,16 @@
 
 ClawGo is currently best described as an **Agent Runtime**, not as a world runtime.
 
-The default collaboration flow is:
+Default collaboration flow:
 
 ```text
 user -> main -> worker -> main -> user
 ```
 
-The key objects are:
+The main objects to understand are:
 
 - `main agent`
 - `subagents`
-- `node-backed branches`
 - `runtime store`
 
 ## Four Runtime Layers
@@ -26,7 +25,7 @@ The current system can be understood in four layers:
 2. Orchestration layer
    `main agent`, router, session planner, and message bus
 3. Execution layer
-   local subagents, remote node branches, tools, skills, and MCP
+   local subagents, tools, skills, and MCP
 4. Persistence and observability layer
    subagent runs, events, threads, messages, sessions, logs, memory, and task audit
 
@@ -45,7 +44,7 @@ It is the coordination center of the runtime, not just a static system prompt.
 
 Local subagents are declared in `config.json -> agents.subagents`.
 
-Each subagent can independently define:
+Each subagent can define:
 
 - `role`
 - `display_name`
@@ -60,23 +59,9 @@ Typical roles are still:
 - `coder`
 - `tester`
 
-## `node-backed branches`
+## Router and Planner
 
-Remote nodes can be mounted as controlled branches, typically through:
-
-- `transport: "node"`
-- `node_id`
-- `parent_agent_id`
-
-That lets the topology contain:
-
-- local workers
-- remote branches
-- node capability entrypoints
-
-## Router And Planner
-
-Routing is still handled by `agents.router`, with fields such as:
+Routing is handled by `agents.router`, with fields such as:
 
 - `main_agent_id`
 - `strategy`
@@ -95,17 +80,17 @@ The core persisted artifacts are:
 - `threads.jsonl`
 - `agent_messages.jsonl`
 
-These files exist to preserve execution state, internal messaging, and recovery points, not just chat text.
+These files preserve execution state, internal messaging, and recovery points, not just chat text.
 
 ## The Current Role Of The WebUI
 
-The WebUI is now focused on inspection and management of:
+The WebUI is focused on inspection and management of:
 
 - Dashboard
 - agent topology
 - config viewing
 - OAuth accounts and provider runtime
-- logs, memory, and node status
+- logs and memory
 
 The README currently stresses two things:
 
@@ -114,15 +99,15 @@ The README currently stresses two things:
 
 ## What Was Removed Recently
 
-Recent cleanup removed a number of legacy surfaces. The main documentation-level effects are:
+Recent cleanup removed several legacy surfaces. The most important docs-level changes are:
 
 - `runtime_control` has been removed
-- the public task runtime control surface has been reduced
-- several legacy helpers and compatibility interfaces were deleted
+- the public task-runtime control surface has been reduced
+- the older node runtime surface is no longer part of the default upstream product
 
 The resulting mental model is simpler:
 
 - configuration through `config.json`
 - role prompts through `AGENT.md`
-- execution through `main + subagents + nodes`
+- execution through `main + subagents`
 - observability through WebUI, logs, memory, and audit

@@ -21,12 +21,10 @@ For current runtime health and operational visibility, use:
 - `/api/logs/recent`
 - `/api/logs/live`
 - `/api/provider/runtime`
-- `/api/nodes`
 
 These cover the observability surface that still exists in current versions:
 
 - provider health and cooldown state
-- node topology, P2P state, and dispatch paths
 - recent logs and live log streaming
 - session, memory, skills, and cron traces
 
@@ -38,4 +36,4 @@ The safer migration path is:
 
 1. verify the exact `clawgo` binary version you run
 2. compare it with the default registered routes in the [WebUI API Reference](/en/reference/webui-api)
-3. move your operational scripts toward `status`, `logs`, `nodes`, and `provider runtime`
+3. move your operational scripts toward `status`, `logs`, and `provider runtime`

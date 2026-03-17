@@ -19,7 +19,7 @@ export default defineConfig({
         nav: [
           { text: '概念', link: '/concepts/' },
           { text: '使用', link: '/guide/' },
-          { text: '示例', link: '/examples/node-p2p-e2e' },
+          { text: '示例', link: '/examples/minimal-world' },
           { text: '参考', link: '/reference/' },
           { text: '运维开发', link: '/ops/' }
         ],
@@ -52,14 +52,15 @@ export default defineConfig({
               { text: 'WebUI 控制台', link: '/guide/webui' },
               { text: '通道使用篇', link: '/guide/channels' },
               { text: 'Cron 使用篇', link: '/guide/cron' },
-              { text: '节点使用篇', link: '/guide/nodes' }
-              ,{ text: 'EKG 使用篇', link: '/guide/ekg' }
+              { text: 'EKG 使用篇', link: '/guide/ekg' },
+              { text: '节点能力迁移说明', link: '/guide/nodes' }
             ]
           },
           {
             text: '示例',
             items: [
-              { text: 'Node P2P E2E 验证', link: '/examples/node-p2p-e2e' }
+              { text: '最小 Subagent 示例', link: '/examples/minimal-world' },
+              { text: 'Node P2P 历史示例说明', link: '/examples/node-p2p-e2e' }
             ]
           },
           {
@@ -107,7 +108,7 @@ export default defineConfig({
         nav: [
           { text: 'Concepts', link: '/en/concepts/' },
           { text: 'Guides', link: '/en/guide/' },
-          { text: 'Examples', link: '/en/examples/node-p2p-e2e' },
+          { text: 'Examples', link: '/en/examples/minimal-world' },
           { text: 'Reference', link: '/en/reference/' },
           { text: 'Ops & Dev', link: '/en/ops/' }
         ],
@@ -140,14 +141,15 @@ export default defineConfig({
               { text: 'WebUI Console', link: '/en/guide/webui' },
               { text: 'Channels Guide', link: '/en/guide/channels' },
               { text: 'Cron Guide', link: '/en/guide/cron' },
-              { text: 'Nodes Guide', link: '/en/guide/nodes' },
-              { text: 'EKG Guide', link: '/en/guide/ekg' }
+              { text: 'EKG Guide', link: '/en/guide/ekg' },
+              { text: 'Node Migration Note', link: '/en/guide/nodes' }
             ]
           },
           {
             text: 'Examples',
             items: [
-              { text: 'Node P2P E2E Validation', link: '/en/examples/node-p2p-e2e' }
+              { text: 'Minimal Subagent Example', link: '/en/examples/minimal-world' },
+              { text: 'Node P2P Historical Note', link: '/en/examples/node-p2p-e2e' }
             ]
           },
           {

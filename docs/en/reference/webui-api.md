@@ -1,6 +1,6 @@
 # WebUI API Reference
 
-This page follows the `/api/*` routes explicitly registered in `pkg/api/server.go`.
+This page follows the `/api/*` routes explicitly registered in the current `pkg/api/server.go`.
 
 ## Auth
 
@@ -8,16 +8,7 @@ Common access patterns:
 
 - `?token=<gateway.token>`
 - `Authorization: Bearer <gateway.token>`
-
-### `POST /api/auth/session`
-
-If you split the frontend out yourself, this endpoint can be used to bootstrap a session cookie.
-
-```bash
-curl -X POST \
-  -H 'Authorization: Bearer YOUR_GATEWAY_TOKEN' \
-  http://127.0.0.1:18790/api/auth/session
-```
+- `clawgo_webui_token` cookie
 
 ## Config and Version
 
@@ -46,8 +37,6 @@ Current normalized keys include:
 - `GET /api/chat/live`
 - `POST /api/upload`
 
-One important detail: the currently registered public routes are `chat`, `chat/history`, and `chat/live`, not the broader runtime-control surface described by the previous docs revision.
-
 ## Provider and OAuth
 
 - `POST /api/provider/oauth/start`
@@ -56,19 +45,6 @@ One important detail: the currently registered public routes are `chat`, `chat/h
 - `GET/POST /api/provider/oauth/accounts`
 - `POST /api/provider/models`
 - `GET/POST /api/provider/runtime`
-
-This is one of the most stable operational API groups in the current WebUI.
-
-## Nodes and Artifacts
-
-- `GET /api/nodes`
-- `GET /api/node_dispatches`
-- `POST /api/node_dispatches/replay`
-- `GET /api/node_artifacts`
-- `GET /api/node_artifacts/export`
-- `GET /api/node_artifacts/download`
-- `POST /api/node_artifacts/delete`
-- `POST /api/node_artifacts/prune`
 
 ## Cron / Skills / Sessions / Memory
 
@@ -100,6 +76,10 @@ The current codebase does not explicitly register these public routes anymore:
 - `/api/world`
 - `/api/subagents_runtime`
 - `/api/subagent_profiles`
+- `/api/auth/session`
+- `/api/nodes`
+- `/api/node_dispatches`
+- `/api/node_artifacts`
 - `/api/task_queue`
 - `/api/ekg_stats`
 

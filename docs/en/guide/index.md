@@ -12,8 +12,8 @@ This section is for people who want to run ClawGo as an Agent Runtime.
 6. [MCP Integration](/en/guide/mcp)
 7. [CLI](/en/guide/cli)
 8. [WebUI Console](/en/guide/webui)
-9. [Nodes Guide](/en/guide/nodes)
-10. [Node P2P E2E Validation](/en/examples/node-p2p-e2e)
+9. [Minimal Subagent Example](/en/examples/minimal-world)
+10. [Node Migration Note](/en/guide/nodes)
 
 ## Read By Goal
 
@@ -38,8 +38,12 @@ This section is for people who want to run ClawGo as an Agent Runtime.
 - [MCP Integration](/en/guide/mcp)
 - [Configuration](/en/guide/configuration)
 
-### I want channels, cron, or remote nodes
+### I want channels or cron
 
 - [Channels Guide](/en/guide/channels)
 - [Cron Guide](/en/guide/cron)
-- [Nodes Guide](/en/guide/nodes)
+
+### I am migrating an older nodes / P2P deployment
+
+- [Node Migration Note](/en/guide/nodes)
+- [Node P2P Historical Note](/en/examples/node-p2p-e2e)

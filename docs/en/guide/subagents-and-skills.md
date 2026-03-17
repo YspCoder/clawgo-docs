@@ -19,9 +19,8 @@ It splits execution into roles such as:
 - `main`
 - `coder`
 - `tester`
-- remote node branches
 
-That keeps the main conversation clean while making internal execution traceable.
+That keeps the main conversation clean while keeping internal execution traceable.
 
 ## Common Subagent Fields
 
@@ -36,27 +35,11 @@ Each subagent can define:
 
 For the current version, `system_prompt_file` remains the canonical configuration path.
 
-## Execution Modes
+## Execution Model
 
-There are two main forms:
+Current upstream docs describe the execution model primarily in terms of local subagents.
 
-### Local subagents
-
-Executed directly with local providers and tools.
-
-### Node-backed branches
-
-Configured like:
-
-```json
-{
-  "transport": "node",
-  "node_id": "edge-dev",
-  "parent_agent_id": "main"
-}
-```
-
-This mounts a remote node into the main topology.
+In other words, the docs no longer expand the older node-mounted branch model as part of the default current surface.
 
 ## Tool Permissions
 
@@ -72,9 +55,9 @@ A common split is:
 - `coder` gets filesystem and shell
 - `tester` gets verification and process-manager tools
 
-## `spawn` And `subagent_profile`
+## `spawn` and `subagent_profile`
 
-The current README explicitly keeps two key capabilities:
+The current README still keeps two key capabilities:
 
 - `spawn`
 - `subagent_profile`
@@ -111,4 +94,4 @@ in the active coding project root.
 - let `main` focus on dispatch and merge
 - push risky execution into `coder` and `tester`
 - keep role prompts in `AGENT.md`
-- attach remote execution through node-backed branches
+- manage subagents through file-based config rather than older runtime-control surfaces

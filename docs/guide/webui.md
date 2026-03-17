@@ -5,7 +5,7 @@
 按最新 README，WebUI 当前主要用于：
 
 - Dashboard 与 Agent 拓扑查看
-- 节点、日志、记忆、运行态检查
+- 日志、记忆、运行态检查
 - OAuth 账号管理
 
 它当前不应被理解成“完整 runtime 控制面”。
@@ -27,7 +27,6 @@ http://<host>:<port>/?token=<gateway.token>
 用于看总体状态，包括：
 
 - 版本
-- 节点状态
 - provider 运行信息
 - 近期运行概览
 
@@ -37,7 +36,6 @@ http://<host>:<port>/?token=<gateway.token>
 
 - `main`
 - 本地 subagents
-- 远端 node-backed branches
 
 用于理解“谁在协作、谁在执行”。
 
@@ -62,13 +60,12 @@ http://<host>:<port>/?token=<gateway.token>
 - 账号删除
 - provider runtime 状态
 
-### Logs / Memory / Nodes / Skills
+### Logs / Memory / Skills
 
 这几页主要承担：
 
 - 日志查看
 - memory 文件检查
-- 节点与派发状态检查
 - skills 浏览与安装
 
 ## 当前最值得看的能力
@@ -78,7 +75,7 @@ http://<host>:<port>/?token=<gateway.token>
 1. Agent 拓扑
 2. Provider OAuth / runtime
 3. Logs
-4. Nodes
+4. Memory
 
 这几页最能反映当前 Agent Runtime 的真实状态。
 

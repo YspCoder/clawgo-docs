@@ -57,8 +57,7 @@
 | --- | --- |
 | `enabled` | 是否启用 |
 | `type` | `router` / `worker` / `reviewer` / `observer` |
-| `transport` | `local` 或 `node` |
-| `node_id` | 远端节点 ID |
+| `transport` | 当前默认文档化为 `local` |
 | `parent_agent_id` | 父 agent |
 | `notify_main_policy` | 主代理通知策略 |
 | `display_name` | 显示名称 |
@@ -99,14 +98,7 @@
 | `port` | 监听端口 |
 | `token` | 网关访问令牌 |
 
-## `gateway.nodes.p2p`
-
-| 字段 | 作用 |
-| --- | --- |
-| `enabled` | 是否启用节点 P2P |
-| `transport` | `websocket_tunnel` / `webrtc` |
-| `stun_servers` | STUN URL 列表 |
-| `ice_servers` | 结构化 ICE server 列表 |
+当前 upstream 默认文档不再继续展开旧版 `gateway.nodes.*`。
 
 ## `tools.mcp.servers.<name>`
 

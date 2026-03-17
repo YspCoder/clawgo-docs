@@ -12,14 +12,13 @@ agents.subagents
 
 ## 为什么有 subagent
 
-ClawGo 不是一个所有任务都塞给主 agent 的系统。
+ClawGo 不是一个把所有任务都塞给主 agent 的系统。
 
 它把执行单元拆成：
 
 - `main`
 - `coder`
 - `tester`
-- 远端 node branch
 
 这样主会话可以保持整洁，而内部执行仍然可追踪。
 
@@ -36,27 +35,11 @@ ClawGo 不是一个所有任务都塞给主 agent 的系统。
 
 对当前版本来说，`system_prompt_file` 仍然是正式配置方式。
 
-## 运行模式
+## 执行模式
 
-当前 subagent 主要有两种：
+当前 upstream 文档默认只按“本地 subagent”来解释执行模型。
 
-### 本地 subagent
-
-由本地 provider 和工具直接执行。
-
-### node-backed branch
-
-配置例如：
-
-```json
-{
-  "transport": "node",
-  "node_id": "edge-dev",
-  "parent_agent_id": "main"
-}
-```
-
-这会把远端节点挂到主拓扑里。
+也就是说，当前主文档不再把旧版节点挂载 branch 作为默认使用面继续展开。
 
 ## 工具权限
 
@@ -74,7 +57,7 @@ subagent 仍然通过这些字段控制工具可见性：
 
 ## `spawn` 与 `subagent_profile`
 
-README 当前明确保留了两个关键能力：
+README 当前仍明确保留这两个关键能力：
 
 - `spawn`
 - `subagent_profile`
@@ -109,4 +92,4 @@ Skills 仍然以 `SKILL.md` 为中心，由 `skill_exec` 暴露给运行时。
 - `main` 只负责派发和汇总
 - 高风险执行交给 `coder` / `tester`
 - 角色 prompt 放在 `AGENT.md`
-- 远端执行通过 node-backed branch 接入
+- 通过文件化配置管理 subagent，而不是依赖旧版运行时控制面
